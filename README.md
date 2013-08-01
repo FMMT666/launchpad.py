@@ -1,9 +1,57 @@
 launchpad.py
 ============
 
-A Novation Launchpad control suite.
+A [Novation Launchpad][1] control suite for [Python][2].
 
-    http://www.askrproject.net
+If you ever dreamed of using your Launchpad for completely other stuff than music: Welcome !-)
+
+---
+## Package
+The "distribution" consists of:
+
+  - launchpad.py
+  - launchpad_charset.py
+  - launchpad_demo.py
+
+You only need the first two files.
+"launchpad.py" as well as "launchpad_demo.py" contain demo code.
+
+
+---
+## Requirements
+
+  - [Python][2]
+  - [Pygame][3] v1.9.1
+
+Launchpad.py was tested under
+
+  - Windows XP, 32 bit
+  - Windows 7, 32 bit
+  - [Raspberry-Pi][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
+  - ...
+
+
+---
+## Notes (from the source)
+
+### For Windows users
+
+      MIDI implementation in PyGame 1.9.2+ is broken and running this will
+      bring up an 'insufficient memory' error ( pygame.midi.Input() ).
+
+      SOLUTION: use v1.9.1
+
+### For Raspberry-Pi users:
+
+      Due to some bugs in PyGame's MIDI implementation, the buttons of the Launchpad
+      won't work after you restarted a program (LEDs are not affected).
+
+      WORKAROUND #2: Simply hit one of the AUTOMAP keys (the topmost 8 buttons)
+                     For whatever reason, this makes the MIDI button  events
+                     appearing again...
+
+      WORKAROUND #1: Pull the Launchpad's plug out and restart... (annoying).
+
 
 ---
 ## Launchpad class methods overview
@@ -35,6 +83,7 @@ A Novation Launchpad control suite.
     ButtonChanged()
     ButtonStateRaw()
     ButtonStateXY()
+
 
 ---
 ## Detailed description
@@ -238,8 +287,16 @@ A Novation Launchpad control suite.
     |   |   |   |   |   |   |   |   |  |8/8|  8
     +---+---+---+---+---+---+---+---+  +---+
 
----
 
+---
 Have fun  
 FMMT666(ASkr)  
 
+
+
+[1]: http://novationmusic.de/midi-controllers-digital-dj/launchpad
+[2]: http://www.python.org
+[3]: http://www.pygame.org
+[4]: http://www.raspberrypi.org
+[5]: http://pi.minecraft.net/
+[6]: http://www.askrproject.net

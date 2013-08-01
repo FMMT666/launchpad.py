@@ -59,9 +59,6 @@
 #  >>>
 #  >>>
 #
-# Code does not yet contain any docstrings.
-# Browse manually...
-#
 #
 
 import string
