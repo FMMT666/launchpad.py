@@ -106,14 +106,14 @@ Launchpad.py was tested under
 
     Debug function.
     Can be called any time and does not even require Open().
-    Prints a list of all detected MIDI equipment and addresses.
+    Prints a list of all detected MIDI devices and addresses.
 
       PARAMS:
       RETURN:
 
 ### Reset()
 
-    Resets the Launchpad and (quickly) turns off al LEDs.
+    Resets the Launchpad and (quickly) turns off all LEDs.
 
       PARAMS:
       RETURN:
@@ -121,7 +121,7 @@ Launchpad.py was tested under
 ### LedGetColor( red, green )
 
     Returns a the special Launchpad color coding format, calculated
-      from a red and green intensity value.
+    from a red and green intensity value.
 
       PARAMS: <red>    red   LED intensity 0..3
               <green>  green LED intensity 0..3
@@ -148,6 +148,7 @@ Launchpad.py was tested under
 
 
 ### LedCtrlRawRapid( allLeds )
+
     Sends a table of consecutive, special color values to the Launchpad.
     Requires (less than) half of the commands to update all buttons:
     [ LED1, LED2, LED3, ... LED80 ]
@@ -167,6 +168,7 @@ Launchpad.py was tested under
 
 
 ### LedCtrlAutomap( number, red, green )
+
     Control one of the "automap" buttons (top row).
     Legacy function, provided for compatibility.
 
@@ -175,6 +177,7 @@ Launchpad.py was tested under
               <green>  green LED intensity 0..3
 
 ### LedAllOn()
+
     Turns on all LEDs.
 
       PARAMS: 
@@ -182,6 +185,7 @@ Launchpad.py was tested under
 
 		
 ### LedCtrlChar( char, red, green, offsx = 0, offsy = 0 )
+
     Sends character <char> in colors <red/green> (0..3 each) and
     lateral offset <offsx> (-8..8) to the Launchpad.
     <offsy> does not have yet any function
@@ -196,6 +200,7 @@ Launchpad.py was tested under
 					
 
 ### LedCtrlString( str, red, green, dir = 0 )
+
     Scrolls a string <str> across the Launchpad's main, 8x8 matrix.
     Red and green specify the color and intensity (0..3 each).
     <dir> determines the direction of scrolling.
@@ -211,6 +216,7 @@ Launchpad.py was tested under
 
 					
 ### ButtonChanged()
+
     Returns True if a button event occured. False otherwise.
 
       PARAMS:
@@ -218,6 +224,7 @@ Launchpad.py was tested under
 		
 
 ### ButtonStateRaw()
+
     Returns the state of the last occured button event in the queue in RAW mode.
 
       PARAMS:
@@ -226,6 +233,7 @@ Launchpad.py was tested under
               if the button was pressed <True> or released <False>.
 
 ### ButtonStateXY()
+
     Returns the state of the last occured button event in the queue in X/Y mode.
 
       PARAMS:

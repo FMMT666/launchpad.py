@@ -57,15 +57,8 @@
 #  >>>
 #  >>>  WORKAROUND #1: Pull the Launchpad's plug out and restart... (annoying).
 #  >>>
-#
-#
-#
 #  >>>
-#  >>> NOTICE FOR SPACE USERS:
-#  >>>
-#  >>>  Yep, this one uses tabs. Tabs everywhere.
-#  >>>  Deal with it :-)
-#  >>>
+#
 #
 
 import string
