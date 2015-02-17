@@ -1,9 +1,20 @@
 #!/usr/bin/python
 
 #
-# Novation Launchpad Python V0.7
-# 7/2013 ASkr(FMMT666)
+# Novation Launchpad Python V0.8a
+# 7/2013, 2/2015 ASkr(FMMT666)
 # www.askrprojects.net
+#
+#
+# 2015/02:
+#  - Tagged stuff for refactoring with REFAC2015. The original code was
+#    quickly hacked together within a weekend. Looks like a lot badly
+#    needs some changes :)
+#  - The S/Mini variants, escpecially in conjunction with a fast PC
+#    are waaaays faster that the original Launchpad.
+#    While this is quite nice for the real-time behaviour of all the
+#    buttons and LEDs, the character drawing functions now need a
+#    timer.
 #
 # 
 # This provides complete Python enabled control over a Novation Launchpad.
@@ -82,12 +93,15 @@ from launchpad_charset import *
 
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
 MIDI_BUFFER_IN  = 16   # same here...
+#MIDI_BUFFER_OUT = 1   # TESTING S/MINI
+#MIDI_BUFFER_IN  = 1   # TESTING S/MINI
 
 
 
 ########################################################################################
 ### CLASS Midi
 ### Mini HAL for MIDI
+### REFAC2015: Only allow one instance of this.
 ########################################################################################
 class Midi:
 
@@ -102,6 +116,7 @@ class Midi:
 		midi.init()
 
 		# TODO: this sucks...
+		# REFAC2015: Yep, it does :)
 		try:
 			midi.get_count()
 		except:
@@ -109,11 +124,12 @@ class Midi:
 
 
 	#-------------------------------------------------------------------------------------
-	#-- returns a list of devices that matches the string 'name' and has in- or outputs
+	#-- Returns a list of devices that matches the string 'name' and has in- or outputs.
 	#-------------------------------------------------------------------------------------
 	def SearchDevices( self, name, output = True, input = True, quiet = True ):
 		ret = []
 		i = 0
+		
 		for n in range( midi.get_count() ):
 			md = midi.get_device_info( n )
 			if quiet == False:
@@ -130,7 +146,8 @@ class Midi:
 
 		
 	#-------------------------------------------------------------------------------------
-	#-- returns a list of devices that matches the string 'name' and has in- or outputs
+	#-- Returns the first device that matches the string 'name'.
+	#-- REFAC2015: Add possibility to pick a specific device if more than one is attached.
 	#-------------------------------------------------------------------------------------
 	def SearchDevice( self, name, output = True, input = True ):
 		ret = self.SearchDevices( name, output, input )
@@ -272,6 +289,8 @@ class Launchpad:
 	#
 	
 	def __init__( self ):
+		# REFAC2015: Nope, Midi() should not be instantiated here!
+		#            Also: hide these
 		self.midi   = Midi() # midi interface class
 		self.idOut  = None   # midi id for output
 		self.idIn   = None   # midi id for input
@@ -292,9 +311,10 @@ class Launchpad:
 		
 
 	#-------------------------------------------------------------------------------------
-	#-- opens the first-found Launchpad MIDI devices (one in, one out)
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-- REFAC2015: Add option to pick a specific device by name or number.
 	#-------------------------------------------------------------------------------------
-	def Open( self ):
+	def Open( self, devName = None, devNumber = None ):
 		self.idOut = self.midi.SearchDevice("Launchpad", True, False )
 		self.idIn  = self.midi.SearchDevice("Launchpad", False, True )
 		
@@ -316,6 +336,7 @@ class Launchpad:
 
 	#-------------------------------------------------------------------------------------
 	#-- prints a list of all devices to the console (for debug)
+	#-- REFAC2015: This definitely does not belong in here!
 	#-------------------------------------------------------------------------------------
 	def ListAll( self ):
 		self.midi.SearchDevices("*", True, True, False )
@@ -323,6 +344,8 @@ class Launchpad:
 
 	#-------------------------------------------------------------------------------------
 	#-- reset the Launchpad
+	#-- REFAC2015: This is device specific and should be handled in a more basic
+	#--            virtual/interface type class.
 	#-------------------------------------------------------------------------------------
 	def Reset( self ):
 		self.midi.RawWrite( 176, 0, 0 )
@@ -331,6 +354,7 @@ class Launchpad:
 	#-------------------------------------------------------------------------------------
 	#-- Returns a Launchpad compatible "color code byte"
 	#-- NOTE: In here, number is 0..7 (left..right)
+	#-- REFAC2015: Probably device specific.
 	#-------------------------------------------------------------------------------------
 	def LedGetColor( self, red, green ):
 		led = 0
@@ -350,6 +374,7 @@ class Launchpad:
 	#-------------------------------------------------------------------------------------
 	#-- Controls a grid LED by its raw <number>; with <green/red> brightness: 0..3
 	#-- For LED numbers, see grid description on top of class.
+	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def LedCtrlRaw( self, number, red, green ):
 
@@ -390,7 +415,8 @@ class Launchpad:
 	#-- LEDn color format: 00gg00rr <- 2 bits green, 2 bits red (0..3)
 	#-- Function LedGetColor() will do the coding for you...
 	#-- Notice that the amount of LEDs needs to be even.
-	#.. If an odd number of values is sent, the next, following LED is turned off!
+	#-- If an odd number of values is sent, the next, following LED is turned off!
+	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def LedCtrlRawRapid( self, allLeds ):
 		le = len( allLeds )
@@ -419,6 +445,7 @@ class Launchpad:
 	#-------------------------------------------------------------------------------------
 	#-- Controls an automap LED <number>; with <green/red> brightness: 0..3
 	#-- NOTE: In here, number is 0..7 (left..right)
+	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def LedCtrlAutomap( self, number, red, green ):
 
@@ -432,6 +459,7 @@ class Launchpad:
 
 	#-------------------------------------------------------------------------------------
 	#-- all LEDs on
+	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def LedAllOn( self ):
 		self.midi.RawWrite( 176, 0, 127 )
@@ -464,18 +492,28 @@ class Launchpad:
 	#-------------------------------------------------------------------------------------
 	def LedCtrlString( self, str, red, green, dir = 0 ):
 
+		# REFAC2015: As it seems, a timer somewhere around 150ms/display works for both
+		#            Standard and S/Mini variants.
+
 		if dir == -1:
 			for i in str:
 				for off in range(5,-8,-1):
 					self.LedCtrlChar(i, red, green, off)
+					# TESTING ONLY (slowdown for S/Mini)
+					time.wait(150);
 		elif dir == 0:
 			for i in str:
 				for off in range(4):
 					self.LedCtrlChar(i, red, green)
+					# TESTING ONLY (slowdown for S/Mini)
+					time.wait(150);
 		elif dir == 1:
 			for i in str:
 				for off in range(-5,8):
 					self.LedCtrlChar(i, red, green, off)
+					# TESTING ONLY (slowdown for S/Mini)
+					time.wait(150);
+					
 
 					
 	#-------------------------------------------------------------------------------------
@@ -488,6 +526,7 @@ class Launchpad:
 	#-------------------------------------------------------------------------------------
 	#-- Returns the raw value of the last button change as a table:
 	#-- [ <button>, <True/False> ]
+	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def ButtonStateRaw( self ):
 		if self.midi.ReadCheck():
@@ -500,6 +539,7 @@ class Launchpad:
 	#-------------------------------------------------------------------------------------
 	#-- Returns an x/y value of the last button change as a table:
 	#-- [ <x>, <y>, <True/False> ]
+	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def ButtonStateXY( self ):
 		if self.midi.ReadCheck():
@@ -532,11 +572,13 @@ def main():
 	# the latter of these two messages might not finish (MIDI buffer too large,
 	# MIDI speed too low...)
 	print("HELLO")
-	LP.LedCtrlString( 'HELLO', 3, 0, 0 )  # display  H E L L O  in green
+	LP.LedCtrlString( 'HELLO', 3, 0, 0 ) # display HELLO in red
 	print("USER")
-	LP.LedCtrlString( 'USER   ', 0, 3, -1 )  # scroll  U S E R  from right to left
+	LP.LedCtrlString( 'USER', 0, 3, -1 ) # scroll USER in green, from right to left
+	
 	# try to give it some extra time:
-	time.wait( 5000 )
+	# TESTING S/MINI
+#	time.wait( 5000 )
 
 	print("---\nTurning on all LEDs.")
 	LP.LedAllOn()
