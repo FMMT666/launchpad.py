@@ -20,7 +20,7 @@ def main():
 	LP.Open()                   # start it
 
 
-	LP.LedCtrlString( 'HELLO   ', 0, 3, -1 )  # scroll "HELLO" from right to left
+	LP.LedCtrlString( 'HELLO ', 0, 3, -1 )  # scroll "HELLO" from right to left
 
 	# random output until button "arm" (lower right) is pressed
 	print("---\nRandom madness. Stop by hitting the ARM button (lower right)")
@@ -30,7 +30,10 @@ def main():
 
 	while 1:
 		LP.LedCtrlRaw( random.randint(0,127), random.randint(0,3), random.randint(0,3) )
+		
+		# some extra time to give the button events a chance to come through...
 		time.wait( 5 )
+		
 		but = LP.ButtonStateRaw()
 		if but != []:
 			print( but )

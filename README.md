@@ -25,10 +25,21 @@ You only need the first two files.
 
 Launchpad.py was tested under
 
+  - Linux, 64 bit
   - Windows XP, 32 bit
   - Windows 7, 32 bit
   - [Raspberry-Pi][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
   - ...
+
+Supported Launchpad devices:
+
+  - Launchpad
+  - Launchpad S
+  - Launchpad Mini
+  
+Planned:
+
+  - Launchpad Pro (mid 2015)
 
 
 ---
@@ -41,7 +52,7 @@ Launchpad.py was tested under
 
       SOLUTION: use v1.9.1
 
-### For Raspberry-Pi users:
+### For Linux and especially Raspberry-Pi users:
 
       Due to some bugs in PyGame's MIDI implementation, the buttons of the Launchpad
       won't work after you restarted a program (LEDs are not affected).
