@@ -113,14 +113,14 @@ Planned:
 
 ### Open( [number], [name] )
 
-    Opens the first available Launchpad and initializes it.
+    Opens the a Launchpad and initializes it.
 
       PARAMS: <number> OPTIONAL, number of Launchpad to open.
                        1st device = 0, 2nd device = 1, ...
                        Defaults to 0, the 1st device if not given.
               <name>   OPTIONAL, only consider devices whose names contain
                        the string <name>. Defaults to "Launchpad".
-                       
+
       RETURN: True     success
               False    error
 
@@ -165,7 +165,7 @@ Planned:
 
       PARAMS: <red>    red   LED intensity 0..3
               <green>  green LED intensity 0..3
-      RETURN: number; Launchpad color code
+      RETURN: number   Launchpad color code
 
 ### LedCtrlRaw( number, red, green )
 
