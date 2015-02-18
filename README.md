@@ -6,6 +6,18 @@ A [Novation Launchpad][1] control suite for [Python][2].
 If you ever dreamed of using your Launchpad for completely other stuff than music: Welcome !-)
 
 ---
+## NEWS
+
+### CHANGES 2015/02/18:
+  
+    - Added option to select a Launchpads if more than one is attached.
+      Notice that simultaneous operation of multiple Launchpads is _not_
+      implemented yet (but will be shortly ;-)
+      
+    - Added optional parameters <number> and <name> to Open()
+
+
+---
 ## Package
 The "distribution" consists of:
 
@@ -69,7 +81,7 @@ Planned:
 
 ### Device control functions
 
-    Open()
+    Open( [name], [number] )
     Close()
     Reset()
 
@@ -99,12 +111,29 @@ Planned:
 ---
 ## Detailed description
 
-### Open()
+### Open( [number], [name] )
 
     Opens the first available Launchpad and initializes it.
 
-      PARAMS: -
-      RETURN: -
+      PARAMS: <number> OPTIONAL, number of Launchpad to open.
+                       1st device = 0, 2nd device = 1, ...
+                       Defaults to 0, the 1st device if not given.
+              <name>   OPTIONAL, only consider devices whose names contain
+                       the string <name>. Defaults to "Launchpad".
+                       
+      RETURN: True     success
+              False    error
+
+      EXAMPLES:
+              # Open the first device attached:
+              lp.Open()
+              # Open the 2nd Launchpad:
+              lp.Open( 1 )
+              # Open the 3rd Launchpad Mini:
+              lp.Open( 0, "Launchpad Mini")
+              # alternative:
+              lp.Open( name = "Launchpad Mini", number = 0)
+              
 
 ### Close()
 

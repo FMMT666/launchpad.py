@@ -147,14 +147,15 @@ class Midi:
 		
 	#-------------------------------------------------------------------------------------
 	#-- Returns the first device that matches the string 'name'.
-	#-- REFAC2015: Add possibility to pick a specific device if more than one is attached.
+	#-- NEW2015/02: added number argument to pick from several devices (if available)
 	#-------------------------------------------------------------------------------------
-	def SearchDevice( self, name, output = True, input = True ):
+	def SearchDevice( self, name, output = True, input = True, number = 0 ):
 		ret = self.SearchDevices( name, output, input )
-		if len(ret) > 0:
-			return ret[0]
-		else:
+		
+		if number < 0 or number >= len( ret ):
 			return None
+
+		return ret[number]
 
 		
 	#-------------------------------------------------------------------------------------
@@ -312,11 +313,10 @@ class Launchpad:
 
 	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Launchpad MIDI devices.
-	#-- REFAC2015: Add option to pick a specific device by name or number.
 	#-------------------------------------------------------------------------------------
-	def Open( self, devName = None, devNumber = None ):
-		self.idOut = self.midi.SearchDevice("Launchpad", True, False )
-		self.idIn  = self.midi.SearchDevice("Launchpad", False, True )
+	def Open( self, number = 0, name = "Launchpad" ):
+		self.idOut = self.midi.SearchDevice( name, True, False, number = number )
+		self.idIn  = self.midi.SearchDevice( name, False, True, number = number )
 		
 		if self.idOut is None or self.idIn is None:
 			return False
@@ -565,9 +565,11 @@ def main():
 	# some demo code ahead...
 
 	LP = Launchpad()  # create a Launchpad instance
-	LP.Open()         # start it
 
 	LP.ListAll()      # debug function: list all available MIDI devices
+
+	LP.Open()         # start it
+
 
 	# the latter of these two messages might not finish (MIDI buffer too large,
 	# MIDI speed too low...)
