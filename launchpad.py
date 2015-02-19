@@ -103,6 +103,26 @@ MIDI_BUFFER_IN  = 16   # same here...
 ### Mini HAL for MIDI
 ### REFAC2015: Only allow one instance of this.
 ########################################################################################
+#
+# Mhh, maybe like this?
+#
+#
+# class Midi:
+#
+#     midiInstance = None
+#
+#     class __Midi:
+#         <insert all MIDI methods right here>
+#
+#     def __init__ ( self, ... )
+#         if midiInstance is None:
+#             midiInstance = __Midi()
+#
+#     def __getattr__ ( self, whatever )
+#         return getattr( self, midiInstance, whatever )
+#
+#
+
 class Midi:
 
 	#-------------------------------------------------------------------------------------
