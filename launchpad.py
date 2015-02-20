@@ -15,6 +15,7 @@
 #    While this is quite nice for the real-time behaviour of all the
 #    buttons and LEDs, the character drawing functions now need a
 #    timer.
+#    -> temporarily "fixed" with a delay :)
 #
 # 
 # This provides complete Python enabled control over a Novation Launchpad.
@@ -98,157 +99,161 @@ MIDI_BUFFER_IN  = 16   # same here...
 
 
 
-########################################################################################
+##########################################################################################
 ### CLASS Midi
-### Mini HAL for MIDI
-### REFAC2015: Only allow one instance of this.
-########################################################################################
-#
-# Mhh, maybe like this?
-#
-#
-# class Midi:
-#
-#     midiInstance = None
-#
-#     class __Midi:
-#         <insert all MIDI methods right here>
-#
-#     def __init__ ( self, ... )
-#         if midiInstance is None:
-#             midiInstance = __Midi()
-#
-#     def __getattr__ ( self, whatever )
-#         return getattr( self, midiInstance, whatever )
-#
-#
-
+### Midi singleton wrapper
+##########################################################################################
 class Midi:
 
-	#-------------------------------------------------------------------------------------
+	# instance created 
+	instanceMidi = None;
+
+	#---------------------------------------------------------------------------------------
 	#-- init
-	#-------------------------------------------------------------------------------------
+	#-- Allow only one instance to be created
+	#---------------------------------------------------------------------------------------
 	def __init__( self ):
+		if Midi.instanceMidi is None:
+			Midi.instanceMidi = Midi.__Midi()
 
-		self.devIn  = None
-		self.devOut = None
+	#---------------------------------------------------------------------------------------
+	#-- getattr
+	#-- Pass all method calls to the real Midi class __Midi()
+	#---------------------------------------------------------------------------------------
+	def __getattr__( self, name ):
+		return getattr( self.instanceMidi, name )
+	
 
-		midi.init()
+	########################################################################################
+	### CLASS __Midi
+	### The real, HALed Midi class
+	########################################################################################
+	class __Midi:
 
-		# TODO: this sucks...
-		# REFAC2015: Yep, it does :)
-		try:
-			midi.get_count()
-		except:
-			print("ERROR: MIDI not available...")
+		#-------------------------------------------------------------------------------------
+		#-- init
+		#-------------------------------------------------------------------------------------
+		def __init__( self ):
 
-
-	#-------------------------------------------------------------------------------------
-	#-- Returns a list of devices that matches the string 'name' and has in- or outputs.
-	#-------------------------------------------------------------------------------------
-	def SearchDevices( self, name, output = True, input = True, quiet = True ):
-		ret = []
-		i = 0
-		
-		for n in range( midi.get_count() ):
-			md = midi.get_device_info( n )
-			if quiet == False:
-				print(md)
-				sys.stdout.flush()
-			if string.find( md[1], name ) >= 0:
-				if output == True and md[3] > 0:
-					ret.append( i )
-				if input == True and md[2] > 0:
-					ret.append( i )
-			i += 1
-
-		return ret
-
-		
-	#-------------------------------------------------------------------------------------
-	#-- Returns the first device that matches the string 'name'.
-	#-- NEW2015/02: added number argument to pick from several devices (if available)
-	#-------------------------------------------------------------------------------------
-	def SearchDevice( self, name, output = True, input = True, number = 0 ):
-		ret = self.SearchDevices( name, output, input )
-		
-		if number < 0 or number >= len( ret ):
-			return None
-
-		return ret[number]
-
-		
-	#-------------------------------------------------------------------------------------
-	#--
-	#-------------------------------------------------------------------------------------
-	def OpenOutput( self, midi_id ):
-		if self.devOut is None:
-			self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
-
-
-	#-------------------------------------------------------------------------------------
-	#--
-	#-------------------------------------------------------------------------------------
-	def CloseOutput( self ):
-		if self.devOut is not None:
-			self.Output.close( self.devOut )
+			self.devIn  = None
 			self.devOut = None
 
+			midi.init()
 
-	#-------------------------------------------------------------------------------------
-	#--
-	#-------------------------------------------------------------------------------------
-	def OpenInput( self, midi_id ):
-		if self.devIn is None:
-			self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
-
-
-	#-------------------------------------------------------------------------------------
-	#--
-	#-------------------------------------------------------------------------------------
-	def CloseInput( self ):
-	  if self.devIn is not None:
-	    midi.Input.close( self.devIn )
-	    self.devIn = None
+			# TODO: this sucks...
+			# REFAC2015: Yep, it does :)
+			try:
+				midi.get_count()
+			except:
+				print("ERROR: MIDI not available...")
 
 
-	#-------------------------------------------------------------------------------------
-	#-- Return MIDI time
-	#-------------------------------------------------------------------------------------
-	def GetTime( self ):
-		return midi.time()
+		#-------------------------------------------------------------------------------------
+		#-- Returns a list of devices that matches the string 'name' and has in- or outputs.
+		#-------------------------------------------------------------------------------------
+		def SearchDevices( self, name, output = True, input = True, quiet = True ):
+			ret = []
+			i = 0
+			
+			for n in range( midi.get_count() ):
+				md = midi.get_device_info( n )
+				if quiet == False:
+					print(md)
+					sys.stdout.flush()
+				if string.find( md[1], name ) >= 0:
+					if output == True and md[3] > 0:
+						ret.append( i )
+					if input == True and md[2] > 0:
+						ret.append( i )
+				i += 1
+
+			return ret
 
 			
-	#-------------------------------------------------------------------------------------
-	#--
-	#-------------------------------------------------------------------------------------
-	def ReadCheck( self ):
-		return self.devIn.poll()
+		#-------------------------------------------------------------------------------------
+		#-- Returns the first device that matches the string 'name'.
+		#-- NEW2015/02: added number argument to pick from several devices (if available)
+		#-------------------------------------------------------------------------------------
+		def SearchDevice( self, name, output = True, input = True, number = 0 ):
+			ret = self.SearchDevices( name, output, input )
+			
+			if number < 0 or number >= len( ret ):
+				return None
 
+			return ret[number]
+
+			
+		#-------------------------------------------------------------------------------------
+		#--
+		#-------------------------------------------------------------------------------------
+		def OpenOutput( self, midi_id ):
+			if self.devOut is None:
+				self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
+
+
+		#-------------------------------------------------------------------------------------
+		#--
+		#-------------------------------------------------------------------------------------
+		def CloseOutput( self ):
+			if self.devOut is not None:
+				self.Output.close( self.devOut )
+				self.devOut = None
+
+
+		#-------------------------------------------------------------------------------------
+		#--
+		#-------------------------------------------------------------------------------------
+		def OpenInput( self, midi_id ):
+			if self.devIn is None:
+				self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
+
+
+		#-------------------------------------------------------------------------------------
+		#--
+		#-------------------------------------------------------------------------------------
+		def CloseInput( self ):
+			if self.devIn is not None:
+				midi.Input.close( self.devIn )
+				self.devIn = None
+
+
+		#-------------------------------------------------------------------------------------
+		#-- Return MIDI time
+		#-------------------------------------------------------------------------------------
+		def GetTime( self ):
+			return midi.time()
+
+				
+		#-------------------------------------------------------------------------------------
+		#--
+		#-------------------------------------------------------------------------------------
+		def ReadCheck( self ):
+			return self.devIn.poll()
+
+			
+		#-------------------------------------------------------------------------------------
+		#--
+		#-------------------------------------------------------------------------------------
+		def ReadRaw( self ):
+			return self.devIn.read( 1 )
+
+
+		#-------------------------------------------------------------------------------------
+		#-- sends a single, short message
+		#-------------------------------------------------------------------------------------
+		def RawWrite( self, stat, dat1, dat2 ):
+			self.devOut.write_short( stat, dat1, dat2 )
+
+			
+		#-------------------------------------------------------------------------------------
+		#-- Sends a table of messages. If timestamp is 0, it is ignored.
+		#-- Amount of <dat> bytes is arbitrary.
+		#-- [ [ [stat, <dat1>, <dat2>, <dat3>], timestamp ],  [...], ... ]
+		#-- <datN> fields are optional
+		#-------------------------------------------------------------------------------------
+		def RawWriteMulti( self, msgTable ):
+			self.devOut.write( msgTable )
 		
-	#-------------------------------------------------------------------------------------
-	#--
-	#-------------------------------------------------------------------------------------
-	def ReadRaw( self ):
-		return self.devIn.read( 1 )
-
-
-	#-------------------------------------------------------------------------------------
-	#-- sends a single, short message
-	#-------------------------------------------------------------------------------------
-	def RawWrite( self, stat, dat1, dat2 ):
-		self.devOut.write_short( stat, dat1, dat2 )
-
-		
-	#-------------------------------------------------------------------------------------
-	#-- Sends a table of messages. If timestamp is 0, it is ignored.
-	#-- Amount of <dat> bytes is arbitrary.
-	#-- [ [ [stat, <dat1>, <dat2>, <dat3>], timestamp ],  [...], ... ]
-	#-- <datN> fields are optional
-	#-------------------------------------------------------------------------------------
-	def RawWriteMulti( self, msgTable ):
-		self.devOut.write( msgTable )
-	
 	
 
 
