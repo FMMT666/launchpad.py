@@ -126,6 +126,9 @@ Planned:
                        Defaults to 0, the 1st device if not given.
               <name>   OPTIONAL, only consider devices whose names contain
                        the string <name>. Defaults to "Launchpad".
+                       It is sufficient to search for a part of the string, e.g.
+                       "chpad S" will find a device named "Launchpad S" or even
+                       "Novation Launchpad S"
 
       RETURN: True     success
               False    error
