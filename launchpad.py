@@ -5,8 +5,10 @@
 # 7/2013, 2/2015 ASkr(FMMT666)
 # www.askrprojects.net
 #
+# 2015/02/21:
+#  - multiple Launchpad support now built-in
 #
-# 2015/02:
+# 2015/02/10:
 #  - Tagged stuff for refactoring with REFAC2015. The original code was
 #    quickly hacked together within a weekend. Looks like a lot badly
 #    needs some changes :)
@@ -21,8 +23,12 @@
 # This provides complete Python enabled control over a Novation Launchpad.
 #
 #
-# TODO:
-#  - docstrings 
+# TODO/NEXT:
+#  - exceptions
+#  - error handling
+#  - bad pointer (midi) on close
+#  - docstrings
+#  - ...
 #
 #
 # REQUIREMENTS:
@@ -33,13 +39,17 @@
 # TESTSUITES:
 #  - Windows XP, 32 bit (Python 2.7.x, Pygame 1.9.1 (read below))
 #  - Raspberry-Pi, Wheezy (standard installation, Python 2.7.3 + Pygame 1.9.1)
+#  - Linux 64 bit (Python 2.7.x, Pygame 1.9.1)
 #
 #
 # ANYTHING MISSING?
-#  - It's pretty complete, except for this "dual, hidden, shadow" display.
+#  - Regarding Launchpad's functionality, it's pretty complete.
+#  - Lot of stuff missing in the code (exception handling, error andling, etc...)
 #
 #
 # KNOWN ISSUES
+#  - The Launchpad.Close() function does not work (bad pointer) and will
+#    crash the application upon calling it.
 #  - A lot of traffic (e.g. using the provided text-scrolling feature)
 #    will lead to an extreme lag with big buffer sizes.
 #    Unfortunately, the Pygame MIDI implementation does not allow to reduce
@@ -116,17 +126,87 @@ class Midi:
 		if Midi.instanceMidi is None:
 			Midi.instanceMidi = Midi.__Midi()
 
+		self.devIn  = None
+		self.devOut = None
+
+
 	#---------------------------------------------------------------------------------------
 	#-- getattr
-	#-- Pass all method calls to the real Midi class __Midi()
+	#-- Pass all unknown method calls to the inner Midi class __Midi()
 	#---------------------------------------------------------------------------------------
 	def __getattr__( self, name ):
 		return getattr( self.instanceMidi, name )
 	
 
+	#-------------------------------------------------------------------------------------
+	#--
+	#-------------------------------------------------------------------------------------
+	def OpenOutput( self, midi_id ):
+		if self.devOut is None:
+			self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
+
+
+	#-------------------------------------------------------------------------------------
+	#--
+	#-------------------------------------------------------------------------------------
+	def CloseOutput( self ):
+		if self.devOut is not None:
+			self.devOut.close()
+			self.devOut = None
+
+
+	#-------------------------------------------------------------------------------------
+	#--
+	#-------------------------------------------------------------------------------------
+	def OpenInput( self, midi_id ):
+		if self.devIn is None:
+			self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
+
+
+	#-------------------------------------------------------------------------------------
+	#--
+	#-------------------------------------------------------------------------------------
+	def CloseInput( self ):
+		if self.devIn is not None:
+			self.devIn.close()
+			self.devIn = None
+
+
+	#-------------------------------------------------------------------------------------
+	#--
+	#-------------------------------------------------------------------------------------
+	def ReadCheck( self ):
+		return self.devIn.poll()
+
+		
+	#-------------------------------------------------------------------------------------
+	#--
+	#-------------------------------------------------------------------------------------
+	def ReadRaw( self ):
+		return self.devIn.read( 1 )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- sends a single, short message
+	#-------------------------------------------------------------------------------------
+	def RawWrite( self, stat, dat1, dat2 ):
+		self.devOut.write_short( stat, dat1, dat2 )
+
+		
+	#-------------------------------------------------------------------------------------
+	#-- Sends a table of messages. If timestamp is 0, it is ignored.
+	#-- Amount of <dat> bytes is arbitrary.
+	#-- [ [ [stat, <dat1>, <dat2>, <dat3>], timestamp ],  [...], ... ]
+	#-- <datN> fields are optional
+	#-------------------------------------------------------------------------------------
+	def RawWriteMulti( self, msgTable ):
+		self.devOut.write( msgTable )
+	
+
+
 	########################################################################################
 	### CLASS __Midi
-	### The real, HALed Midi class
+	### The rest of the Midi class, non Midi-device specific.
 	########################################################################################
 	class __Midi:
 
@@ -134,9 +214,6 @@ class Midi:
 		#-- init
 		#-------------------------------------------------------------------------------------
 		def __init__( self ):
-
-			self.devIn  = None
-			self.devOut = None
 
 			midi.init()
 
@@ -146,6 +223,15 @@ class Midi:
 				midi.get_count()
 			except:
 				print("ERROR: MIDI not available...")
+
+				
+		#-------------------------------------------------------------------------------------
+		#-- del
+		#-- This will never be executed, because no one knows, how many Launchpad instances
+		#-- exist(ed) until we start to count them...
+		#-------------------------------------------------------------------------------------
+		def __del__( self ):
+			midi.quit()
 
 
 		#-------------------------------------------------------------------------------------
@@ -182,77 +268,12 @@ class Midi:
 
 			return ret[number]
 
-			
-		#-------------------------------------------------------------------------------------
-		#--
-		#-------------------------------------------------------------------------------------
-		def OpenOutput( self, midi_id ):
-			if self.devOut is None:
-				self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
-
-
-		#-------------------------------------------------------------------------------------
-		#--
-		#-------------------------------------------------------------------------------------
-		def CloseOutput( self ):
-			if self.devOut is not None:
-				self.Output.close( self.devOut )
-				self.devOut = None
-
-
-		#-------------------------------------------------------------------------------------
-		#--
-		#-------------------------------------------------------------------------------------
-		def OpenInput( self, midi_id ):
-			if self.devIn is None:
-				self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
-
-
-		#-------------------------------------------------------------------------------------
-		#--
-		#-------------------------------------------------------------------------------------
-		def CloseInput( self ):
-			if self.devIn is not None:
-				midi.Input.close( self.devIn )
-				self.devIn = None
-
 
 		#-------------------------------------------------------------------------------------
 		#-- Return MIDI time
 		#-------------------------------------------------------------------------------------
 		def GetTime( self ):
 			return midi.time()
-
-				
-		#-------------------------------------------------------------------------------------
-		#--
-		#-------------------------------------------------------------------------------------
-		def ReadCheck( self ):
-			return self.devIn.poll()
-
-			
-		#-------------------------------------------------------------------------------------
-		#--
-		#-------------------------------------------------------------------------------------
-		def ReadRaw( self ):
-			return self.devIn.read( 1 )
-
-
-		#-------------------------------------------------------------------------------------
-		#-- sends a single, short message
-		#-------------------------------------------------------------------------------------
-		def RawWrite( self, stat, dat1, dat2 ):
-			self.devOut.write_short( stat, dat1, dat2 )
-
-			
-		#-------------------------------------------------------------------------------------
-		#-- Sends a table of messages. If timestamp is 0, it is ignored.
-		#-- Amount of <dat> bytes is arbitrary.
-		#-- [ [ [stat, <dat1>, <dat2>, <dat3>], timestamp ],  [...], ... ]
-		#-- <datN> fields are optional
-		#-------------------------------------------------------------------------------------
-		def RawWriteMulti( self, msgTable ):
-			self.devOut.write( msgTable )
 		
 	
 
@@ -349,14 +370,16 @@ class Launchpad:
 		self.midi.OpenOutput( self.idOut )
 		self.midi.OpenInput( self.idIn )
 
+		# lol...
 		return True
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Closes everything
+	#-- Closes this device
 	#-------------------------------------------------------------------------------------
 	def Close( self ):
-		None
+		self.midi.CloseInput()
+		self.midi.CloseOutput()
 	
 
 	#-------------------------------------------------------------------------------------
