@@ -100,8 +100,6 @@ from pygame import time
 from launchpad_charset import *
 
 
-
-
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
 MIDI_BUFFER_IN  = 16   # same here...
 #MIDI_BUFFER_OUT = 1   # TESTING S/MINI

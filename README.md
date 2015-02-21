@@ -8,12 +8,18 @@ If you ever dreamed of using your Launchpad for completely other stuff than musi
 ---
 ## NEWS
 
+### CHANGES 2015/02/21:
+
+    - Support for multiple Launchpads now finally built in. Use 'em all:
+        lp1 = launchpad.Launchpad()
+        lp2 = launchpad.Launchpad()
+        lp1.Open(0)
+        lp2.Open(1)
+
 ### CHANGES 2015/02/18:
   
-    - Added option to select a Launchpads if more than one is attached.
-      Notice that simultaneous operation of multiple Launchpads is _not_
-      implemented yet (but will be shortly ;-)
-      
+    - Added option to select a Launchpad if more than one is attached.
+      Also supports search for a device string, e.g. "Mini".
     - Added optional parameters <number> and <name> to Open()
 
 
@@ -137,7 +143,7 @@ Planned:
 
 ### Close()
 
-    Not required and not needed. No function in there (yet).
+    Has a bug. Don't call it (yet)...
 
       PARAMS:
       RETURN:
@@ -348,3 +354,4 @@ FMMT666(ASkr)
 [4]: http://www.raspberrypi.org
 [5]: http://pi.minecraft.net/
 [6]: http://www.askrproject.net
+
