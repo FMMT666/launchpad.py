@@ -140,6 +140,7 @@ class Midi:
 	#--
 	#-------------------------------------------------------------------------------------
 	def OpenOutput( self, midi_id ):
+		# TODO: catch exepction and return True/False on success/error
 		if self.devOut is None:
 			self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
 
@@ -157,6 +158,7 @@ class Midi:
 	#--
 	#-------------------------------------------------------------------------------------
 	def OpenInput( self, midi_id ):
+		# TODO: catch exepction and return True/False on success/error
 		if self.devIn is None:
 			self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
 
@@ -213,6 +215,7 @@ class Midi:
 		#-------------------------------------------------------------------------------------
 		def __init__( self ):
 
+			# TODO: exceptions
 			midi.init()
 
 			# TODO: this sucks...
@@ -334,9 +337,7 @@ class Launchpad:
 	#
 	
 	def __init__( self ):
-		# REFAC2015: Nope, Midi() should not be instantiated here!
-		#            Also: hide these
-		self.midi   = Midi() # midi interface class
+		self.midi   = Midi() # midi interface instance (singleton)
 		self.idOut  = None   # midi id for output
 		self.idIn   = None   # midi id for input
 
@@ -365,6 +366,7 @@ class Launchpad:
 		if self.idOut is None or self.idIn is None:
 			return False
 
+		# TODO: exceptions
 		self.midi.OpenOutput( self.idOut )
 		self.midi.OpenInput( self.idIn )
 
