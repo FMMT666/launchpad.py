@@ -140,9 +140,13 @@ class Midi:
 	#--
 	#-------------------------------------------------------------------------------------
 	def OpenOutput( self, midi_id ):
-		# TODO: catch exepction and return True/False on success/error
 		if self.devOut is None:
-			self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
+			try:
+				self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
+			except:
+				self.devOut = None
+				return False
+		return True
 
 
 	#-------------------------------------------------------------------------------------
@@ -158,9 +162,13 @@ class Midi:
 	#--
 	#-------------------------------------------------------------------------------------
 	def OpenInput( self, midi_id ):
-		# TODO: catch exepction and return True/False on success/error
 		if self.devIn is None:
-			self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
+			try:
+				self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
+			except:
+				self.devIn = None
+				return False
+		return True
 
 
 	#-------------------------------------------------------------------------------------
@@ -215,7 +223,6 @@ class Midi:
 		#-------------------------------------------------------------------------------------
 		def __init__( self ):
 
-			# TODO: exceptions
 			midi.init()
 
 			# TODO: this sucks...
@@ -366,12 +373,9 @@ class Launchpad:
 		if self.idOut is None or self.idIn is None:
 			return False
 
-		# TODO: exceptions
-		self.midi.OpenOutput( self.idOut )
-		self.midi.OpenInput( self.idIn )
-
-		# lol...
-		return True
+		if self.midi.OpenOutput( self.idOut ) == False:
+			return False
+		return self.midi.OpenInput( self.idIn )
 
 
 	#-------------------------------------------------------------------------------------
