@@ -122,7 +122,11 @@ class Midi:
 	#---------------------------------------------------------------------------------------
 	def __init__( self ):
 		if Midi.instanceMidi is None:
-			Midi.instanceMidi = Midi.__Midi()
+			try:
+				Midi.instanceMidi = Midi.__Midi()
+			except:
+				print("unable to initialize MIDI")
+				Midi.instanceMidi = None
 
 		self.devIn  = None
 		self.devOut = None
@@ -222,15 +226,10 @@ class Midi:
 		#-- init
 		#-------------------------------------------------------------------------------------
 		def __init__( self ):
-
+			# exception handling moved up to Midi()
 			midi.init()
-
-			# TODO: this sucks...
-			# REFAC2015: Yep, it does :)
-			try:
-				midi.get_count()
-			except:
-				print("ERROR: MIDI not available...")
+			# but I can't remember why I put this one in here...
+			midi.get_count()
 
 				
 		#-------------------------------------------------------------------------------------
