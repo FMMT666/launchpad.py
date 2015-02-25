@@ -24,8 +24,6 @@
 #
 #
 # TODO/NEXT:
-#  - exceptions
-#  - error handling
 #  - bad pointer (midi) on close
 #  - docstrings
 #  - ...
