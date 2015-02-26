@@ -25,6 +25,7 @@
 #
 # TODO/NEXT:
 #  - bad pointer (midi) on close
+#  - defines for buttons
 #  - docstrings
 #  - ...
 #
