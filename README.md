@@ -123,7 +123,7 @@ Planned:
 
       PARAMS: <number> OPTIONAL, number of Launchpad to open.
                        1st device = 0, 2nd device = 1, ...
-                       Defaults to 0, the 1st device if not given.
+                       Defaults to 0, the 1st device, if not given.
               <name>   OPTIONAL, only consider devices whose names contain
                        the string <name>. Defaults to "Launchpad".
                        It is sufficient to search for a part of the string, e.g.
@@ -139,7 +139,7 @@ Planned:
               # Open the 2nd Launchpad:
               lp.Open( 1 )
               # Open the 3rd Launchpad Mini:
-              lp.Open( 0, "Launchpad Mini")
+              lp.Open( 2, "Launchpad Mini")
               # alternative:
               lp.Open( name = "Launchpad Mini", number = 0)
               
