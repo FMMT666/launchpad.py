@@ -10,8 +10,8 @@
 #
 # 2015/02/10:
 #  - Tagged stuff for refactoring with REFAC2015. The original code was
-#    quickly hacked together within a weekend. Looks like a lot badly
-#    needs some changes :)
+#    quickly hacked together within a weekend. Looks like a lot of this
+#    badly needs some changes :)
 #  - The S/Mini variants, escpecially in conjunction with a fast PC
 #    are waaaays faster that the original Launchpad.
 #    While this is quite nice for the real-time behaviour of all the

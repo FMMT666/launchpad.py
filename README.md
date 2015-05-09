@@ -5,6 +5,8 @@ A [Novation Launchpad][1] control suite for [Python][2].
 
 If you ever dreamed of using your Launchpad for completely other stuff than music: Welcome !-)
 
+Watch a 6s video [here][7].
+
 ---
 ## NEWS
 
@@ -357,4 +359,4 @@ FMMT666(ASkr)
 [4]: http://www.raspberrypi.org
 [5]: http://pi.minecraft.net/
 [6]: http://www.askrproject.net
-
+[7]: https://mtc.cdn.vine.co/r/videos/5B6AFA722E1181009294682988544_30ec8c83a82.1.5.18230528301682594589.mp4
