@@ -5,10 +5,20 @@ A [Novation Launchpad][1] control suite for [Python][2].
 
 If you ever dreamed of using your Launchpad for completely other stuff than music: Welcome !-)
 
+Compatible with most (tm) single board computers.
+
 Watch a 6s video [here][7].
 
 ---
 ## NEWS
+
+### CHANGES 2016/01/10:
+
+    - The current version does not work with Mac OS X.
+      Regarding that, as well as the fact that PyGame somehow reached its
+      end of life, I am currently looking for other Midi libraries or implementations.
+    - I bought a Launchpad Pro. Time to implement this, although I am not sure
+      what will come first, building a new Midi system or implementing the Pro.
 
 ### CHANGES 2015/02/21:
 
@@ -45,11 +55,23 @@ You only need the first two files.
 
 Launchpad.py was tested under
 
-  - Linux, 64 bit
+  - Linux, 32 bit, 64 bit
   - Windows XP, 32 bit
-  - Windows 7, 32 bit
-  - [Raspberry-Pi][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
+  - Windows 7, 32 bit, 64 bit
+  - [Raspberry-Pi 1/2][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
+  - Beagle Bone (Black)
+  - Banana Pi (Pro/M2/R1)
+  - pcDuino V3
   - ...
+
+It does _not_ (yet) work with
+
+  - Mac OS X
+  
+because PyGame's Mac implementation was built without any Midi functionality.
+
+ 
+  
 
 Supported Launchpad devices:
 
@@ -59,7 +81,7 @@ Supported Launchpad devices:
   
 Planned:
 
-  - Launchpad Pro (mid 2015)
+  - Launchpad Pro (Q1/2016)
 
 
 ---
