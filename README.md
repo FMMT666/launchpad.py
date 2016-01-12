@@ -99,8 +99,8 @@ Planned:
       Due to some bugs in PyGame's MIDI implementation, the buttons of the Launchpad
       won't work after you restarted a program (LEDs are not affected).
 
-      WORKAROUND #2: Simply hit one of the AUTOMAP keys (the topmost 8 buttons)
-                     For whatever reason, this makes the MIDI button  events
+      WORKAROUND #2: Simply hit one of the AUTOMAP keys (the topmost 8 buttons).
+                     For whatever reason, this makes the MIDI button events
                      appearing again...
 
       WORKAROUND #1: Pull the Launchpad's plug out and restart... (annoying).
