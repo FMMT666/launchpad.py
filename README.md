@@ -7,7 +7,8 @@ If you ever dreamed of using your Launchpad for completely other stuff than musi
 
 Compatible with most (tm) single board computers.
 
-Watch a 6s video [here][7].
+Watch a 6s video [here][7].  
+Or take a look at [that one][8].
 
 ---
 ## NEWS
@@ -395,3 +396,4 @@ FMMT666(ASkr)
 [5]: http://pi.minecraft.net/
 [6]: http://www.askrproject.net
 [7]: https://mtc.cdn.vine.co/r/videos/5B6AFA722E1181009294682988544_30ec8c83a82.1.5.18230528301682594589.mp4
+[8]: https://mtc.cdn.vine.co/r/videos/B02C20F7301181005332596555776_3da8b2c29ec.1.5.3791810774169827111.mp4
