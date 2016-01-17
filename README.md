@@ -5,11 +5,13 @@ A [Novation Launchpad][1] control suite for [Python][2].
 
 If you ever dreamed of using your Launchpad for completely other stuff than music: Welcome !-)
 
-Compatible with most (tm) single board computers.
+Compatible with most [tm] single board computers.
 
 Watch a 6s video [here][7].  
 Or take a look at [that one][8].  
 What about the brand new Launchpad Pro support? [Right][9]!
+
+Older Launchpads might be documented [here][10].
 
 ---
 ## NEWS
@@ -582,7 +584,7 @@ FMMT666(ASkr)
 
 
 
-[1]: http://novationmusic.de/midi-controllers-digital-dj/launchpad
+[1]: https://global.novationmusic.com/launch/launchpad
 [2]: http://www.python.org
 [3]: http://www.pygame.org
 [4]: http://www.raspberrypi.org
@@ -591,3 +593,4 @@ FMMT666(ASkr)
 [7]: https://mtc.cdn.vine.co/r/videos/5B6AFA722E1181009294682988544_30ec8c83a82.1.5.18230528301682594589.mp4
 [8]: https://mtc.cdn.vine.co/r/videos/B02C20F7301181005332596555776_3da8b2c29ec.1.5.3791810774169827111.mp4
 [9]: https://mtc.cdn.vine.co/r/videos/EFB02602EF1300276501647966208_4cce4117438.5.1.10016548273760817556.mp4
+[10]: https://novationmusic.de/launch/launchpad-mk1
