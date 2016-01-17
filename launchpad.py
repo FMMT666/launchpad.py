@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 #
@@ -5,6 +6,11 @@
 # 7/2013, 2/2015, 1/2016 ASkr(FMMT666)
 # www.askrprojects.net
 #
+#
+# 2016/01/17:
+#  - basic Launchpad Pro support now built in; working on more...
+#  - added RGB LED control
+#  - added X/Y LED control (RGB and colorcode)
 #
 # 2016/01/16:
 #  - preparations for Launchpad Pro support (new base class)
@@ -218,7 +224,16 @@ class Midi:
 	#-------------------------------------------------------------------------------------
 	def RawWriteMulti( self, msgTable ):
 		self.devOut.write( msgTable )
+
 	
+	#-------------------------------------------------------------------------------------
+	#-- Sends a single system-exclusive message.
+	#-- The start (0xF0) and end bytes (0xF7) are added automatically.
+	#-- [ <dat1>, <dat2>, ..., <datN> ]
+	#-- Timestamp is not supported and will be sent as '0' (for now)
+	#-------------------------------------------------------------------------------------
+	def RawWriteSysEx( self, msgTable, timeStamp = 0 ):
+		self.devOut.write_sys_ex( timeStamp, [0xf0] + msgTable + [0xf7] )
 
 
 	########################################################################################
@@ -681,8 +696,7 @@ class LaunchpadPro( LaunchpadBase ):
 	#        +---+---+---+---+---+---+---+---+ 
 	#
 	#
-	# LED AND BUTTON NUMBERS IN XY MODE (X/Y)
-	# Mhh. Maybe that's not a good idea...
+	# LED AND BUTTON NUMBERS IN XY CLASSIC MODE (X/Y)
 	#
 	#   9      0   1   2   3   4   5   6   7      8   
 	#        +---+---+---+---+---+---+---+---+ 
@@ -711,7 +725,37 @@ class LaunchpadPro( LaunchpadBase ):
 	#        |   |1/9|   |   |   |   |   |   |         9
 	#        +---+---+---+---+---+---+---+---+ 
 	#
-
+	#
+	# LED AND BUTTON NUMBERS IN XY PRO MODE (X/Y)
+	#
+	#   0      1   2   3   4   5   6   7   8      9
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |1/0|   |3/0|   |   |   |   |   |         0
+	#        +---+---+---+---+---+---+---+---+ 
+	#         
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |1/1|   |   |   |   |   |   |   |  |   |  1
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |0/2|  |   |   |   |   |   |   |   |   |  |   |  2
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |6/3|   |   |  |   |  3
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  4
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  5
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |5/6|   |   |   |  |   |  6
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  7
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |0/8|  |   |   |   |   |   |   |   |   |  |9/8|  8
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	#       
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |   |2/9|   |   |   |   |   |   |         9
+	#        +---+---+---+---+---+---+---+---+ 
+	#
+	
 	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
 
 	#-------------------------------------------------------------------------------------
@@ -722,36 +766,121 @@ class LaunchpadPro( LaunchpadBase ):
 		# should not be required
 		#if type( name ) is not str:
 		#	return 0;
-		if name in self.COLORS:
-			return self.COLORS[name]
+		if name in LaunchpadPro.COLORS:
+			return LaunchpadPro.COLORS[name]
 		else:
-			return self.COLORS['black']
-		
-
-	#-------------------------------------------------------------------------------------
-	#-- Tries to match an RGB color with one of those from the 128 colors palette.
-	#-- Each of <red>, <green> and <blue> can be 0..4, for a total of 256 color codes.
-	#-------------------------------------------------------------------------------------
-	def LedGetColor( self, red, green, blue ):
-		pass
+			return LaunchpadPro.COLORS['black']
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Controls a grid LED by its raw <number>; with <colorcode> from the palette.
-	#-- If <colorcode> is omitted, "white" is used.
+	#-- Controls a grid LED by its position <number> and a color, specified by
+	#-- <red>, <green> and <blue> intensities, with can each be an integer between 0..63.
+	#-- If <blue> is omitted, this methos runs in "Classic" compatibility mode and the
+	#-- intensities, which were within 0..3 in that mode, are multiplied by 21 (0..63)
+	#-- to emulate the old brightness feeling :)
+	#-- Notice that each message requires 10 bytes to be sent. For a faster, but
+	#-- unfortunately "not-RGB" method, see "LedCtrlRawByCode()"
 	#-------------------------------------------------------------------------------------
-	def LedCtrlRaw( self, number, colorcode = None ):
+	def LedCtrlRaw( self, number, red, green, blue = None ):
+
+		number = min( number, 99 )
+		number = max( number, 0 )
+
+		if blue is None:
+			blue   = 0
+			red   *= 21
+			green *= 21
+			
+		red = min( red, 63 )
+		red = max( red, 0 )
+		green = min( green, 63 )
+		green = max( green, 0 )
+		blue = min( blue, 63 )
+		blue = max( blue, 0 )
+
+		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its position <number> and a color code <colorcode>
+	#-- from the Launchpad's color palette.
+	#-- If <colorcode> is omitted, 'white' is used.
+	#-- This method should be ~3 times faster that the RGB version "LedCtrlRaw()", which
+	#-- uses 10 byte, system-exclusive MIDI messages.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRawByCode( self, number, colorcode = None ):
+
+		number = min( number, 99 )
+		number = max( number, 0 )
 
 		if colorcode is None:
-			colorcode = self.COLORS['white']
+			colorcode = LaunchpadPro.COLORS['white']
 
-		if number < 1 or number > 98:
-			return
-			
 		self.midi.RawWrite( 144, number, colorcode )
 
 
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its coordinates <x>, <y> and <reg>, <green> and <blue>
+	#-- intensity values. By default, the old and compatible "Classic" mode is used
+	#-- (8x8 matrix left has x=0). If <mode> is set to "pro", x=0 will light up the round
+	#-- buttons on the left of the Launchpad Pro (not available on other models).
+	#-- This method internally uses "LedCtrlRaw()". Please also notice the comments
+	#-- in that one.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlXY( self, x, y, red, green, blue = None, mode = "classic" ):
+		x = min( x, 9 )
+		x = max( x, 0 )
+		y = min( y, 9 )
+		y = max( y, 0 )
 		
+		# rotate matrix to the right, column 9 overflows from right to left, same row
+		if mode != "pro":
+			x = ( x + 1 ) % 10
+			
+		# swap y
+		led = 90-(10*y) + x
+		
+		self.LedCtrlRaw( led, red, green, blue )
+	
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its coordinates <x>, <y> and its <colorcode>.
+	#-- By default, the old and compatible "Classic" mode is used (8x8 matrix left has x=0).
+	#-- If <mode> is set to "pro", x=0 will light up the round buttons on the left of the
+	#-- Launchpad Pro (not available on other models).
+	#-------------------------------------------------------------------------------------
+	def LedCtrlXYByCode( self, x, y, colorcode, mode = "classic" ):
+		x = min( x, 9 )
+		x = max( x, 0 )
+		y = min( y, 9 )
+		y = max( y, 0 )
+		
+		# rotate matrix to the right, column 9 overflows from right to left, same row
+		if mode != "pro":
+			x = ( x + 1 ) % 10
+			
+		# swap y
+		led = 90-(10*y) + x
+		
+		self.LedCtrlRawByCode( led, colorcode )
+		
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Quickly sets all all LEDs to the same color, given by <colorcode>.
+	#-- If <colorcode> is omitted, "white" is used.
+	#-------------------------------------------------------------------------------------
+	def LedAllOn( self, colorcode = None ):
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+		else:
+			colorcode = min( colorcode, 127 )
+			colorcode = max( colorcode, 0 )
+		
+		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 14, colorcode ] )
+
+
+
 ########################################################################################
 ########################################################################################
 ########################################################################################
@@ -774,7 +903,7 @@ def main():
 		color = 0
 		led = 0
 		while( True ):
-			lp.LedCtrlRaw( led, color )
+			lp.LedCtrlRawByCode( led, color )
 			color+=1
 			led+=1
 			if color > 128:

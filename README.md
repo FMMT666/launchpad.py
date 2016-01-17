@@ -23,7 +23,8 @@ Older Launchpads might be documented [here][10].
         lp_pro = LaunchpadPro()
     - added method Check(); Checks whether a device is attached.
     - added demo code for Pro (including automatic device recognition)
-     
+    - added RGB LED control
+    - added X/Y LED control for RGB and color code mode
 
 ### CHANGES 2016/01/10:
 
@@ -118,7 +119,7 @@ name it once shipped the first red/green LED with!
 
       MAKE SURE THE LAUNCHPAD PRO IS IN LIVE MODE!
       To enter live mode, hold the SETUP bottom on the top left and
-      push the top left matrix button (should be green).
+      push the top left matrix button ('green' in setup-mode ).
       
       IT WON'T WORK IN OTHER MODES (Note, Fader, Drums or Programming).
 
@@ -183,8 +184,11 @@ name it once shipped the first red/green LED with!
 ### LED functions
 
     LedGetColorByName( name )
-    LedGetColor( red, green, blue )
-    LedCtrlRaw( number, colorcode )
+    LedCtrlRaw( number, red, gree, [blue] )
+    LedCtrlRawByCode( number, [colorcode] )
+    LedCtrlXY( x, y, red, green, [blue] )
+    LedCtrlXYByCode( x, y, colorcode )
+    LedAllOn( [colorcode] )
     
     work in progress...
 
@@ -416,23 +420,6 @@ name it once shipped the first red/green LED with!
 ---
 ## Detailed description of Launchpad "Pro" only methods
 
-### LedGetColor( red, green, blue )
-
-    WORK IN PROGESS! NOT FUNCTIONAL YET!
-    
-    Returns a color in the special Launchpad Pro color code format, estimated
-    from a red, green and blue intensity value.
-    [...]
-
-      PARAMS: <red>    red   LED intensity 0..4
-              <green>  green LED intensity 0..4
-              <blue>   green LED intensity 0..4
-      RETURN: number   Launchpad Pro color code
-
-      EXAMPLES:
-              colorGrey = LP.LedGetColor( 2, 2, 2 )
-
-
 ### LedGetColorByName( name )
 
     WORK IN PROGRESS! ONLY A FEW COLORS, SO FAR!
@@ -451,12 +438,85 @@ name it once shipped the first red/green LED with!
       off, black, white, red, green
 
 
-### LedCtrlRaw( number, colorcode )
+### LedCtrlRaw( number, red, green, [blue] )
 
-    Controls an LED via its number and colorcode (see table somewhere below)
+    Controls an LED via its number and red, green and blue intensity values.
+    
+    This method uses system-exclusive MIDI messages, which require 10 bytes to
+    be sent for each message. For a faster version, hence less comfortable version,
+    see LedCtrlRawByCode() below (though even sending 10 bytes is pretty fast on the Pro).
+    
+    If <blue> is omitted, this method runs in "Classic" compatibility mode, which only
+    had red/green LEDs and intensities ranging from 0..3. In that mode, the input
+    arguments are multiplied by 21, to map 0..3 to 0..63.
 
       PARAMS: <number>    number of the LED to control
-              <colorcode> a number from 0..128
+              <red>       a number from 0..63
+              <green>     a number from 0..63
+              <blue>      OPTIONAL, a number from 0..63
+      RETURN:
+
+
+### LedCtrlRawByCode( number, [colorcode] )
+
+    Controls an LED via its number and colorcode.
+    If <colorcode> is omitted, 'white' is used.
+    This is about three times faster than the comfortable RGB method LedCtrlRaw().
+
+      PARAMS: <number>     number of the LED to control
+              <colorcode>  OPTIONAL, a number from 0..127
+      RETURN:
+
+
+### LedCtrlXY( x, y, red, green, [blue], [mode] )
+
+    Controls an LED via its x/y coordinates and red, green or blue intensity values.
+    An additional <mode> parameter determines the origin of the x-axis.
+    
+    If <blue> is omitted, this method operates in "Classic" compatibility mode.
+    The classic Launchpad only had 2 bit intensity values (0..3). In compatibility
+    mode, these values are now multiplied by 21, to extend the range to 0..63.
+    That way, old, existing code, written for the classic Launchpads does not
+    need to be changed.
+    
+    By default, if <mode> is omitted, the origin of the x axis is the left side of
+    the 8x8 matrix, like in "Classic" mode (those devices had no round buttons on
+    the left).
+    If <mode> is set to "pro" (string), x=0 will light up the round buttons on the
+    left side. Please also see the table for X/Y modes somewhere at the end of this
+    document.
+
+    This method uses system-exclusive MIDI messages, which require 10 bytes to
+    be sent for each message. For a faster version, hence less comfortable version,
+    see LedCtrlXYBaCode() below.
+    
+      PARAMS: <x>      x coordinate of the LED to control
+              <y>      y coordinate of the LED to control
+              <red>    red   LED intensity 0..63 (or 0..3 in "Classic" mode)
+              <green>  green LED intensity 0..63 (or 0..3 in "Classic" mode)
+              <blue>   blue  LED intensity 0..63 (omit  for  "Classic" mode)
+      RETURN:
+
+
+### LedCtrlXYByCode( x, y, colorcode, [mode] )
+
+    Controls an LED via its x/y coordinates and a color from the color palette.
+    
+    Except for the color code, this function does the same as LedCtrlXY() does,
+    but about 3 times faster.
+    
+      PARAMS: <x>          x coordinate of the LED to control
+              <y>          y coordinate of the LED to control
+              <colorcode>  a number from 0..127
+      RETURN:
+
+
+### LedAllOn( [colorcode] )
+
+    Quickly sets all LEDs to the color code given by <colorcode>.
+    If <colorcode> is omitted, 'white' is used.
+
+      PARAMS: <colorcode>   OPTIONAL, a number from 0..127
       RETURN:
 
 
@@ -466,8 +526,8 @@ name it once shipped the first red/green LED with!
 ### RAW mode
 
     +---+---+---+---+---+---+---+---+ 
-    |200|201|202|203|204|205|206|207| < AUTO
-    +---+---+---+---+---+---+---+---+   Or u
+    |200|201|202|203|204|205|206|207| < or 0..7 with LedCtrlAutomap()
+    +---+---+---+---+---+---+---+---+   
 
     +---+---+---+---+---+---+---+---+  +---+
     |  0|...|   |   |   |   |   |  7|  |  8|
@@ -544,11 +604,7 @@ name it once shipped the first red/green LED with!
            |  1|  2|   |   |   |   |   |  8|
            +---+---+---+---+---+---+---+---+ 
 
-### X/Y mode
-
-Work in progress.  
-Might change because it's probably stupid to have the 9th column at the left, but
-that way it would be compatible to existing code...
+### X/Y "Classic" mode
 
       9      0   1   2   3   4   5   6   7      8   
            +---+---+---+---+---+---+---+---+ 
@@ -576,6 +632,40 @@ that way it would be compatible to existing code...
            +---+---+---+---+---+---+---+---+ 
            |   |1/9|   |   |   |   |   |   |         9
            +---+---+---+---+---+---+---+---+ 
+
+### X/Y "Pro" mode
+
+      0      1   2   3   4   5   6   7   8      9
+           +---+---+---+---+---+---+---+---+ 
+           |1/0|   |3/0|   |   |   |   |   |         0
+           +---+---+---+---+---+---+---+---+ 
+            
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |1/1|   |   |   |   |   |   |   |  |   |  1
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |0/2|  |   |   |   |   |   |   |   |   |  |   |  2
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |6/3|   |   |  |   |  3
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  4
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  5
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |5/6|   |   |   |  |   |  6
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  7
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |0/8|  |   |   |   |   |   |   |   |   |  |9/8|  8
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+          
+           +---+---+---+---+---+---+---+---+ 
+           |   |2/9|   |   |   |   |   |   |         9
+           +---+---+---+---+---+---+---+---+ 
+
+
+
+
+
 
 
 ---
