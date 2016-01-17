@@ -2,8 +2,12 @@
 
 #
 # Novation Launchpad Python V0.8a
-# 7/2013, 2/2015 ASkr(FMMT666)
+# 7/2013, 2/2015, 1/2016 ASkr(FMMT666)
 # www.askrprojects.net
+#
+#
+# 2016/01/16:
+#  - preparations for Launchpad Pro support (new base class)
 #
 # 2015/02/21:
 #  - multiple Launchpad support now built-in
@@ -39,6 +43,8 @@
 #  - Windows XP, 32 bit (Python 2.7.x, Pygame 1.9.1 (read below))
 #  - Raspberry-Pi, Wheezy (standard installation, Python 2.7.3 + Pygame 1.9.1)
 #  - Linux 64 bit (Python 2.7.x, Pygame 1.9.1)
+#  - several others
+#  - does _not_ work on Mac OS X (for now)
 #
 #
 # ANYTHING MISSING?
@@ -285,10 +291,84 @@ class Midi:
 
 
 ########################################################################################
+### CLASS LaunchpadBase
+###
+### Todo: Could be abstract, but "abc" and "ABCMeta" are somehow a PITA...
+########################################################################################
+class LaunchpadBase:
+
+	def __init__( self ):
+		self.midi   = Midi() # midi interface instance (singleton)
+		self.idOut  = None   # midi id for output
+		self.idIn   = None   # midi id for input
+
+		# just in case someone likes "defines" ;)
+		SCROLL_NONE  =  0
+		SCROLL_LEFT  = -1
+		SCROLL_RIGHT =  1
+		# same for LED brightness
+		LED_OFF      =  0
+		LED_LOW      =  1
+		LED_MED      =  2
+		LED_HIGH     =  3
+
+
+	def __delete__( self ):
+		self.Close();
+		
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-------------------------------------------------------------------------------------
+	def Open( self, number = 0, name = "Launchpad" ):
+		self.idOut = self.midi.SearchDevice( name, True, False, number = number )
+		self.idIn  = self.midi.SearchDevice( name, False, True, number = number )
+		
+		if self.idOut is None or self.idIn is None:
+			return False
+
+		if self.midi.OpenOutput( self.idOut ) == False:
+			return False
+		
+		return self.midi.OpenInput( self.idIn )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-------------------------------------------------------------------------------------
+	def Check( self, number = 0, name = "Launchpad" ):
+		self.idOut = self.midi.SearchDevice( name, True, False, number = number )
+		self.idIn  = self.midi.SearchDevice( name, False, True, number = number )
+		
+		if self.idOut is None or self.idIn is None:
+			return False
+		
+		return True
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Closes this device
+	#-------------------------------------------------------------------------------------
+	def Close( self ):
+		self.midi.CloseInput()
+		self.midi.CloseOutput()
+	
+
+	#-------------------------------------------------------------------------------------
+	#-- prints a list of all devices to the console (for debug)
+	#-------------------------------------------------------------------------------------
+	def ListAll( self ):
+		self.midi.SearchDevices( "*", True, True, False )
+
+
+
+########################################################################################
 ### CLASS Launchpad
 ###
+### For 2-color Launchpads with 8x8 matrix and 2x8 top/right rows
 ########################################################################################
-class Launchpad:
+class Launchpad( LaunchpadBase ):
 
 	# LED AND BUTTON NUMBERS IN RAW MODE (DEC):
 	#
@@ -340,56 +420,6 @@ class Launchpad:
 	# |   |   |   |   |   |   |   |   |  |8/8|  8
 	# +---+---+---+---+---+---+---+---+  +---+
 	#
-	
-	def __init__( self ):
-		self.midi   = Midi() # midi interface instance (singleton)
-		self.idOut  = None   # midi id for output
-		self.idIn   = None   # midi id for input
-
-		# just in case someone likes "defines" ;)
-		SCROLL_NONE  =  0
-		SCROLL_LEFT  = -1
-		SCROLL_RIGHT =  1
-		# same for LED brightness
-		LED_OFF      =  0
-		LED_LOW      =  1
-		LED_MED      =  2
-		LED_HIGH     =  3
-
-
-	def __delete__( self ):
-		self.Close();
-		
-
-	#-------------------------------------------------------------------------------------
-	#-- Opens one of the attached Launchpad MIDI devices.
-	#-------------------------------------------------------------------------------------
-	def Open( self, number = 0, name = "Launchpad" ):
-		self.idOut = self.midi.SearchDevice( name, True, False, number = number )
-		self.idIn  = self.midi.SearchDevice( name, False, True, number = number )
-		
-		if self.idOut is None or self.idIn is None:
-			return False
-
-		if self.midi.OpenOutput( self.idOut ) == False:
-			return False
-		return self.midi.OpenInput( self.idIn )
-
-
-	#-------------------------------------------------------------------------------------
-	#-- Closes this device
-	#-------------------------------------------------------------------------------------
-	def Close( self ):
-		self.midi.CloseInput()
-		self.midi.CloseOutput()
-	
-
-	#-------------------------------------------------------------------------------------
-	#-- prints a list of all devices to the console (for debug)
-	#-- REFAC2015: This definitely does not belong in here!
-	#-------------------------------------------------------------------------------------
-	def ListAll( self ):
-		self.midi.SearchDevices("*", True, True, False )
 
 
 	#-------------------------------------------------------------------------------------
@@ -606,19 +636,164 @@ class Launchpad:
 				
 		return []
 
+
+
+########################################################################################
+### CLASS LaunchpadPro
+###
+### For 3-color Launchpads with 8x8 matrix and 4x8 left/right/top/bottom rows
+########################################################################################
+
+class LaunchpadPro( LaunchpadBase ):
+
+	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
+	# WITH LAUNCHPAD IN "LIVE MODE" (PRESS SETUP, top-left GREEN).
+	#
+	# Notice that the fine manual doesn't know that mode.
+	# According to what's written there, the numbering used
+	# refers to the "PROGRAMMING MODE", which actually does
+	# not react to any of those notes (or numbers).
+	#
+	#        +---+---+---+---+---+---+---+---+ 
+	#        | 91|   |   |   |   |   |   | 98|
+	#        +---+---+---+---+---+---+---+---+ 
+	#         
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 80|  | 81|   |   |   |   |   |   |   |  | 89|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 70|  |   |   |   |   |   |   |   |   |  | 79|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 60|  |   |   |   |   |   |   | 67|   |  | 69|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 50|  |   |   |   |   |   |   |   |   |  | 59|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 40|  |   |   |   |   |   |   |   |   |  | 49|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 30|  |   |   |   |   |   |   |   |   |  | 39|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 20|  |   |   | 23|   |   |   |   |   |  | 29|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 10|  |   |   |   |   |   |   |   |   |  | 19|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	#       
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |  1|  2|   |   |   |   |   |  8|
+	#        +---+---+---+---+---+---+---+---+ 
+	#
+	#
+	# LED AND BUTTON NUMBERS IN XY MODE (X/Y)
+	# Mhh. Maybe that's not a good idea...
+	#
+	#   9      0   1   2   3   4   5   6   7      8   
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |0/0|   |2/0|   |   |   |   |   |         0
+	#        +---+---+---+---+---+---+---+---+ 
+	#         
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |0/1|   |   |   |   |   |   |   |  |   |  1
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |9/2|  |   |   |   |   |   |   |   |   |  |   |  2
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |5/3|   |   |  |   |  3
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  4
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  5
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |4/6|   |   |   |  |   |  6
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  7
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |9/8|  |   |   |   |   |   |   |   |   |  |8/8|  8
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	#       
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |   |1/9|   |   |   |   |   |   |         9
+	#        +---+---+---+---+---+---+---+---+ 
+	#
+
+	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns an RGB colorcode by trying to find a color of a name given by string <name>.
+	#-- If nothing was found, Code 'black' (off) is returned.
+	#-------------------------------------------------------------------------------------
+	def LedGetColorByName( self, name ):
+		# should not be required
+		#if type( name ) is not str:
+		#	return 0;
+		if name in self.COLORS:
+			return self.COLORS[name]
+		else:
+			return self.COLORS['black']
+		
+
+	#-------------------------------------------------------------------------------------
+	#-- Tries to match an RGB color with one of those from the 128 colors palette.
+	#-- Each of <red>, <green> and <blue> can be 0..4, for a total of 256 color codes.
+	#-------------------------------------------------------------------------------------
+	def LedGetColor( self, red, green, blue ):
+		pass
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its raw <number>; with <colorcode> from the palette.
+	#-- If <colorcode> is omitted, "white" is used.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRaw( self, number, colorcode = None ):
+
+		if colorcode is None:
+			colorcode = self.COLORS['white']
+
+		if number < 1 or number > 98:
+			return
+			
+		self.midi.RawWrite( 144, number, colorcode )
+
+
 		
 ########################################################################################
 ########################################################################################
 ########################################################################################
 def main():
 
-	# some demo code ahead...
+	LP = Launchpad()
 
-	LP = Launchpad()  # create a Launchpad instance
+	print("--------------------------------------------------")
+	LP.ListAll()
+	
+	# Check if there's a Pro attached.
+	# If yes, just loop in here and never return...
+	if LP.Check( 0, "Pro" ):
+		print("--------------------------------------------------")
+		print("Launchpad Pro found")
+		print(">>> Make sure the device is in 'LIVE' mode!")
+		print(">>> Push 'Setup' + top left matrix button.")
+		lp = LaunchpadPro()
+		lp.Open(0,"Pro")
+		color = 0
+		led = 0
+		while( True ):
+			lp.LedCtrlRaw( led, color )
+			color+=1
+			led+=1
+			if color > 128:
+				color = 0
+			if led > 98:
+				led = 1
+			
 
-	LP.ListAll()      # debug function: list all available MIDI devices
+	print("--------------------------------------------------")
+	
+	# "Classic" demo code ahead...
+	if LP.Check() == False:
+		print("No standard Launchpad found.")
+		return
 
-	LP.Open()         # start it
+	print("Launchpad Classic found")
+
+	# open the first "Classic" Launchpad
+	LP.Open()
 
 
 	# the latter of these two messages might not finish (MIDI buffer too large,
@@ -704,7 +879,6 @@ def main():
 	LP.Reset()
 			
 	LP.Close()
-	
 
 	
 if __name__ == '__main__':

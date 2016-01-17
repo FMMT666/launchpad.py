@@ -8,10 +8,20 @@ If you ever dreamed of using your Launchpad for completely other stuff than musi
 Compatible with most (tm) single board computers.
 
 Watch a 6s video [here][7].  
-Or take a look at [that one][8].
+Or take a look at [that one][8].  
+What about the brand new Launchpad Pro support? [Right][9]!
 
 ---
 ## NEWS
+
+### CHANGES 2016/01/17:
+
+    - Support for Launchpad Pro now build in (only a few functions, so far).
+      Please notice the new class for the Pro:
+        lp_pro = LaunchpadPro()
+    - added method Check(); Checks whether a device is attached.
+    - added demo code for Pro (including automatic device recognition)
+     
 
 ### CHANGES 2016/01/10:
 
@@ -84,22 +94,31 @@ It does _not_ (yet) work with
   
 because PyGame's Mac implementation was built without any Midi functionality.
 
- 
-  
 
-Supported Launchpad devices:
+Supported and tested red/green LED Launchpad devices, here referred  to as "Classic":
 
-  - Launchpad
+  - Launchpad (the original, old "MK1")
   - Launchpad S
-  - Launchpad Mini
+  - Launchpad Mini (MK1)
   
-Planned:
+Supported and tested full RGB Launchpad devices:
+  
+  - Launchpad Pro
 
-  - Launchpad Pro (Q1/2016)
+Notice that Novation now (1/2016) sells an RGB Launchpad under the same
+name it once shipped the first red/green LED with!
 
 
 ---
 ## Notes (from the source)
+
+### For Launchpad Pro users
+
+      MAKE SURE THE LAUNCHPAD PRO IS IN LIVE MODE!
+      To enter live mode, hold the SETUP bottom on the top left and
+      push the top left matrix button (should be green).
+      
+      IT WON'T WORK IN OTHER MODES (Note, Fader, Drums or Programming).
 
 ### For Windows users
 
@@ -121,7 +140,7 @@ Planned:
 
 
 ---
-## Launchpad class methods overview
+## Common Launchpad class methods overview (valid for all devices)
 
 ### Device control functions
 
@@ -133,6 +152,10 @@ Planned:
 ### Utility functions
 
     ListAll()
+    
+    
+---
+## Launchpad "Classic" class methods overview (valid for green/red LED devices)
 
 ### LED functions
 
@@ -153,12 +176,44 @@ Planned:
 
 
 ---
-## Detailed description
+## Launchpad "Pro" class methods overview (valid for RGB LED devices)
+
+### LED functions
+
+    LedGetColorByName( name )
+    LedGetColor( red, green, blue )
+    LedCtrlRaw( number, colorcode )
+    
+    work in progress...
+
+### Button functions
+
+    work in progress...
+
+
+---
+## Detailed description of common Launchpad methods
 
 ### Open( [number], [name] )
 
-    Opens the a Launchpad and initializes it.
-
+    Opens the a Launchpad and initializes it.  
+    Please notice that some devices have up to six MIDI entries!.
+    A dump by ListAll(), with a "Pro" and a MK1 "Mini" might look like:
+    
+        ('ALSA', 'Midi Through Port-0', 0, 1, 0)
+        ('ALSA', 'Midi Through Port-0', 1, 0, 0)
+        ('ALSA', 'Launchpad Pro MIDI 1', 0, 1, 1)
+        ('ALSA', 'Launchpad Pro MIDI 1', 1, 0, 1)
+        ('ALSA', 'Launchpad Pro MIDI 2', 0, 1, 0)
+        ('ALSA', 'Launchpad Pro MIDI 2', 1, 0, 0)
+        ('ALSA', 'Launchpad Pro MIDI 3', 0, 1, 0)
+        ('ALSA', 'Launchpad Pro MIDI 3', 1, 0, 0)
+        ('ALSA', 'Launchpad Mini MIDI 1', 0, 1, 0)
+        ('ALSA', 'Launchpad Mini MIDI 1', 1, 0, 0)
+    
+    You'll (usually) only need the first entry of each device.
+    
+    
       PARAMS: <number> OPTIONAL, number of Launchpad to open.
                        1st device = 0, 2nd device = 1, ...
                        Defaults to 0, the 1st device, if not given.
@@ -174,20 +229,37 @@ Planned:
       EXAMPLES:
               # Open the first device attached:
               lp.Open()
+              
               # Open the 2nd Launchpad:
               lp.Open( 1 )
+              
               # Open the 3rd Launchpad Mini:
               lp.Open( 2, "Launchpad Mini")
+              
               # alternative:
               lp.Open( name = "Launchpad Mini", number = 0)
+
+
+### Check( [number], [name] )
+
+    Checks if a device is attached.
+    Uses exactly the same notation as Open(), but only returns True or False,
+    without opening anything.
+    
+      PARAMS: see Open()
+      
+      RETURN: True     device exists
+              False    device does not exist
+
               
 
 ### Close()
 
-    Has a bug. Don't call it (yet)...
+    Bug in PyGame. Don't call it (yet)...
 
       PARAMS:
       RETURN:
+
 
 ### ListAll()
 
@@ -198,12 +270,18 @@ Planned:
       PARAMS:
       RETURN:
 
+
+---
+## Detailed description of Launchpad "Classic" only methods
+
+
 ### Reset()
 
     Resets the Launchpad and (quickly) turns off all LEDs.
 
       PARAMS:
       RETURN:
+
 
 ### LedGetColor( red, green )
 
@@ -214,6 +292,7 @@ Planned:
               <green>  green LED intensity 0..3
       RETURN: number   Launchpad color code
 
+
 ### LedCtrlRaw( number, red, green )
 
     Controls an LED via its number (see table somewhere below)
@@ -222,6 +301,7 @@ Planned:
               <red>    red   LED intensity 0..3
               <green>  green LED intensity 0..3
       RETURN:
+
 
 ### LedCtrlXY( x, y, red, green )
 
@@ -284,7 +364,7 @@ Planned:
                        Negative is left and positive right.
               <offsy>  no function
       RETURN:
-					
+
 
 ### LedCtrlString( str, red, green, dir = 0 )
 
@@ -301,7 +381,7 @@ Planned:
                         1 -> scroll left to right
       RETURN:
 
-					
+
 ### ButtonChanged()
 
     Returns True if a button event occured. False otherwise.
@@ -319,6 +399,7 @@ Planned:
               <button> is the RAW button number, the second field determines
               if the button was pressed <True> or released <False>.
 
+
 ### ButtonStateXY()
 
     Returns the state of the last occured button event in the queue in X/Y mode.
@@ -331,7 +412,54 @@ Planned:
 
 
 ---
-## Button and LED codes
+## Detailed description of Launchpad "Pro" only methods
+
+### LedGetColor( red, green, blue )
+
+    WORK IN PROGESS! NOT FUNCTIONAL YET!
+    
+    Returns a color in the special Launchpad Pro color code format, estimated
+    from a red, green and blue intensity value.
+    [...]
+
+      PARAMS: <red>    red   LED intensity 0..4
+              <green>  green LED intensity 0..4
+              <blue>   green LED intensity 0..4
+      RETURN: number   Launchpad Pro color code
+
+      EXAMPLES:
+              colorGrey = LP.LedGetColor( 2, 2, 2 )
+
+
+### LedGetColorByName( name )
+
+    WORK IN PROGRESS! ONLY A FEW COLORS, SO FAR!
+
+    Returns a color in the special Launchpad Pro color code format, derived
+    from a color name, in the string <name>.
+    [...]
+
+      PARAMS: <name>   a name of a color in lower caps, "red", "green"...
+      RETURN: number   Launchpad Pro color code
+
+      EXAMPLES:
+              colorRed = LP.LedGetColorByName( "red" )
+    
+    Supported, so far:
+      off, black, white, red, green
+
+
+### LedCtrlRaw( number, colorcode )
+
+    Controls an LED via its number and colorcode (see table somewhere below)
+
+      PARAMS: <number>    number of the LED to control
+              <colorcode> a number from 0..128
+      RETURN:
+
+
+---
+## Button and LED codes, Launchpad "Classic" (red/green LEDs)
 
 ### RAW mode
 
@@ -384,6 +512,71 @@ Planned:
 
 
 ---
+## Button and LED codes, Launchpad "Pro" (RGB LEDs)
+
+### RAW mode
+
+           +---+---+---+---+---+---+---+---+ 
+           | 91|   |   |   |   |   |   | 98|
+           +---+---+---+---+---+---+---+---+ 
+    
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 80|  | 81|   |   |   |   |   |   |   |  | 89|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 70|  |   |   |   |   |   |   |   |   |  | 79|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 60|  |   |   |   |   |   |   | 67|   |  | 69|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 50|  |   |   |   |   |   |   |   |   |  | 59|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 40|  |   |   |   |   |   |   |   |   |  | 49|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 30|  |   |   |   |   |   |   |   |   |  | 39|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 20|  |   |   | 23|   |   |   |   |   |  | 29|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 10|  |   |   |   |   |   |   |   |   |  | 19|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    
+           +---+---+---+---+---+---+---+---+ 
+           |  1|  2|   |   |   |   |   |  8|
+           +---+---+---+---+---+---+---+---+ 
+
+### X/Y mode
+
+Work in progress.  
+Might change because it's probably stupid to have the 9th column at the left, but
+that way it would be compatible to existing code...
+
+      9      0   1   2   3   4   5   6   7      8   
+           +---+---+---+---+---+---+---+---+ 
+           |0/0|   |2/0|   |   |   |   |   |         0
+           +---+---+---+---+---+---+---+---+ 
+            
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |0/1|   |   |   |   |   |   |   |  |   |  1
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |9/2|  |   |   |   |   |   |   |   |   |  |   |  2
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |5/3|   |   |  |   |  3
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  4
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  5
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |4/6|   |   |   |  |   |  6
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  7
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |9/8|  |   |   |   |   |   |   |   |   |  |8/8|  8
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+          
+           +---+---+---+---+---+---+---+---+ 
+           |   |1/9|   |   |   |   |   |   |         9
+           +---+---+---+---+---+---+---+---+ 
+
+
+---
 Have fun  
 FMMT666(ASkr)  
 
@@ -397,3 +590,4 @@ FMMT666(ASkr)
 [6]: http://www.askrproject.net
 [7]: https://mtc.cdn.vine.co/r/videos/5B6AFA722E1181009294682988544_30ec8c83a82.1.5.18230528301682594589.mp4
 [8]: https://mtc.cdn.vine.co/r/videos/B02C20F7301181005332596555776_3da8b2c29ec.1.5.3791810774169827111.mp4
+[9]: https://mtc.cdn.vine.co/r/videos/EFB02602EF1300276501647966208_4cce4117438.5.1.10016548273760817556.mp4
