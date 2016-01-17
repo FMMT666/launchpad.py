@@ -196,6 +196,13 @@ name it once shipped the first red/green LED with!
 
     work in progress...
 
+### Color codes
+
+All RGB Launchpads have a 128 color palette built-in.  
+Controlling LEDs with colors from the palette is about three times faster than
+using the, indeed much more comfortable RGB notation.
+
+![RGB color palette](/images/lppro_colorcodes.png)
 
 ---
 ## Detailed description of common Launchpad methods
