@@ -565,7 +565,7 @@ class Launchpad( LaunchpadBase ):
 	#-- to the Launchpad. <offsy> does not have yet any function
 	#-------------------------------------------------------------------------------------
 	def LedCtrlChar( self, char, red, green, offsx = 0, offsy = 0 ):
-		char = ord(char)
+		char = ord( char )
 		char = min( char, 255)
 		char = max( char, 0) * 8
 
@@ -585,27 +585,27 @@ class Launchpad( LaunchpadBase ):
 	#-- Dir specifies: -1 to left, 0 no scroll, 1 to right
 	#-- The "no scroll" characters are sent 8 times to have a comparable speed.
 	#-------------------------------------------------------------------------------------
-	def LedCtrlString( self, str, red, green, dir = 0 ):
+	def LedCtrlString( self, string, red, green, direction = 0 ):
 
 		# REFAC2015: As it seems, a timer somewhere around 150ms/display works for both
 		#            Standard and S/Mini variants.
 
-		if dir == -1:
-			for i in str:
-				for off in range(5,-8,-1):
-					self.LedCtrlChar(i, red, green, off)
+		if direction == -1:
+			for i in string:
+				for offsx in range(5,-8,-1):
+					self.LedCtrlChar(i, red, green, offsx = offsx)
 					# TESTING ONLY (slowdown for S/Mini)
 					time.wait(150);
-		elif dir == 0:
-			for i in str:
-				for off in range(4):
+		elif direction == 0:
+			for i in string:
+				for offsx in range(4):
 					self.LedCtrlChar(i, red, green)
 					# TESTING ONLY (slowdown for S/Mini)
 					time.wait(150);
-		elif dir == 1:
-			for i in str:
-				for off in range(-5,8):
-					self.LedCtrlChar(i, red, green, off)
+		elif direction == 1:
+			for i in string:
+				for offsx in range(-5,8):
+					self.LedCtrlChar(i, red, green, offsx = offsx)
 					# TESTING ONLY (slowdown for S/Mini)
 					time.wait(150);
 					
@@ -863,8 +863,42 @@ class LaunchpadPro( LaunchpadBase ):
 		led = 90-(10*y) + x
 		
 		self.LedCtrlRawByCode( led, colorcode )
-		
 
+
+	#-------------------------------------------------------------------------------------
+	#-- Sends character <char> in colors <red/green/blue> and lateral offset <offsx> (-8..8)
+	#-- to the Launchpad. <offsy> does not have yet any function.
+	#-- If <blue> is omitted, this method runs in "Classic" compatibility mode and the
+	#-- old 0..3 <red/green> values are multiplied with 21, to match the "Pro" 0..63 range.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlChar( self, char, red, green, blue = None, offsx = 0, offsy = 0 ):
+		char = ord( char )
+		char = min( char, 255)
+		char = max( char, 0) * 8
+
+		# compatibility mode
+		if blue is None:
+			red   *= 21
+			green *= 21
+			blue   =  0
+
+		min( red, 63 )
+		max( red,  0 )
+		min( green, 63 )
+		max( green,  0 )
+		min( blue, 63 )
+		max( blue,  0 )
+
+		for i in range(81, 1, -10):
+			for j in range(8):
+				sum = i + j + offsx
+				if sum >= i and sum < i + 8:
+					if CHARTAB[char]  &  0x80 >> j:
+						self.LedCtrlRaw( sum, red, green, blue )
+					else:
+						self.LedCtrlRaw( sum, 0, 0, 0 )
+			char += 1
+		
 
 	#-------------------------------------------------------------------------------------
 	#-- Quickly sets all all LEDs to the same color, given by <colorcode>.

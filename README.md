@@ -16,15 +16,19 @@ Older Launchpads might be documented [here][10].
 ---
 ## NEWS
 
-### CHANGES 2016/01/17:
+### CHANGES 2016/01/XX:
 
     - Support for Launchpad Pro now build in (only a few functions, so far).
       Please notice the new class for the Pro:
         lp_pro = LaunchpadPro()
+      Except for a few, low level functions (e.g. "LedCtrlRaw()"), this and
+      probably all future classes will remain compatible to the good, old
+      "Classic" Launchpad (MK1).
     - added method Check(); Checks whether a device is attached.
     - added demo code for Pro (including automatic device recognition)
-    - added RGB LED control
-    - added X/Y LED control for RGB and color code mode
+    - added Pro RGB LED control
+    - added Pro X/Y LED control for RGB and color code mode
+    - added Pro character display incl. left/right shift
 
 ### CHANGES 2016/01/10:
 
@@ -47,6 +51,17 @@ Older Launchpads might be documented [here][10].
     - Added option to select a Launchpad if more than one is attached.
       Also supports search for a device string, e.g. "Mini".
     - Added optional parameters <number> and <name> to Open()
+
+
+---
+## Upcoming attractions
+
+  - missing "Pro" functions, buttons, etc...
+  - own classes for the other Launchpad models
+  - better event system
+  - custom bitmaps and graphics
+  - better custom font support
+  - ...
 
 
 ---
@@ -264,7 +279,6 @@ using the, indeed much more comfortable RGB notation.
       RETURN: True     device exists
               False    device does not exist
 
-              
 
 ### Close()
 
@@ -368,7 +382,12 @@ using the, indeed much more comfortable RGB notation.
 
     Sends character <char> in colors <red/green> (0..3 each) and
     lateral offset <offsx> (-8..8) to the Launchpad.
-    <offsy> does not have yet any function
+    <offsy> does not have yet any function.
+    
+    It is highly recommended to use <offsx> and <offsy> as
+    named parameters, for compatible code with the RGB Launchpads, e.g.:
+    
+      lp.LedCtrlChar( 'a', 3, 2, offsx = xvar )
 
       PARAMS: <char>   one field string to display; e.g.: 'A'
               <red>    red   LED intensity 0..3
@@ -378,6 +397,12 @@ using the, indeed much more comfortable RGB notation.
               <offsy>  no function
       RETURN:
 
+      EXAMPLES:
+              # scroll a red 'A' from left to right
+              for x in range( -8, 9 ):
+			    lp.LedCtrlChar( 'A', 3, 0, offsx = x )
+			    time.wait( 100 )
+		
 
 ### LedCtrlString( str, red, green, dir = 0 )
 
@@ -516,6 +541,38 @@ using the, indeed much more comfortable RGB notation.
               <y>          y coordinate of the LED to control
               <colorcode>  a number from 0..127
       RETURN:
+
+
+### LedCtrlChar( char, red, green, [blue], offsx = 0, offsy = 0 )
+
+    Sends character <char> in colors <red/green/blue> (0..63 each) and
+    lateral offset <offsx> (-8..8) to the Launchpad.
+    <offsy> does not have yet any function.
+    
+    It is highly recommended to use <offsx> and <offsy> as
+    named parameters, for compatible code with the RGB Launchpads, e.g.:
+    
+      lp.LedCtrlChar( 'a', 3, 2, offsx = xvar )
+      
+    If <blue> is ommited, this methods runs in "Classic" compatibility
+    mode and multiplies the <red> and <green> intensity values with 21, to
+    adapt the old 0..3 range to the new 0..63 one of the "Pro" mode.
+    That way, it is compatible to old, existing "Classic" code.
+
+      PARAMS: <char>   one field string to display; e.g.: 'A'
+              <red>    red   LED intensity 0..63 (or 0..3 in "Classic" mode)
+              <green>  green LED intensity 0..63 (or 0..3 in "Classic" mode)
+              <blue>   blue  LED intensity 0..63 (omit  for  "Classic" mode)
+              <offsx>  x offset of the character on the main, 8x8 matrix (-8..8)
+                       Negative is left and positive right.
+              <offsy>  no function
+      RETURN:
+
+      EXAMPLES:
+              # scroll a purple 'A' from left to right
+              for x in range( -8, 9 ):
+			    lp.LedCtrlChar( 'A', 63, 0, 63, offsx = x )
+			    time.wait( 100 )
 
 
 ### LedAllOn( [colorcode] )
