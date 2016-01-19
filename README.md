@@ -404,11 +404,16 @@ using the, indeed much more comfortable RGB notation.
 			    time.wait( 100 )
 		
 
-### LedCtrlString( str, red, green, dir = 0 )
+### LedCtrlString( string, red, green, direction = 0 )
 
     Scrolls a string <str> across the Launchpad's main, 8x8 matrix.
     Red and green specify the color and intensity (0..3 each).
     <dir> determines the direction of scrolling.
+    
+    For future compatibility, it is highly recommended to use
+    <direction> as a named argument, e.g.:
+    
+      lp.LedCtrlString( "Hello", 3,1, direction = -1 )
 
 
       PARAMS: <str>    a string to display; e.g.: 'Hello'

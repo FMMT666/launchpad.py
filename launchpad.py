@@ -962,9 +962,9 @@ def main():
 	# the latter of these two messages might not finish (MIDI buffer too large,
 	# MIDI speed too low...)
 	print("HELLO")
-	LP.LedCtrlString( 'HELLO', 3, 0, 0 ) # display HELLO in red
+	LP.LedCtrlString( 'HELLO', 3, 0, direction = 0 ) # display HELLO in red
 	print("USER")
-	LP.LedCtrlString( 'USER', 0, 3, -1 ) # scroll USER in green, from right to left
+	LP.LedCtrlString( 'USER', 0, 3, direction = -1 ) # scroll USER in green, from right to left
 	
 	# try to give it some extra time:
 	# TESTING S/MINI
