@@ -29,6 +29,7 @@ Older Launchpads might be documented [here][10].
     - added Pro RGB LED control
     - added Pro X/Y LED control for RGB and color code mode
     - added Pro character display incl. left/right shift
+    - added Pro string scrolling
 
 ### CHANGES 2016/01/10:
 
@@ -54,13 +55,16 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## Upcoming attractions
+## Upcoming attractions, notes and thoughs
 
   - missing "Pro" functions, buttons, etc...
   - own classes for the other Launchpad models
   - better event system
   - custom bitmaps and graphics
   - better custom font support
+  - Why the **** didn't I use [r,g,b] tables for colors, instead single args??? (*sigh*)
+  - background color in char and string methods
+  - string scroll: screen update bug if rightmost column is filled (not deleted)
   - ...
 
 
@@ -404,24 +408,26 @@ using the, indeed much more comfortable RGB notation.
 			    time.wait( 100 )
 		
 
-### LedCtrlString( string, red, green, direction = 0 )
+### LedCtrlString( string, red, green, direction = 0, waitms = 150 )
 
-    Scrolls a string <str> across the Launchpad's main, 8x8 matrix.
-    Red and green specify the color and intensity (0..3 each).
-    <dir> determines the direction of scrolling.
+    Scrolls <string> across the Launchpad's main, 8x8 matrix.
+    <red/green> specify the color and intensity (0..3 each).
+    <direction> determines the direction of scrolling.
+    Dirty hack: <waitms>, by default 150, delays the scrolling speed.
     
     For future compatibility, it is highly recommended to use
-    <direction> as a named argument, e.g.:
+    <direction> and <waitms> as a named arguments, e.g.:
     
-      lp.LedCtrlString( "Hello", 3,1, direction = -1 )
+      lp.LedCtrlString( "Hello", 3,1, direction = -1, waitms = 100 )
 
 
-      PARAMS: <str>    a string to display; e.g.: 'Hello'
-              <red>    red   LED intensity 0..3
-              <green>  green LED intensity 0..3
-              <dir>    -1 -> scroll right to left
-                        0 -> do not scroll, just show the character
-                        1 -> scroll left to right
+      PARAMS: <string>     a string to display; e.g.: 'Hello'
+              <red>        red   LED intensity 0..3
+              <green>      green LED intensity 0..3
+              <direction> -1 -> scroll right to left
+                           0 -> do not scroll, just show the character
+                           1 -> scroll left to right
+              <waitms>     OPTIONAL: delay for scrolling speed, default 150
       RETURN:
 
 
@@ -578,6 +584,33 @@ using the, indeed much more comfortable RGB notation.
               for x in range( -8, 9 ):
 			    lp.LedCtrlChar( 'A', 63, 0, 63, offsx = x )
 			    time.wait( 100 )
+
+
+### LedCtrlString( string, red, green, blue = None, direction = 0, waitms = 150 )
+
+    Scrolls a string <str> across the Launchpad's main, 8x8 matrix.
+    <red/green/blue> specify the color and intensity (0..63 each).
+    <direction> determines the direction of scrolling.
+    Dirty hack: <waitms>, by default 150, delays the scrolling speed.
+    
+    If <blue> is omitted, "Classic" compatibility mode is turned on and the old
+    0..3 <red/green> intensity values are strechted to 0..63.
+    
+    For future compatibility, it is highly recommended to use
+    <direction> and <waitms> as a named arguments, e.g.:
+    
+      lp.LedCtrlString( "Hello", 3,1, direction = -1, waitms = 100 )
+
+
+      PARAMS: <string>     a string to display; e.g.: 'Hello'
+              <red>        red   LED intensity 0..63 (or 0..3 in "Classic" mode)
+              <green>      green LED intensity 0..63 (or 0..3 in "Classic" mode)
+              <blue>       green LED intensity 0..63 (omit  for  "Classic" mode)
+              <direction> -1 -> scroll right to left
+                           0 -> do not scroll, just show the character
+                           1 -> scroll left to right
+              <waitms>     OPTIONAL: delay for scrolling speed, default 150
+      RETURN:
 
 
 ### LedAllOn( [colorcode] )

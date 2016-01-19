@@ -581,33 +581,35 @@ class Launchpad( LaunchpadBase ):
 					
 
 	#-------------------------------------------------------------------------------------
-	#-- Scroll a string, as fast as we can, over the Launch pad.
-	#-- Dir specifies: -1 to left, 0 no scroll, 1 to right
+	#-- Scroll <string>, in colors specified by <red/green>, as fast as we can.
+	#-- <direction> specifies: -1 to left, 0 no scroll, 1 to right
+	#--
 	#-- The "no scroll" characters are sent 8 times to have a comparable speed.
+	#-- ^^^ WTF?
 	#-------------------------------------------------------------------------------------
-	def LedCtrlString( self, string, red, green, direction = 0 ):
+	def LedCtrlString( self, string, red, green, direction = 0, waitms = 150 ):
 
-		# REFAC2015: As it seems, a timer somewhere around 150ms/display works for both
-		#            Standard and S/Mini variants.
+		# TODO: The delay was a dirty hack.
+		#       It won't go :-/
 
 		if direction == -1:
 			for i in string:
 				for offsx in range(5,-8,-1):
 					self.LedCtrlChar(i, red, green, offsx = offsx)
 					# TESTING ONLY (slowdown for S/Mini)
-					time.wait(150);
+					time.wait(waitms);
 		elif direction == 0:
 			for i in string:
 				for offsx in range(4):
 					self.LedCtrlChar(i, red, green)
 					# TESTING ONLY (slowdown for S/Mini)
-					time.wait(150);
+					time.wait(waitms);
 		elif direction == 1:
 			for i in string:
 				for offsx in range(-5,8):
 					self.LedCtrlChar(i, red, green, offsx = offsx)
 					# TESTING ONLY (slowdown for S/Mini)
-					time.wait(150);
+					time.wait(waitms);
 					
 
 					
@@ -898,6 +900,54 @@ class LaunchpadPro( LaunchpadBase ):
 					else:
 						self.LedCtrlRaw( sum, 0, 0, 0 )
 			char += 1
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Scroll <string>, with color specified by <red/green/blue>, as fast as we can.
+	#-- <direction> specifies: -1 to left, 0 no scroll, 1 to right
+	#-- If <blue> is omitted, "Classic" compatibility mode is turned on and the old
+	#-- 0..3 color intensity range is streched by 21 to 0..63.
+	#--
+	#-- The "no scroll" characters are sent 8 times to have a comparable speed.
+	#-- ^^^ WAT?
+	#-------------------------------------------------------------------------------------
+	def LedCtrlString( self, string, red, green, blue = None, direction = 0, waitms = 150 ):
+
+		# TODO: The delay was a dirty hack.
+		#       It won't go :-/
+
+		# compatibility mode
+		if blue is None:
+			red   *= 21
+			green *= 21
+			blue   =  0
+
+		min( red, 63 )
+		max( red,  0 )
+		min( green, 63 )
+		max( green,  0 )
+		min( blue, 63 )
+		max( blue,  0 )
+
+		if direction == -1:
+			for i in string:
+				for offsx in range(5,-8,-1):
+					self.LedCtrlChar(i, red, green, blue, offsx = offsx)
+					# TESTING ONLY (slowdown for S/Mini)
+					time.wait(waitms);
+		elif direction == 0:
+			for i in string:
+				for offsx in range(4):
+					self.LedCtrlChar(i, red, green, blue)
+					# TESTING ONLY (slowdown for S/Mini)
+					time.wait(waitms);
+		elif direction == 1:
+			for i in string:
+				for offsx in range(-5,8):
+					self.LedCtrlChar(i, red, green, blue, offsx = offsx)
+					# TESTING ONLY (slowdown for S/Mini)
+					time.wait(waitms);
+
 		
 
 	#-------------------------------------------------------------------------------------
@@ -934,6 +984,10 @@ def main():
 		print(">>> Push 'Setup' + top left matrix button.")
 		lp = LaunchpadPro()
 		lp.Open(0,"Pro")
+		
+		lp.LedCtrlString( '*burp*', 63, 0, 63, direction = -1, waitms = 50 )
+		
+		
 		color = 0
 		led = 0
 		while( True ):
