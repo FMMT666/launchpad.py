@@ -217,13 +217,13 @@ class Midi:
 
 		
 	#-------------------------------------------------------------------------------------
-	#-- Sends a table of messages. If timestamp is 0, it is ignored.
+	#-- Sends a list of messages. If timestamp is 0, it is ignored.
 	#-- Amount of <dat> bytes is arbitrary.
 	#-- [ [ [stat, <dat1>, <dat2>, <dat3>], timestamp ],  [...], ... ]
 	#-- <datN> fields are optional
 	#-------------------------------------------------------------------------------------
-	def RawWriteMulti( self, msgTable ):
-		self.devOut.write( msgTable )
+	def RawWriteMulti( self, lstMessages ):
+		self.devOut.write( lstMessages )
 
 	
 	#-------------------------------------------------------------------------------------
@@ -501,7 +501,7 @@ class Launchpad( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Sends a table of consecutive, special color values to the Launchpad.
+	#-- Sends a list of consecutive, special color values to the Launchpad.
 	#-- Only requires (less than) half of the commands to update all buttons.
 	#-- [ LED1, LED2, LED3, ... LED80 ]
 	#-- First, the 8x8 matrix is updated, left to right, top to bottom.
@@ -621,7 +621,7 @@ class Launchpad( LaunchpadBase ):
 
 		
 	#-------------------------------------------------------------------------------------
-	#-- Returns the raw value of the last button change as a table:
+	#-- Returns the raw value of the last button change as a list:
 	#-- [ <button>, <True/False> ]
 	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
@@ -634,7 +634,7 @@ class Launchpad( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Returns an x/y value of the last button change as a table:
+	#-- Returns an x/y value of the last button change as a list:
 	#-- [ <x>, <y>, <True/False> ]
 	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
@@ -868,6 +868,30 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- EXPERIMENTAL
+	#-- New approach to color arguments.
+	#-- <lstColor> list of length 3 with RGB color information, [<r>,<g>,<b>]
+	#-------------------------------------------------------------------------------------
+	def LedCtrlXYByRGB( self, x, y, lstColor, mode = "classic" ):
+		if type( lstColor ) is not list:
+			return
+			
+		x = min( x, 9 )
+		x = max( x, 0 )
+		y = min( y, 9 )
+		y = max( y, 0 )
+		
+		# rotate matrix to the right, column 9 overflows from right to left, same row
+		if mode != "pro":
+			x = ( x + 1 ) % 10
+			
+		# swap y
+		led = 90-(10*y) + x
+	
+		self.LedCtrlRaw( led, lstColor[0], lstColor[1], lstColor[2] )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Sends character <char> in colors <red/green/blue> and lateral offset <offsx> (-8..8)
 	#-- to the Launchpad. <offsy> does not have yet any function.
 	#-- If <blue> is omitted, this method runs in "Classic" compatibility mode and the
@@ -1057,7 +1081,7 @@ def main():
 				break
 
 	# fast update method
-	print("---\nFast update via color table.")
+	print("---\nFast update via color list.")
 	g = LP.LedGetColor( 0, 3 )
 	r = LP.LedGetColor( 3, 0 )
 	y = LP.LedGetColor( 3, 3 )

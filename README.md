@@ -62,7 +62,7 @@ Older Launchpads might be documented [here][10].
   - better event system
   - custom bitmaps and graphics
   - better custom font support
-  - Why the **** didn't I use [r,g,b] tables for colors, instead single args??? (*sigh*)
+  - Why the **** didn't I use [r,g,b] lists for colors, instead single args??? (*sigh*)
   - background color in char and string methods
   - string scroll: screen update bug if rightmost column is filled (not deleted)
   - ...
@@ -219,7 +219,7 @@ name it once shipped the first red/green LED with!
 
 All RGB Launchpads have a 128 color palette built-in.  
 Controlling LEDs with colors from the palette is about three times faster than
-using the, indeed much more comfortable RGB notation.
+using the, indeed much more comfortable, RGB notation.
 
 ![RGB color palette](/images/lppro_colorcodes.png)
 
@@ -347,7 +347,7 @@ using the, indeed much more comfortable RGB notation.
 
 ### LedCtrlRawRapid( allLeds )
 
-    Sends a table of consecutive, special color values to the Launchpad.
+    Sends a list of consecutive, special color values to the Launchpad.
     Requires (less than) half of the commands to update all buttons:
     [ LED1, LED2, LED3, ... LED80 ]
     First, the 8x8 matrix is updated, left to right, top to bottom.
@@ -361,7 +361,7 @@ using the, indeed much more comfortable RGB notation.
     If an odd number of values is sent, the next, following LED is
     turned off!
 
-      PARAMS: <allLeds> A table of up to 80 Launchpad color codes.
+      PARAMS: <allLeds> A list of up to 80 Launchpad color codes.
       RETURN:
 
 
@@ -444,7 +444,7 @@ using the, indeed much more comfortable RGB notation.
     Returns the state of the last occured button event in the queue in RAW mode.
 
       PARAMS:
-      RETURN: [ <button>, <True/False> ] A table with two fields:
+      RETURN: [ <button>, <True/False> ] A list with two fields:
               <button> is the RAW button number, the second field determines
               if the button was pressed <True> or released <False>.
 
@@ -454,7 +454,7 @@ using the, indeed much more comfortable RGB notation.
     Returns the state of the last occured button event in the queue in X/Y mode.
 
       PARAMS:
-      RETURN: [ <x>, <y>, <True/False> ] A table with three fields:
+      RETURN: [ <x>, <y>, <True/False> ] A list with three fields:
               <x> is the x coordinate of the button, <y>, guess what, the
               y coordinate. The third field reveals if the button was pressed
               <True> or released <False>.
