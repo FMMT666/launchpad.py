@@ -13,6 +13,21 @@ What about the brand new Launchpad Pro support? [Right][9]!
 
 Older Launchpads might be documented [here][10].
 
+
+---
+## STATUS 2016/01/22:
+
+What's hot, what's not?
+
+    Launchpad Mk1   - class "Launchpad()"     all features; LEDs and buttons
+    Launchpad/S     - class "Launchpad()"     all features; LEDs and buttons
+    Launchpad Mini  - class "Launchpad()"     all features; LEDs and buttons
+
+    Launchpad Mk2   - class "LaunchpadMk2()"  alpha;        LEDs
+
+    Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs
+
+
 ---
 ## NEWS
 
@@ -58,7 +73,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## Upcoming attractions, notes and thoughs
+## Upcoming attractions, notes and thoughts
 
   - missing "Pro" functions, buttons, etc...
   - missing "Mk2" functions, check compatibility
@@ -222,7 +237,7 @@ name it once shipped the first red/green LED with!
 
 
 ---
-## Launchpad "Pro" class methods overview (valid for RGB LED devices)
+## Launchpad "Mk2" and "Pro" class methods overview (valid for RGB LED devices)
 
 ### LED functions
 
@@ -329,7 +344,7 @@ using the, indeed much more comfortable, RGB notation.
 
 
 ---
-## Detailed description of Launchpad "Classic" only methods
+## Detailed description of Launchpad Mk1 "Classic" only methods
 
 
 ### Reset()
@@ -487,7 +502,7 @@ using the, indeed much more comfortable, RGB notation.
 
 
 ---
-## Detailed description of Launchpad "Pro" only methods
+## Detailed description of Launchpad "Pro" and "Mk2" only methods
 
 ### LedGetColorByName( name )
 
@@ -518,6 +533,9 @@ using the, indeed much more comfortable, RGB notation.
     If <blue> is omitted, this method runs in "Classic" compatibility mode, which only
     had red/green LEDs and intensities ranging from 0..3. In that mode, the input
     arguments are multiplied by 21, to map 0..3 to 0..63.
+    
+    Notice that the "Pro" and "Mk2" have different LED number layouts.
+    Please see tables, somewhere below.
 
       PARAMS: <number>    number of the LED to control
               <red>       a number from 0..63
@@ -548,16 +566,17 @@ using the, indeed much more comfortable, RGB notation.
     That way, old, existing code, written for the classic Launchpads does not
     need to be changed.
     
-    By default, if <mode> is omitted, the origin of the x axis is the left side of
-    the 8x8 matrix, like in "Classic" mode (those devices had no round buttons on
-    the left).
-    If <mode> is set to "pro" (string), x=0 will light up the round buttons on the
-    left side. Please also see the table for X/Y modes somewhere at the end of this
-    document.
+    For "Pro" only:
+      By default, if <mode> is omitted, the origin of the x axis is the left side
+      of the 8x8 matrix, like in "Classic" mode (those devices had no round buttons
+      on the left).
+      If <mode> is set to "pro" (string), x=0 will light up the round buttons on the
+      left side. Please also see the table for X/Y modes somewhere at the end of this
+      document.
 
     This method uses system-exclusive MIDI messages, which require 10 bytes to
     be sent for each message. For a faster version, hence less comfortable version,
-    see LedCtrlXYBaCode() below.
+    see LedCtrlXYByCode() below.
     
       PARAMS: <x>      x coordinate of the LED to control
               <y>      y coordinate of the LED to control
@@ -649,7 +668,7 @@ using the, indeed much more comfortable, RGB notation.
 
 
 ---
-## Button and LED codes, Launchpad "Classic" (red/green LEDs)
+## Button and LED codes, Launchpad Mk1 "Classic" (red/green LEDs)
 
 ### RAW mode
 
@@ -679,7 +698,7 @@ using the, indeed much more comfortable, RGB notation.
 
       0   1   2   3   4   5   6   7      8   
     +---+---+---+---+---+---+---+---+ 
-    |   |1/0|   |   |   |   |   |   |         0
+    |0/0|1/0|   |   |   |   |   |   |         0
     +---+---+---+---+---+---+---+---+ 
 
     +---+---+---+---+---+---+---+---+  +---+
@@ -700,6 +719,60 @@ using the, indeed much more comfortable, RGB notation.
     |   |   |   |   |   |   |   |   |  |8/8|  8
     +---+---+---+---+---+---+---+---+  +---+
 
+
+---
+## Button and LED codes, Launchpad "Mk2" (RGB LEDs)
+
+### RAW mode
+
+    +---+---+---+---+---+---+---+---+ 
+    |104|   |106|   |   |   |   |111|
+    +---+---+---+---+---+---+---+---+ 
+    
+    +---+---+---+---+---+---+---+---+  +---+
+    | 81|   |   |   |   |   |   |   |  | 89|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 71|   |   |   |   |   |   |   |  | 79|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 61|   |   |   |   |   | 67|   |  | 69|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 51|   |   |   |   |   |   |   |  | 59|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 41|   |   |   |   |   |   |   |  | 49|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 31|   |   |   |   |   |   |   |  | 39|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 21|   | 23|   |   |   |   |   |  | 29|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 11|   |   |   |   |   |   |   |  | 19|
+    +---+---+---+---+---+---+---+---+  +---+
+    
+
+### X/Y mode
+
+      0   1   2   3   4   5   6   7      8   
+    +---+---+---+---+---+---+---+---+ 
+    |0/0|   |2/0|   |   |   |   |   |         0
+    +---+---+---+---+---+---+---+---+ 
+     
+    +---+---+---+---+---+---+---+---+  +---+
+    |0/1|   |   |   |   |   |   |   |  |   |  1
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  2
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |5/3|   |   |  |   |  3
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  4
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  5
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |4/6|   |   |   |  |   |  6
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  7
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |8/8|  8
+    +---+---+---+---+---+---+---+---+  +---+
+    
 
 ---
 ## Button and LED codes, Launchpad "Pro" (RGB LEDs)

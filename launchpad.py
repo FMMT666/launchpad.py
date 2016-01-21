@@ -1128,11 +1128,8 @@ class LaunchpadMk2( LaunchpadPro ):
 		x = max( x, 0 )
 		y = min( y, 8 )
 		y = max( y, 0 )
-		
-		# rotate matrix to the right, column 9 overflows from right to left, same row
-#		if mode != "pro":
-#			x = ( x + 1 ) % 10
 
+		# top row (round buttons)
 		if y == 0:
 			led = 104 + x
 		else:
