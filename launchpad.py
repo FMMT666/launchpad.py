@@ -7,10 +7,12 @@
 # www.askrprojects.net
 #
 #
-# 2016/01/17:
+# 2016/01/XX:
 #  - basic Launchpad Pro support now built in; working on more...
 #  - added RGB LED control
 #  - added X/Y LED control (RGB and colorcode)
+#  - added a lot more stuff for "Pro"
+#  - added "Mk2" support (new class)
 #
 # 2016/01/16:
 #  - preparations for Launchpad Pro support (new base class)
@@ -227,13 +229,13 @@ class Midi:
 
 	
 	#-------------------------------------------------------------------------------------
-	#-- Sends a single system-exclusive message.
+	#-- Sends a single system-exclusive message, given by list <lstMessage>
 	#-- The start (0xF0) and end bytes (0xF7) are added automatically.
 	#-- [ <dat1>, <dat2>, ..., <datN> ]
 	#-- Timestamp is not supported and will be sent as '0' (for now)
 	#-------------------------------------------------------------------------------------
-	def RawWriteSysEx( self, msgTable, timeStamp = 0 ):
-		self.devOut.write_sys_ex( timeStamp, [0xf0] + msgTable + [0xf7] )
+	def RawWriteSysEx( self, lstMessage, timeStamp = 0 ):
+		self.devOut.write_sys_ex( timeStamp, [0xf0] + lstMessage + [0xf7] )
 
 
 	########################################################################################
@@ -658,7 +660,7 @@ class Launchpad( LaunchpadBase ):
 ########################################################################################
 ### CLASS LaunchpadPro
 ###
-### For 3-color Launchpads with 8x8 matrix and 4x8 left/right/top/bottom rows
+### For 3-color "Pro" Launchpads with 8x8 matrix and 4x8 left/right/top/bottom rows
 ########################################################################################
 
 class LaunchpadPro( LaunchpadBase ):
@@ -759,6 +761,31 @@ class LaunchpadPro( LaunchpadBase ):
 	#
 	
 	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the button layout (and codes) to the set, specified by <mode>.
+	#-- Valid options:
+	#--  00 - Session, 01 - Drum Rack, 02 - Chromatic Note, 03 - User (Drum)
+	#--  04 - Audio, 05 -Fader, 06 - Record Arm, 07 - Track Select, 08 - Mute
+	#--  09 - Solo, 0A - Volume 
+	#-- Until now, we'll need the "Session" (0x00) settings.
+	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
+	def LedSetLayout( self, mode ):
+		mode = min( mode, 0x0A )
+		mode = max( mode, 0 )
+		
+		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 34, mode ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the button layout to "Session" mode.
+	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
+	def LedSetButtonLayoutSession( self ):
+		self.LedSetLayout( 0 )
+
 
 	#-------------------------------------------------------------------------------------
 	#-- Returns an RGB colorcode by trying to find a color of a name given by string <name>.
@@ -990,9 +1017,138 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 ########################################################################################
+### CLASS LaunchpadMk2
+###
+### For 3-color "Mk2" Launchpads with 8x8 matrix and 2x8 right/top rows
+########################################################################################
+
+class LaunchpadMk2( LaunchpadPro ):
+
+	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
+	# WITH LAUNCHPAD IN "LIVE MODE" (PRESS SETUP, top-left GREEN).
+	#
+	# Notice that the fine manual doesn't know that mode.
+	# According to what's written there, the numbering used
+	# refers to the "PROGRAMMING MODE", which actually does
+	# not react to any of those notes (or numbers).
+	#
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |104|   |106|   |   |   |   |111|
+	#        +---+---+---+---+---+---+---+---+ 
+	#         
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 81|   |   |   |   |   |   |   |  | 89|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 71|   |   |   |   |   |   |   |  | 79|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 61|   |   |   |   |   | 67|   |  | 69|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 51|   |   |   |   |   |   |   |  | 59|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 41|   |   |   |   |   |   |   |  | 49|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 31|   |   |   |   |   |   |   |  | 39|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 21|   | 23|   |   |   |   |   |  | 29|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        | 11|   |   |   |   |   |   |   |  | 19|
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#       
+	#
+	#
+	# LED AND BUTTON NUMBERS IN XY MODE (X/Y)
+	#
+	#          0   1   2   3   4   5   6   7      8   
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |0/0|   |2/0|   |   |   |   |   |         0
+	#        +---+---+---+---+---+---+---+---+ 
+	#         
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |0/1|   |   |   |   |   |   |   |  |   |  1
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |   |   |   |   |   |   |   |   |  |   |  2
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |   |   |   |   |   |5/3|   |   |  |   |  3
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |   |   |   |   |   |   |   |   |  |   |  4
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |   |   |   |   |   |   |   |   |  |   |  5
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |   |   |   |   |4/6|   |   |   |  |   |  6
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |   |   |   |   |   |   |   |   |  |   |  7
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#        |   |   |   |   |   |   |   |   |  |8/8|  8
+	#        +---+---+---+---+---+---+---+---+  +---+
+	#       
+	
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its position <number> and a color, specified by
+	#-- <red>, <green> and <blue> intensities, with can each be an integer between 0..63.
+	#-- If <blue> is omitted, this methos runs in "Classic" compatibility mode and the
+	#-- intensities, which were within 0..3 in that mode, are multiplied by 21 (0..63)
+	#-- to emulate the old brightness feeling :)
+	#-- Notice that each message requires 10 bytes to be sent. For a faster, but
+	#-- unfortunately "not-RGB" method, see "LedCtrlRawByCode()"
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def LedCtrlRaw( self, number, red, green, blue = None ):
+
+		number = min( number, 111 )
+		number = max( number, 0 )
+
+		if number > 89 and number < 104:
+			return
+
+		if blue is None:
+			blue   = 0
+			red   *= 21
+			green *= 21
+			
+		red = min( red, 63 )
+		red = max( red, 0 )
+		green = min( green, 63 )
+		green = max( green, 0 )
+		blue = min( blue, 63 )
+		blue = max( blue, 0 )
+
+		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its coordinates <x>, <y> and <reg>, <green> and <blue>
+	#-- intensity values.
+	#-- This method internally uses "LedCtrlRaw()".
+	#-- Please also notice the comments in that one.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def LedCtrlXY( self, x, y, red, green, blue = None ):
+		x = min( x, 8 )
+		x = max( x, 0 )
+		y = min( y, 8 )
+		y = max( y, 0 )
+		
+		# rotate matrix to the right, column 9 overflows from right to left, same row
+#		if mode != "pro":
+#			x = ( x + 1 ) % 10
+
+		if y == 0:
+			led = 104 + x
+		else:
+			# swap y
+			led = 91-(10*y) + x
+		
+		self.LedCtrlRaw( led, red, green, blue )
+
+
+
+########################################################################################
 ########################################################################################
 ########################################################################################
 def main():
+
+	# THIS SHOULD ALL BE REWRITTEN...
 
 	LP = Launchpad()
 
@@ -1001,16 +1157,22 @@ def main():
 	
 	# Check if there's a Pro attached.
 	# If yes, just loop in here and never return...
-	if LP.Check( 0, "Pro" ):
-		print("--------------------------------------------------")
-		print("Launchpad Pro found")
-		print(">>> Make sure the device is in 'LIVE' mode!")
-		print(">>> Push 'Setup' + top left matrix button.")
-		lp = LaunchpadPro()
-		lp.Open(0,"Pro")
+	if LP.Check( 0, "Pro" ) or LP.Check( 0, "MK2" ):
+		# lol :-)
+		if LP.Check( 0, "Pro" ):
+			print("--------------------------------------------------")
+			print("Launchpad Pro found")
+			print(">>> Make sure the device is in 'LIVE' mode!")
+			print(">>> Push 'Setup' + top left matrix button.")
+			lp = LaunchpadPro()
+			lp.Open(0,"Pro")
+		else:
+			print("--------------------------------------------------")
+			print("Launchpad Mk2 found")
+			lp = LaunchpadMk2()
+			lp.Open(0,"MK2")
 		
 		lp.LedCtrlString( '*burp*', 63, 0, 63, direction = -1, waitms = 50 )
-		
 		
 		color = 0
 		led = 0
@@ -1020,7 +1182,7 @@ def main():
 			led+=1
 			if color > 128:
 				color = 0
-			if led > 98:
+			if led > 111:
 				led = 1
 			
 

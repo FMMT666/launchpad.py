@@ -18,7 +18,7 @@ Older Launchpads might be documented [here][10].
 
 ### CHANGES 2016/01/XX:
 
-    - Support for Launchpad Pro now build in (only a few functions, so far).
+    - Support for Launchpad Pro now built in (only a few functions, so far).
       Please notice the new class for the Pro:
         lp_pro = LaunchpadPro()
       Except for a few, low level functions (e.g. "LedCtrlRaw()"), this and
@@ -30,6 +30,9 @@ Older Launchpads might be documented [here][10].
     - added Pro X/Y LED control for RGB and color code mode
     - added Pro character display incl. left/right shift
     - added Pro string scrolling
+    - Support for Launchpad Mk2 now built in
+      Please notice the new class for the Mk2:
+        lp_pro = LaunchpadMk2()
 
 ### CHANGES 2016/01/10:
 
@@ -58,7 +61,9 @@ Older Launchpads might be documented [here][10].
 ## Upcoming attractions, notes and thoughs
 
   - missing "Pro" functions, buttons, etc...
-  - own classes for the other Launchpad models
+  - missing "Mk2" functions, check compatibility
+  - maybe "Mk2" should be the base class for the "Pro" and not the other way round?
+  - device search string should be case insensitive
   - better event system
   - custom bitmaps and graphics
   - better custom font support
@@ -122,10 +127,11 @@ Supported and tested red/green LED Launchpad devices, here referred  to as "Clas
   - Launchpad (the original, old "MK1")
   - Launchpad S
   - Launchpad Mini (MK1)
-  
+
 Supported and tested full RGB Launchpad devices:
   
   - Launchpad Pro
+  - Launchpad Mk2
 
 Notice that Novation now (1/2016) sells an RGB Launchpad under the same
 name it once shipped the first red/green LED with!
@@ -134,13 +140,31 @@ name it once shipped the first red/green LED with!
 ---
 ## Notes (from the source)
 
+### For Launchpad Mk1 users (the original "Classic" Launchpad):
+
+      USE CLASS "Launchpad":
+      
+        lp = launchpad.Launchpad()
+
 ### For Launchpad Pro users
+
+      USE CLASS "LaunchpadPro":
+      
+        lp = launchpad.LaunchpadPro()
 
       MAKE SURE THE LAUNCHPAD PRO IS IN LIVE MODE!
       To enter live mode, hold the SETUP bottom on the top left and
       push the top left matrix button ('green' in setup-mode ).
       
       IT WON'T WORK IN OTHER MODES (Note, Fader, Drums or Programming).
+
+      That will soon be automated...
+
+### For Launchpad Mk2 users
+
+      USE CLASS "LaunchpadMk2":
+      
+        lp = launchpad.LaunchpadMk2()
 
 ### For Windows users
 
@@ -162,7 +186,7 @@ name it once shipped the first red/green LED with!
 
 
 ---
-## Common Launchpad class methods overview (valid for all devices)
+## Common Launchpad Mk1 ("Classic") class methods overview (valid for all devices)
 
 ### Device control functions
 
@@ -177,7 +201,7 @@ name it once shipped the first red/green LED with!
     
     
 ---
-## Launchpad "Classic" class methods overview (valid for green/red LED devices)
+## Launchpad Mk1 "Classic" class methods overview (valid for green/red LED devices)
 
 ### LED functions
 
@@ -230,7 +254,7 @@ using the, indeed much more comfortable, RGB notation.
 
     Opens the a Launchpad and initializes it.  
     Please notice that some devices have up to six MIDI entries!.
-    A dump by ListAll(), with a "Pro" and a MK1 "Mini" might look like:
+    A dump by ListAll(), with a "Pro", a MK1 "Mini" and a "MK2" might look like:
     
         ('ALSA', 'Midi Through Port-0', 0, 1, 0)
         ('ALSA', 'Midi Through Port-0', 1, 0, 0)
@@ -242,8 +266,10 @@ using the, indeed much more comfortable, RGB notation.
         ('ALSA', 'Launchpad Pro MIDI 3', 1, 0, 0)
         ('ALSA', 'Launchpad Mini MIDI 1', 0, 1, 0)
         ('ALSA', 'Launchpad Mini MIDI 1', 1, 0, 0)
-    
-    You'll (usually) only need the first entry of each device.
+        ('ALSA', 'Launchpad MK2 MIDI 1', 0, 1, 0)
+        ('ALSA', 'Launchpad MK2 MIDI 1', 1, 0, 0)
+
+    You'll (usually) only need to care about the first entry of each device.
     
     
       PARAMS: <number> OPTIONAL, number of Launchpad to open.
