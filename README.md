@@ -48,6 +48,8 @@ What's hot, what's not?
     - Support for Launchpad Mk2 now built in
       Please notice the new class for the Mk2:
         lp_pro = LaunchpadMk2()
+    - classes for "Pro" and "Mk2" now with default names for Open() and Check();
+
 
 ### CHANGES 2016/01/10:
 
@@ -284,20 +286,27 @@ using the, indeed much more comfortable, RGB notation.
         ('ALSA', 'Launchpad MK2 MIDI 1', 0, 1, 0)
         ('ALSA', 'Launchpad MK2 MIDI 1', 1, 0, 0)
 
-    You'll (usually) only need to care about the first entry of each device.
-    
+    You'll only need to count the entries if you have two or more identical Launchpads attached.
     
       PARAMS: <number> OPTIONAL, number of Launchpad to open.
                        1st device = 0, 2nd device = 1, ...
                        Defaults to 0, the 1st device, if not given.
               <name>   OPTIONAL, only consider devices whose names contain
-                       the string <name>. Defaults to "Launchpad".
+                       the string <name>. The default names for the classes are:
+                         Launchpad()     -> "Launchpad"
+                         LaunchpadMk2()  -> "MK2"
+                         LaunchpadPro()  -> "Pro"
                        It is sufficient to search for a part of the string, e.g.
                        "chpad S" will find a device named "Launchpad S" or even
                        "Novation Launchpad S"
 
       RETURN: True     success
               False    error
+
+    Notice that the default name for the class Launchpad(), the "Mk1" or "Classic" Launchpads,
+    will also react to an attached "Pro" or "Mk2" model. In that case, it's required to either
+    enter the complete name (as shown by "ListAll()").
+
 
       EXAMPLES:
               # Open the first device attached:
@@ -311,6 +320,14 @@ using the, indeed much more comfortable, RGB notation.
               
               # alternative:
               lp.Open( name = "Launchpad Mini", number = 0)
+              
+              # open the 1st "Mk2"
+              lp = launchpad.LaunchpadMk2()  # notice the "Mk2" class!
+              lp.Open()                      # equals Open( 0, "MK2" )
+              
+              # open the 1st "Pro"
+              lp = launchpad.LaunchpadPro()  # notice the "Pro" class!
+              lp.Open()                      # equals Open( 0, "Pro" )
 
 
 ### Check( [number], [name] )
@@ -318,6 +335,19 @@ using the, indeed much more comfortable, RGB notation.
     Checks if a device is attached.
     Uses exactly the same notation as Open(), but only returns True or False,
     without opening anything.
+    
+    Like Open(), this method uses different default names for the different classes:
+      Launchpad()     -> "Launchpad"
+      LaunchpadMk2()  -> "MK2"
+      LaunchpadPro()  -> "Pro"
+      
+    Notice that it's absolutely safe to query for an "Pro" or "Mk2" from all classes, e.g.:
+    
+      lp = lauchpad.Launchpad()        # Launchpad "Mk1" or "Classic" class
+      if lp.Check( 0, "Pro" ):         # check for "Pro"
+		lp = launchpad.LaunchpadPro()  # "reload" the new class for the "Pro"
+		lp.Open()                      # equals lp.Open( 0, "Pro" )
+      
     
       PARAMS: see Open()
       

@@ -312,7 +312,7 @@ class Midi:
 ###
 ### Todo: Could be abstract, but "abc" and "ABCMeta" are somehow a PITA...
 ########################################################################################
-class LaunchpadBase:
+class LaunchpadBase( object ):
 
 	def __init__( self ):
 		self.midi   = Midi() # midi interface instance (singleton)
@@ -441,8 +441,7 @@ class Launchpad( LaunchpadBase ):
 
 	#-------------------------------------------------------------------------------------
 	#-- reset the Launchpad
-	#-- REFAC2015: This is device specific and should be handled in a more basic
-	#--            virtual/interface type class.
+	#-- Turns off all LEDs
 	#-------------------------------------------------------------------------------------
 	def Reset( self ):
 		self.midi.RawWrite( 176, 0, 0 )
@@ -556,10 +555,14 @@ class Launchpad( LaunchpadBase ):
 
 	#-------------------------------------------------------------------------------------
 	#-- all LEDs on
-	#-- REFAC2015: Device specific.
+	#-- <colorcode> is here for backwards compatibility with the newer "Mk2" and "Pro"
+	#-- classes. If it's "0", all LEDs are turned off and on otherwise.
 	#-------------------------------------------------------------------------------------
-	def LedAllOn( self ):
-		self.midi.RawWrite( 176, 0, 127 )
+	def LedAllOn( self, colorcode = None ):
+		if colorcode == 0:
+			self.midi.RawWrite( 176, 0, 127 )
+		else:
+			self.Reset()
 
 		
 	#-------------------------------------------------------------------------------------
@@ -761,6 +764,24 @@ class LaunchpadPro( LaunchpadBase ):
 	#
 	
 	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-- Uses search string "Pro", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Open( self, number = 0, name = "Pro" ):
+		return super( LaunchpadPro, self ).Open( number = number, name = name );
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "Pro", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "Pro" ):
+		return super( LaunchpadPro, self ).Check( number = number, name = name );
 
 
 	#-------------------------------------------------------------------------------------
@@ -1022,7 +1043,7 @@ class LaunchpadPro( LaunchpadBase ):
 ### For 3-color "Mk2" Launchpads with 8x8 matrix and 2x8 right/top rows
 ########################################################################################
 
-class LaunchpadMk2( LaunchpadPro ):
+class LaunchpadMk2( Launchpad ):
 
 	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
 	# WITH LAUNCHPAD IN "LIVE MODE" (PRESS SETUP, top-left GREEN).
@@ -1081,6 +1102,25 @@ class LaunchpadMk2( LaunchpadPro ):
 	#        |   |   |   |   |   |   |   |   |  |8/8|  8
 	#        +---+---+---+---+---+---+---+---+  +---+
 	#       
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-- Uses search string "MK2", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def Open( self, number = 0, name = "MK2" ):
+		return super( LaunchpadMk2, self ).Open( number = number, name = name );
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "MK2", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def Check( self, number = 0, name = "MK2" ):
+		return super( LaunchpadMk2, self ).Check( number = number, name = name );
 	
 
 	#-------------------------------------------------------------------------------------
