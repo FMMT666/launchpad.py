@@ -1043,7 +1043,7 @@ class LaunchpadPro( LaunchpadBase ):
 ### For 3-color "Mk2" Launchpads with 8x8 matrix and 2x8 right/top rows
 ########################################################################################
 
-class LaunchpadMk2( Launchpad ):
+class LaunchpadMk2( LaunchpadPro ):
 
 	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
 	# WITH LAUNCHPAD IN "LIVE MODE" (PRESS SETUP, top-left GREEN).
