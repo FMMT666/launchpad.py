@@ -771,7 +771,11 @@ class LaunchpadPro( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
 	def Open( self, number = 0, name = "Pro" ):
-		return super( LaunchpadPro, self ).Open( number = number, name = name );
+		retval = super( LaunchpadPro, self ).Open( number = number, name = name )
+		if retval == True:
+			self.LedSetMode( 0 )
+
+		return retval
 
 
 	#-------------------------------------------------------------------------------------
@@ -781,7 +785,7 @@ class LaunchpadPro( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
 	def Check( self, number = 0, name = "Pro" ):
-		return super( LaunchpadPro, self ).Check( number = number, name = name );
+		return super( LaunchpadPro, self ).Check( number = number, name = name )
 
 
 	#-------------------------------------------------------------------------------------
@@ -798,6 +802,18 @@ class LaunchpadPro( LaunchpadBase ):
 		mode = max( mode, 0 )
 		
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 34, mode ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Selects the Pro's mode.
+	#-- <mode> -> 0 -> "Ableton Live mode"  (what we need)
+	#--           1 -> "Standalone mode"    (power up default)
+	#-------------------------------------------------------------------------------------
+	def LedSetMode( self, mode ):
+		if mode < 0 or mode > 1:
+			return
+			
+		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 33, mode ] )
 
 
 	#-------------------------------------------------------------------------------------

@@ -49,6 +49,8 @@ What's hot, what's not?
       Please notice the new class for the Mk2:
         lp_pro = LaunchpadMk2()
     - classes for "Pro" and "Mk2" now with default names for Open() and Check();
+    - "Pro" now automatically put in "Ableton Live mode" after opening it.
+      No need to push "Setup - Live" button anymore.
 
 
 ### CHANGES 2016/01/10:
@@ -532,7 +534,18 @@ using the, indeed much more comfortable, RGB notation.
 
 
 ---
-## Detailed description of Launchpad "Pro" and "Mk2" only methods
+## Detailed description of Launchpad "Pro" or "Mk2" only methods
+
+### LedSetMode( mode ) *>>> PRO ONLY <<<*
+
+    Sets the Launchpad's mode.
+    For proper operation with launchpad.py, the "Pro" must be set to "Ableton Live" mode.
+    There is no need to call this method as it is automatically executed within Open().
+
+      PARAMS: <mode>   0 selects "Ableton Live mode" (what we need)
+                       1 selects "Standalone mode"   (power-up default)
+      RETURN:
+
 
 ### LedGetColorByName( name )
 
