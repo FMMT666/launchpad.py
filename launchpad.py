@@ -936,6 +936,7 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- New approach to color arguments.
 	#-- <lstColor> list of length 3 with RGB color information, [<r>,<g>,<b>]
 	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
 	def LedCtrlXYByRGB( self, x, y, lstColor, mode = "classic" ):
 		if type( lstColor ) is not list:
 			return

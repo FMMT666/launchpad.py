@@ -23,7 +23,7 @@ What's hot, what's not?
     Launchpad/S     - class "Launchpad()"     all features; LEDs and buttons
     Launchpad Mini  - class "Launchpad()"     all features; LEDs and buttons
 
-    Launchpad Mk2   - class "LaunchpadMk2()"  alpha;        LEDs
+    Launchpad Mk2   - class "LaunchpadMk2()"  prepared;     LEDs
 
     Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs
 
@@ -101,7 +101,7 @@ The "distribution" consists of:
   - launchpad_demo.py
 
 You only need the first two files.
-"launchpad.py" as well as "launchpad_demo.py" contain demo code.
+Both, "launchpad.py" as well as "launchpad_demo.py" contain demo code.
 
 
 ---
@@ -170,14 +170,9 @@ name it once shipped the first red/green LED with!
       USE CLASS "LaunchpadPro":
       
         lp = launchpad.LaunchpadPro()
-
-      MAKE SURE THE LAUNCHPAD PRO IS IN LIVE MODE!
-      To enter live mode, hold the SETUP bottom on the top left and
-      push the top left matrix button ('green' in setup-mode ).
-      
-      IT WON'T WORK IN OTHER MODES (Note, Fader, Drums or Programming).
-
-      That will soon be automated...
+        
+      As of 2016/01/24, the "Pro" is now automatically set to "Ableton Live mode",
+      which is required for launchpad.py to work.
 
 ### For Launchpad Mk2 users
 
@@ -194,7 +189,7 @@ name it once shipped the first red/green LED with!
 
 ### For Linux and especially Raspberry-Pi users:
 
-      Due to some bugs in PyGame's MIDI implementation, the buttons of the Launchpad
+      Due to some bugs in PyGame's MIDI implementation, the buttons of the Launchpad Mk1
       won't work after you restarted a program (LEDs are not affected).
 
       WORKAROUND #2: Simply hit one of the AUTOMAP keys (the topmost 8 buttons).
@@ -245,11 +240,14 @@ name it once shipped the first red/green LED with!
 
 ### LED functions
 
+    LedSetMode( mode )
     LedGetColorByName( name )
     LedCtrlRaw( number, red, gree, [blue] )
     LedCtrlRawByCode( number, [colorcode] )
     LedCtrlXY( x, y, red, green, [blue] )
     LedCtrlXYByCode( x, y, colorcode )
+    LedCtrlChar( char, red, green, [blue], [offsx], [offsy] )
+    LedCtrlString( string, red, green, [blue], [direction], [waitms] )
     LedAllOn( [colorcode] )
     
     work in progress...
