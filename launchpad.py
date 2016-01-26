@@ -450,7 +450,6 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- Returns a Launchpad compatible "color code byte"
 	#-- NOTE: In here, number is 0..7 (left..right)
-	#-- REFAC2015: Probably device specific.
 	#-------------------------------------------------------------------------------------
 	def LedGetColor( self, red, green ):
 		led = 0
@@ -470,19 +469,18 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- Controls a grid LED by its raw <number>; with <green/red> brightness: 0..3
 	#-- For LED numbers, see grid description on top of class.
-	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def LedCtrlRaw( self, number, red, green ):
 
 		if number > 199:
-			self.LedCtrlAutomap( number - 200, red, green )
-
+			if number < 208:
+				# 200-207
+				self.LedCtrlAutomap( number - 200, red, green )
 		else:
-			number = min( int(number), 120 ) # make int and limit to <=127
-			number = max( number, 0 )        # no negative numbers
-				
+			if number < 0 or number > 120:
+				return
+			# 0-120
 			led = self.LedGetColor( red, green )
-			
 			self.midi.RawWrite( 144, number, led )
 
 
@@ -541,13 +539,13 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- Controls an automap LED <number>; with <green/red> brightness: 0..3
 	#-- NOTE: In here, number is 0..7 (left..right)
-	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def LedCtrlAutomap( self, number, red, green ):
 
-		number = min( int(number), 7 ) # make int and limit to <=7
-		number = max( number, 0 )      # minimum is 104
-		
+		if number < 0 or number > 7:
+			return
+
+		# TODO: limit red/green
 		led = self.LedGetColor( red, green )
 		
 		self.midi.RawWrite( 176, 104 + number, led )
@@ -556,13 +554,14 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- all LEDs on
 	#-- <colorcode> is here for backwards compatibility with the newer "Mk2" and "Pro"
-	#-- classes. If it's "0", all LEDs are turned off, instead on.
+	#-- classes. If it's "0", all LEDs are turned off. In all other cases turned on,
+	#-- like the function name implies :-/
 	#-------------------------------------------------------------------------------------
 	def LedAllOn( self, colorcode = None ):
 		if colorcode == 0:
-			self.midi.RawWrite( 176, 0, 127 )
-		else:
 			self.Reset()
+		else:
+			self.midi.RawWrite( 176, 0, 127 )
 
 		
 	#-------------------------------------------------------------------------------------
@@ -571,8 +570,10 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	def LedCtrlChar( self, char, red, green, offsx = 0, offsy = 0 ):
 		char = ord( char )
-		char = min( char, 255)
-		char = max( char, 0) * 8
+		
+		if char < 0 or char > 255:
+			return
+		char *= 8
 
 		for i in range(0, 8*16, 16):
 			for j in range(8):

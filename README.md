@@ -23,7 +23,7 @@ What's hot, what's not?
     Launchpad/S     - class "Launchpad()"     all features; LEDs and buttons
     Launchpad Mini  - class "Launchpad()"     all features; LEDs and buttons
 
-    Launchpad Mk2   - class "LaunchpadMk2()"  prepared;     LEDs
+    Launchpad Mk2   - class "LaunchpadMk2()"  growing;      LEDs
 
     Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs
 
