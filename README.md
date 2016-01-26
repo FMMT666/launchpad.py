@@ -51,6 +51,7 @@ What's hot, what's not?
     - classes for "Pro" and "Mk2" now with default names for Open() and Check();
     - "Pro" now automatically put in "Ableton Live mode" after opening it.
       No need to push "Setup - Live" button anymore.
+    - added Mk2 LedCtrlRawByCode() and LedCtrlXYByCode()
 
 
 ### CHANGES 2016/01/10:
@@ -624,6 +625,7 @@ using the, indeed much more comfortable, RGB notation.
               <red>    red   LED intensity 0..63 (or 0..3 in "Classic" mode)
               <green>  green LED intensity 0..63 (or 0..3 in "Classic" mode)
               <blue>   blue  LED intensity 0..63 (omit  for  "Classic" mode)
+              <mode>   OPTIONAL: "Classic" selects old x/y origin  >>> PRO ONLY <<<
       RETURN:
 
 
@@ -637,6 +639,7 @@ using the, indeed much more comfortable, RGB notation.
       PARAMS: <x>          x coordinate of the LED to control
               <y>          y coordinate of the LED to control
               <colorcode>  a number from 0..127
+              <mode>       OPTIONAL: "Classic" selects old x/y origin >>> PRO ONLY <<<
       RETURN:
 
 

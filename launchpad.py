@@ -556,7 +556,7 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- all LEDs on
 	#-- <colorcode> is here for backwards compatibility with the newer "Mk2" and "Pro"
-	#-- classes. If it's "0", all LEDs are turned off and on otherwise.
+	#-- classes. If it's "0", all LEDs are turned off, instead on.
 	#-------------------------------------------------------------------------------------
 	def LedAllOn( self, colorcode = None ):
 		if colorcode == 0:
@@ -879,6 +879,7 @@ class LaunchpadPro( LaunchpadBase ):
 		number = min( number, 99 )
 		number = max( number, 0 )
 
+		# TODO: limit/check colorcode
 		if colorcode is None:
 			colorcode = LaunchpadPro.COLORS['white']
 
@@ -914,6 +915,7 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- By default, the old and compatible "Classic" mode is used (8x8 matrix left has x=0).
 	#-- If <mode> is set to "pro", x=0 will light up the round buttons on the left of the
 	#-- Launchpad Pro (not available on other models).
+	#-- About three times faster than the SysEx RGB method LedCtrlXY().
 	#-------------------------------------------------------------------------------------
 	def LedCtrlXYByCode( self, x, y, colorcode, mode = "classic" ):
 		x = min( x, 9 )
@@ -1063,7 +1065,6 @@ class LaunchpadPro( LaunchpadBase ):
 class LaunchpadMk2( LaunchpadPro ):
 
 	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
-	# WITH LAUNCHPAD IN "LIVE MODE" (PRESS SETUP, top-left GREEN).
 	#
 	# Notice that the fine manual doesn't know that mode.
 	# According to what's written there, the numbering used
@@ -1174,6 +1175,32 @@ class LaunchpadMk2( LaunchpadPro ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its position <number> and a color code <colorcode>
+	#-- from the Launchpad's color palette.
+	#-- If <colorcode> is omitted, 'white' is used.
+	#-- This method should be ~3 times faster that the RGB version "LedCtrlRaw()", which
+	#-- uses 10 byte, system-exclusive MIDI messages.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def LedCtrlRawByCode( self, number, colorcode = None ):
+
+		number = min( number, 111 )
+		number = max( number, 0 )
+
+		if number > 89 and number < 104:
+			return
+
+		# TODO: limit/check colorcode
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+
+		if number < 104:
+			self.midi.RawWrite( 144, number, colorcode )
+		else:
+			self.midi.RawWrite( 176, number, colorcode )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Controls a grid LED by its coordinates <x>, <y> and <reg>, <green> and <blue>
 	#-- intensity values.
 	#-- This method internally uses "LedCtrlRaw()".
@@ -1194,6 +1221,28 @@ class LaunchpadMk2( LaunchpadPro ):
 			led = 91-(10*y) + x
 		
 		self.LedCtrlRaw( led, red, green, blue )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its coordinates <x>, <y> and its <colorcode>.
+	#-- About three times faster than the, indeed much more comfortable RGB version
+	#-- "LedCtrlXY()"
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def LedCtrlXYByCode( self, x, y, colorcode ):
+		x = min( x, 8 )
+		x = max( x, 0 )
+		y = min( y, 8 )
+		y = max( y, 0 )
+
+		# top row (round buttons)
+		if y == 0:
+			led = 104 + x
+		else:
+			# swap y
+			led = 91-(10*y) + x
+		
+		self.LedCtrlRawByCode( led, colorcode )
 
 
 
