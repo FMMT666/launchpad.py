@@ -848,8 +848,8 @@ class LaunchpadPro( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	def LedCtrlRaw( self, number, red, green, blue = None ):
 
-		number = min( number, 99 )
-		number = max( number, 0 )
+		if number < 0 or number > 99:
+			return
 
 		if blue is None:
 			blue   = 0
@@ -875,8 +875,8 @@ class LaunchpadPro( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	def LedCtrlRawByCode( self, number, colorcode = None ):
 
-		number = min( number, 99 )
-		number = max( number, 0 )
+		if number < 0 or number > 99:
+			return
 
 		# TODO: limit/check colorcode
 		if colorcode is None:
@@ -894,10 +894,9 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- in that one.
 	#-------------------------------------------------------------------------------------
 	def LedCtrlXY( self, x, y, red, green, blue = None, mode = "classic" ):
-		x = min( x, 9 )
-		x = max( x, 0 )
-		y = min( y, 9 )
-		y = max( y, 0 )
+
+		if x < 0 or x > 9 or y < 0 or y > 9:
+			return
 		
 		# rotate matrix to the right, column 9 overflows from right to left, same row
 		if mode != "pro":
@@ -917,10 +916,9 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- About three times faster than the SysEx RGB method LedCtrlXY().
 	#-------------------------------------------------------------------------------------
 	def LedCtrlXYByCode( self, x, y, colorcode, mode = "classic" ):
-		x = min( x, 9 )
-		x = max( x, 0 )
-		y = min( y, 9 )
-		y = max( y, 0 )
+
+		if x < 0 or x > 9 or y < 0 or y > 9:
+			return
 		
 		# rotate matrix to the right, column 9 overflows from right to left, same row
 		if mode != "pro":
@@ -939,13 +937,12 @@ class LaunchpadPro( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	# TODO: ASkr, Undocumented!
 	def LedCtrlXYByRGB( self, x, y, lstColor, mode = "classic" ):
+
 		if type( lstColor ) is not list:
 			return
-			
-		x = min( x, 9 )
-		x = max( x, 0 )
-		y = min( y, 9 )
-		y = max( y, 0 )
+
+		if x < 0 or x > 9 or y < 0 or y > 9:
+			return
 		
 		# rotate matrix to the right, column 9 overflows from right to left, same row
 		if mode != "pro":
