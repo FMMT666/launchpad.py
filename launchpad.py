@@ -178,8 +178,8 @@ class Midi:
 	def OpenInput( self, midi_id, bufferSize = None ):
 		if self.devIn is None:
 			try:
-				# TODO: Omitting the buffer size seems to fix some input problems...
-				#       Needs checks...
+				# TODO: Omitting the buffer size seems to fix some input problems,
+				#       but needs checks whether input events could get lost...
 				if bufferSize is None:
 					self.devIn = midi.Input( midi_id )
 				else:
@@ -1067,7 +1067,6 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
 	#-------------------------------------------------------------------------------------
-	# TODO: ASkr, Undocumented!
 	def ButtonStateRaw( self ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()

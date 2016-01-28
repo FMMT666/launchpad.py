@@ -52,6 +52,7 @@ What's hot, what's not?
     - "Pro" now automatically put in "Ableton Live mode" after opening it.
       No need to push "Setup - Live" button anymore.
     - added Mk2 LedCtrlRawByCode() and LedCtrlXYByCode()
+    - added Pro ButtonStateRaw(); first *damn fast* button reads \o/
 
 
 ### CHANGES 2016/01/10:
@@ -250,10 +251,11 @@ name it once shipped the first red/green LED with!
     LedCtrlChar( char, red, green, [blue], [offsx], [offsy] )
     LedCtrlString( string, red, green, [blue], [direction], [waitms] )
     LedAllOn( [colorcode] )
-    
-    work in progress...
+
 
 ### Button functions
+
+	ButtonStateRaw()
 
     work in progress...
 
@@ -516,7 +518,8 @@ using the, indeed much more comfortable, RGB notation.
     Returns the state of the last occured button event in the queue in RAW mode.
 
       PARAMS:
-      RETURN: [ <button>, <True/False> ] A list with two fields:
+      RETURN: [ ]                        An empty list if no event occured, otherwise...
+              [ <button>, <True/False> ] ... a list with two fields:
               <button> is the RAW button number, the second field determines
               if the button was pressed <True> or released <False>.
 
@@ -526,7 +529,8 @@ using the, indeed much more comfortable, RGB notation.
     Returns the state of the last occured button event in the queue in X/Y mode.
 
       PARAMS:
-      RETURN: [ <x>, <y>, <True/False> ] A list with three fields:
+      RETURN: [ ]                        An empty list if no event occured, otherwise...
+              [ <x>, <y>, <True/False> ] ... a list with three fields:
               <x> is the x coordinate of the button, <y>, guess what, the
               y coordinate. The third field reveals if the button was pressed
               <True> or released <False>.
@@ -709,6 +713,21 @@ using the, indeed much more comfortable, RGB notation.
 
       PARAMS: <colorcode>   OPTIONAL, a number from 0..127
       RETURN:
+
+
+### ButtonStateRaw()
+
+    Returns the state of the last occured button event in the queue in RAW mode.
+    
+    Notice that this is not directly compatible with the "Classic" ButtonStateRaw()
+    method, which returns [ <button>, <True/False> ].
+
+      PARAMS:
+      RETURN: [ ]                    An empty list if no event occured, otherwise...
+              [ <button>, <value> ]  ... a list with two fields:
+              <button> is the button number, the second field, <value> determines
+              the intensity (0..127) with which the button was pressed.
+              0 means that the button was released.
 
 
 ---
