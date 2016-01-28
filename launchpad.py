@@ -115,9 +115,6 @@ from launchpad_charset import *
 
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
 MIDI_BUFFER_IN  = 16   # same here...
-#MIDI_BUFFER_OUT = 1   # TESTING S/MINI
-#MIDI_BUFFER_IN  = 1   # TESTING S/MINI
-
 
 
 ##########################################################################################
@@ -181,7 +178,10 @@ class Midi:
 	def OpenInput( self, midi_id ):
 		if self.devIn is None:
 			try:
-				self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
+				# TODO: Omitting the buffer size seems to fix some input problems...
+				#       Needs checks...
+				#self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
+				self.devIn = midi.Input( midi_id )
 			except:
 				self.devIn = None
 				return False
@@ -796,9 +796,10 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- Until now, we'll need the "Session" (0x00) settings.
 	#-------------------------------------------------------------------------------------
 	# TODO: ASkr, Undocumented!
+	# TODO: return value
 	def LedSetLayout( self, mode ):
-		mode = min( mode, 0x0A )
-		mode = max( mode, 0 )
+		if mode < 0 or mode > 0x0d:
+			return
 		
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 34, mode ] )
 
