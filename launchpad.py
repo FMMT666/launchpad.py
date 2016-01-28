@@ -629,7 +629,6 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- Returns the raw value of the last button change as a list:
 	#-- [ <button>, <True/False> ]
-	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def ButtonStateRaw( self ):
 		if self.midi.ReadCheck():
@@ -642,7 +641,6 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- Returns an x/y value of the last button change as a list:
 	#-- [ <x>, <y>, <True/False> ]
-	#-- REFAC2015: Device specific.
 	#-------------------------------------------------------------------------------------
 	def ButtonStateXY( self ):
 		if self.midi.ReadCheck():
@@ -1054,6 +1052,29 @@ class LaunchpadPro( LaunchpadBase ):
 			colorcode = max( colorcode, 0 )
 		
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 14, colorcode ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change as a list
+	#-- [ <button>, <value> ], in which <button> is the raw number of the button and
+	#-- <value> an intensity value from 0..127.
+	#-- >0 = button pressed; 0 = button released
+	#-- A constant force ("push longer") is suppressed here...
+	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
+	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
+	#-- Compatibility would require checking via "== True" and not "is True".
+	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
+	def ButtonStateRaw( self ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+			
+			if a[0][0][0] == 144 or a[0][0][0] == 176:
+				return [ a[0][0][1], a[0][0][2] ]
+			else:
+				return []
+		else:
+			return []
 
 
 
