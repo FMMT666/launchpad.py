@@ -114,7 +114,7 @@ from launchpad_charset import *
 
 
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
-MIDI_BUFFER_IN  = 16   # same here...
+MIDI_BUFFER_IN  = 16   # same here...; (2016/01 -> not in use by default anymore)
 
 
 ##########################################################################################
@@ -175,13 +175,18 @@ class Midi:
 	#-------------------------------------------------------------------------------------
 	#--
 	#-------------------------------------------------------------------------------------
-	def OpenInput( self, midi_id ):
+	def OpenInput( self, midi_id, bufferSize = None ):
 		if self.devIn is None:
 			try:
 				# TODO: Omitting the buffer size seems to fix some input problems...
 				#       Needs checks...
-				#self.devIn = midi.Input( midi_id, MIDI_BUFFER_IN )
-				self.devIn = midi.Input( midi_id )
+				if bufferSize is None:
+					self.devIn = midi.Input( midi_id )
+				else:
+					# arbitrary randomness...
+					if bufferSize < 0 or bufferSize > 1024:
+						bufferSize = MIDI_BUFFER_IN
+					self.devIn = midi.Input( midi_id, bufferSize )
 			except:
 				self.devIn = None
 				return False
