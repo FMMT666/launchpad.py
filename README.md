@@ -15,7 +15,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2016/01/22:
+## STATUS 2016/02/05:
 
 What's hot, what's not?
 
@@ -23,9 +23,9 @@ What's hot, what's not?
     Launchpad/S     - class "Launchpad()"     all features; LEDs and buttons
     Launchpad Mini  - class "Launchpad()"     all features; LEDs and buttons
 
-    Launchpad Mk2   - class "LaunchpadMk2()"  growing;      LEDs
+    Launchpad Mk2   - class "LaunchpadMk2()"  growing;      LEDs     buttons untested
 
-    Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs
+    Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs and buttons
 
 
 ---
