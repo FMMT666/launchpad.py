@@ -81,8 +81,9 @@ What's hot, what's not?
 ---
 ## Upcoming attractions, notes and thoughts
 
-  - missing "Pro" functions, buttons, etc...
-  - missing "Mk2" functions, check compatibility
+  - find a more platform compatible MIDI lib
+  - some missing "Pro" functions, buttons, etc...
+  - some missing "Mk2" functions, check compatibility
   - maybe "Mk2" should be the base class for the "Pro" and not the other way round?
   - device search string should be case insensitive
   - better event system
@@ -122,8 +123,11 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 ---
 ## Requirements
 
-  - [Python][2]
+  - [Python][2] 2
   - [Pygame][3] v1.9.1
+  
+It does not work with Python 3.  
+Python 3 requires PyGame v1.9.2, which was built without any MIDI functionality.
 
 Launchpad.py was tested under
 
