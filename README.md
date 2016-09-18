@@ -110,7 +110,7 @@ Both, "launchpad.py" as well as "launchpad_demo.py" contain demo code.
 ---
 ## License
 
-[CC BY 4.0, Attribution 4.0 International][6]
+[CC BY 4.0, Attribution 4.0 International][11]
 
 You are free to:
 
@@ -952,3 +952,4 @@ FMMT666(ASkr)
 [8]: https://mtc.cdn.vine.co/r/videos/B02C20F7301181005332596555776_3da8b2c29ec.1.5.3791810774169827111.mp4
 [9]: https://mtc.cdn.vine.co/r/videos/EFB02602EF1300276501647966208_4cce4117438.5.1.10016548273760817556.mp4
 [10]: https://novationmusic.de/launch/launchpad-mk1
+[11]: https://creativecommons.org/licenses/by/4.0/
