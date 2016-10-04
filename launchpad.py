@@ -494,7 +494,7 @@ class Launchpad( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	def LedCtrlXY( self, x, y, red, green ):
 
-		if x < 0 or y > 8 or y < 0 or y > 8:
+		if x < 0 or x > 8 or y < 0 or y > 8:
 			return
 
 		if y == 0:
