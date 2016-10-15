@@ -29,7 +29,8 @@ What's hot, what's not?
 
 
 Bad news. As it seems, the MIDI SysEx messages don't work in Windows 10.  
-As for now, the LEDs can only be controlled by "LedCtrlRawByCode()" and "LedCtrlXYByCode()".
+As for now, the LEDs can only be controlled by "LedCtrlRawByCode()" and "LedCtrlXYByCode()".  
+This only affects Windows 10.
 
 
 ---
