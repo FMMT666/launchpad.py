@@ -15,7 +15,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2016/02/05:
+## STATUS 2016/10/25:
 
 What's hot, what's not?
 
@@ -26,6 +26,10 @@ What's hot, what's not?
     Launchpad Mk2   - class "LaunchpadMk2()"  growing;      LEDs     buttons untested
 
     Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs and buttons
+
+
+Bad news. As it seems, the MIDI SysEx messages don't work in Windows 10.  
+As for now, the LEDs can only be controlled by "LedCtrlRawByCode()" and "LedCtrlXYByCode()".
 
 
 ---
@@ -80,6 +84,10 @@ What's hot, what's not?
 
 ---
 ## Upcoming attractions, notes and thoughts
+
+  More and more reported issues are direcly related to PyGame.  
+  As nice as it was, it has reached its end, so finding a more (platform)
+  compatible lib (that actually works), is prio no. 1 now...
 
   - find a more platform compatible MIDI lib
   - some missing "Pro" functions, buttons, etc...
@@ -139,6 +147,22 @@ Launchpad.py was tested under
   - Banana Pi (Pro/M2/R1)
   - pcDuino V3
   - ...
+
+As recently discovered (2016/10/25), MIDI SysEx messages are broken in Windows 10
+and the following LED control functions WILL NOT WORK:
+
+  - LedSetLayout()
+  - LedSetMode()
+  - LedCtrlRaw()
+  - LedAllOn()
+  - LedCtrlChar()
+  - LedCtrlXY()
+  - LedCtrlXYByRGB()
+
+So with Windows 10, you're limited to:
+
+  - LedCtrlRawByCode()
+  - LedCtrlXYByCode()
 
 It does _not_ (yet) work with
 
