@@ -11,11 +11,13 @@ Watch a 6s video [here][7].
 Or take a look at [that one][8].  
 What about the brand new Launchpad Pro support? [Right][9]!
 
+Hey - and the Mac? Yep, that finally works: [Look][12] \o/  
+
 Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2016/10/25:
+## STATUS 2016/11/27:
 
 What's hot, what's not?
 
@@ -27,6 +29,7 @@ What's hot, what's not?
 
     Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs and buttons
 
+Good news: Now working with macOS Sierra. Thanks, [Stewart!][13].  
 
 Bad news. As it seems, the MIDI SysEx messages don't work in Windows 10.  
 As for now, the LEDs can only be controlled by "LedCtrlRawByCode()" and "LedCtrlXYByCode()".  
@@ -35,6 +38,10 @@ This only affects Windows 10.
 
 ---
 ## NEWS
+
+### CHANGES 2016/11/XX:
+
+    - added notes about how to use it on macOS
 
 ### CHANGES 2016/01/XX:
 
@@ -133,7 +140,7 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 ## Requirements
 
   - [Python][2] 2
-  - [Pygame][3] v1.9.1
+  - [Pygame][3] v1.9.1 (macOS: Pygame v1.9.2b8 via pip)
   
 It does not work with Python 3.  
 Python 3 requires PyGame v1.9.2, which was built without any MIDI functionality.
@@ -143,6 +150,8 @@ Launchpad.py was tested under
   - Linux, 32 bit, 64 bit
   - Windows XP, 32 bit
   - Windows 7, 32 bit, 64 bit
+  - Windows 10, 64 bit (*LIMITED OPERATION*, see below)
+  - macOS Sierra
   - [Raspberry-Pi 1/2][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
   - Beagle Bone (Black)
   - Banana Pi (Pro/M2/R1)
@@ -165,13 +174,9 @@ So with Windows 10, you're limited to:
   - LedCtrlRawByCode()
   - LedCtrlXYByCode()
 
-It does _not_ (yet) work with
-
-  - Mac OS X
+Please also notice that the "Ableton Live mode" cannot automatically be
+enabled, due to this restriction!
   
-because PyGame's Mac implementation was built without any Midi functionality.
-
-
 Supported and tested red/green LED Launchpad devices, here referred  to as "Classic":
 
   - Launchpad (the original, old "MK1")
@@ -204,6 +209,9 @@ name it once shipped the first red/green LED with!
         
       As of 2016/01/24, the "Pro" is now automatically set to "Ableton Live mode",
       which is required for launchpad.py to work.
+      
+      Notice that the automatic switching into "Ableton Live Mode" does NOT work
+      with Windows 10, due to the SysEx messages issue.
 
 ### For Launchpad Mk2 users
 
@@ -211,12 +219,47 @@ name it once shipped the first red/green LED with!
       
         lp = launchpad.LaunchpadMk2()
 
+### For Mac users
+
+#### Mac Python and Pygame
+
+Good news, everybody. It now works with macOS Sierra \o/  
+Best part: It even works with the stock "Apple Python".
+      
+Pygame can be installed via "pip". Just enter "pip" on the console
+to see whether it is installed:
+      
+        pip
+      
+If it isn't, you can install it with:
+      
+        sudo easy_install pip
+        
+If pip is working, search for Pygame via pip (console command):
+      
+        sudo pip search pygame
+      
+Somewhere in the list, you should see something like
+      
+        Pygame (1.9.2b8)   - Python Game Development
+        
+Install that with:
+      
+        sudo pip install pygame
+
+#### Hardware
+
+Notice that the original Launchpad MK1 requires an USB driver.  
+Get it from [here][14].
+     
 ### For Windows users
 
       MIDI implementation in PyGame 1.9.2+ is broken and running this will
       bring up an 'insufficient memory' error ( pygame.midi.Input() ).
 
       SOLUTION: use v1.9.1
+      
+      Also notice the Windows 10 limitations above (LED controls).
 
 ### For Linux and especially Raspberry-Pi users:
 
@@ -978,3 +1021,6 @@ FMMT666(ASkr)
 [9]: https://mtc.cdn.vine.co/r/videos/EFB02602EF1300276501647966208_4cce4117438.5.1.10016548273760817556.mp4
 [10]: https://novationmusic.de/launch/launchpad-mk1
 [11]: https://creativecommons.org/licenses/by/4.0/
+[12]: https://twitter.com/FMMT666/status/802869723910275072/video/1
+[13]: https://github.com/FMMT666/launchpad.py/issues/9
+[14]:https://novationmusic.de/support/product-downloads?product=Launchpad+MK1
