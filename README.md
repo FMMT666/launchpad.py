@@ -11,7 +11,7 @@ Watch a 6s video [here][7].
 Or take a look at [that one][8].  
 What about the brand new Launchpad Pro support? [Right][9]!
 
-Hey - and the Mac? Yep, that finally works: [Look][12] \o/  
+Hey - and the Mac? Yep, that finally works too. [Look][12] \o/  
 
 Older Launchpads might be documented [here][10].
 
@@ -250,7 +250,9 @@ Install that with:
 #### Hardware
 
 Notice that the original Launchpad MK1 requires an USB driver.  
-Get it from [here][14].
+Get it from [here][14] (Novation USB Driver-2.7.dmg).
+
+As it seems, all newer Launchpads work right out of the box, no driver required.
      
 ### For Windows users
 
