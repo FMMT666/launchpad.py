@@ -247,24 +247,6 @@ Install that with:
       
         sudo pip install pygame
 
-
-### For FTDI users
-
-Just discovered another oddity...
-
-I attached a Launchpad Pro to my Linux box, to finally add the button methods,
-but it refused to show up as an USB device. Instead of the "note mode",
-indicated by a turquoise/pink colour pattern, it played that "blob animation" and
-did nothing...
-
-After a while, I found out that the culprit was an FTDI FT232R UART, which was attached to
-the same computer (VID:PID, 0403:6001).
-
-After unplugging the FTDI, the Launchpad Pro worked as expected.  
-
-Strange...
-
-
 #### Hardware
 
 Notice that the original Launchpad MK1 requires an USB driver.  
@@ -292,6 +274,21 @@ As it seems, all newer Launchpads work right out of the box, no driver required.
 
       WORKAROUND #1: Pull the Launchpad's plug out and restart... (annoying).
 
+### For FTDI users
+
+Just discovered another oddity...
+
+I attached a Launchpad Pro to my Linux box, to finally add the button methods,
+but it refused to show up as an USB device. Instead of the "note mode",
+indicated by a turquoise/pink colour pattern, it played that "blob animation" and
+did nothing...
+
+After a while, I found out that the culprit was an FTDI FT232R UART, which was attached to
+the same computer (VID:PID, 0403:6001).
+
+After unplugging the FTDI, the Launchpad Pro worked as expected.  
+
+Strange...
 
 ---
 ## Common Launchpad Mk1 ("Classic") class methods overview (valid for all devices)
