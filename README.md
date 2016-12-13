@@ -93,7 +93,7 @@ This only affects Windows 10.
 ---
 ## Upcoming attractions, notes and thoughts
 
-  More and more reported issues are direcly related to PyGame.  
+  More and more reported issues are directly related to PyGame.  
   As nice as it was, it has reached its end, so finding a more (platform)
   compatible lib (that actually works), is prio no. 1 now...
 
@@ -246,6 +246,24 @@ Somewhere in the list, you should see something like
 Install that with:
       
         sudo pip install pygame
+
+
+### For FTDI users
+
+Just discovered another oddity...
+
+I attached a Launchpad Pro to my Linux box, to finally add the button methods,
+but it refused to show up as an USB device. Instead of the "note mode",
+indicated by a turquoise/pink colour pattern, it played that "blob animation" and
+did nothing...
+
+After a while, I found out that the culprit was an FTDI FT232R UART, which was attached to
+the same computer (VID:PID, 0403:6001).
+
+After unplugging the FTDI, the Launchpad Pro worked as expected.  
+
+Strange...
+
 
 #### Hardware
 
