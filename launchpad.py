@@ -323,15 +323,10 @@ class LaunchpadBase( object ):
 		self.idOut  = None   # midi id for output
 		self.idIn   = None   # midi id for input
 
-		# just in case someone likes "defines" ;)
-		SCROLL_NONE  =  0
-		SCROLL_LEFT  = -1
-		SCROLL_RIGHT =  1
-		# same for LED brightness
-		LED_OFF      =  0
-		LED_LOW      =  1
-		LED_MED      =  2
-		LED_HIGH     =  3
+		# scroll directions
+		self.SCROLL_NONE  =  0
+		self.SCROLL_LEFT  = -1
+		self.SCROLL_RIGHT =  1
 
 
 	def __delete__( self ):
@@ -581,46 +576,48 @@ class Launchpad( LaunchpadBase ):
 
 		for i in range(0, 8*16, 16):
 			for j in range(8):
-				sum = i + j + offsx
-				if sum >= i and sum < i + 8:
+				lednum = i + j + offsx
+				if lednum >= i and lednum < i + 8:
 					if CHARTAB[char]  &  0x80 >> j:
-						self.LedCtrlRaw( sum, red, green )
+						self.LedCtrlRaw( lednum, red, green )
 					else:
-						self.LedCtrlRaw( sum, 0, 0 )
+						self.LedCtrlRaw( lednum, 0, 0 )
 			char += 1
 					
 
 	#-------------------------------------------------------------------------------------
 	#-- Scroll <string>, in colors specified by <red/green>, as fast as we can.
 	#-- <direction> specifies: -1 to left, 0 no scroll, 1 to right
-	#--
-	#-- The "no scroll" characters are sent 8 times to have a comparable speed.
-	#-- ^^^ WTF?
+	#-- The delays were a dirty hack, but there's little to nothing one can do here.
+	#-- So that's how the <waitms> parameter came into play...
+	#-- NEW   12/2016: More than one char on display \o/
+	#-- IDEA: variable spacing for seamless scrolling, e.g.: "__/\_"
 	#-------------------------------------------------------------------------------------
-	def LedCtrlString( self, string, red, green, direction = 0, waitms = 150 ):
+	def LedCtrlString( self, string, red, green, direction = None, waitms = 150 ):
 
-		# TODO: The delay was a dirty hack.
-		#       It won't go :-/
+		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
 
-		if direction == -1:
+		if direction == self.SCROLL_LEFT:
+			string += " "
+			for n in range( (len(string) + 1) * 8 ):
+				if n <= len(string)*8:
+					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+				if n > 7:
+					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+				time.wait(waitms)
+		elif direction == self.SCROLL_RIGHT:
+			string = " " + string
+			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
+				if n > 7:
+					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+				if n <= len(string)*8:
+					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+				time.wait(waitms)
+		else:
 			for i in string:
-				for offsx in range(5,-8,-1):
-					self.LedCtrlChar(i, red, green, offsx = offsx)
-					# TESTING ONLY (slowdown for S/Mini)
-					time.wait(waitms);
-		elif direction == 0:
-			for i in string:
-				for offsx in range(4):
+				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green)
-					# TESTING ONLY (slowdown for S/Mini)
 					time.wait(waitms);
-		elif direction == 1:
-			for i in string:
-				for offsx in range(-5,8):
-					self.LedCtrlChar(i, red, green, offsx = offsx)
-					# TESTING ONLY (slowdown for S/Mini)
-					time.wait(waitms);
-					
 
 					
 	#-------------------------------------------------------------------------------------
@@ -1327,6 +1324,8 @@ def main():
 
 	# the latter of these two messages might not finish (MIDI buffer too large,
 	# MIDI speed too low...)
+	LP.LedCtrlString( '*', 0, 3, direction = -1 ) # erase test
+	LP.LedCtrlString( '*', 0, 3, direction =  1 ) # erase test
 	print("HELLO")
 	LP.LedCtrlString( 'HELLO', 3, 0, direction = 0 ) # display HELLO in red
 	print("USER")

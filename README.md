@@ -42,6 +42,10 @@ This only affects Windows 10.
 ### CHANGES 2016/12/XX:
 
     - added "fireworks demo" note (device not recognized)
+    - reworked string scrolling for MK1 and MK2 Launchpads:
+      - no spaces between characters
+      - no artefacts left on screen
+      
 
 ### CHANGES 2016/11/XX:
 
