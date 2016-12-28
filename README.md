@@ -39,6 +39,10 @@ This only affects Windows 10.
 ---
 ## NEWS
 
+### CHANGES 2016/12/XX:
+
+    - added "fireworks demo" note (device not recognized)
+
 ### CHANGES 2016/11/XX:
 
     - added notes about how to use it on macOS
@@ -274,21 +278,35 @@ As it seems, all newer Launchpads work right out of the box, no driver required.
 
       WORKAROUND #1: Pull the Launchpad's plug out and restart... (annoying).
 
-### For FTDI users
+### Other Notes
+
+#### Launchpad (Pro) not recognized, playing fireworks demo
 
 Just discovered another oddity...
 
-I attached a Launchpad Pro to my Linux box, to finally add the button methods,
-but it refused to show up as an USB device. Instead of the "note mode",
-indicated by a turquoise/pink colour pattern, it played that "blob animation" and
+I attached a Launchpad Pro to my Linux box, as many times before, to finally add the
+button methods, but it refused to show up as an USB device. Instead of the "note mode",
+indicated by a turquoise/pink colour pattern, it played that "fireworks animation" and
 did nothing...
 
-After a while, I found out that the culprit was an FTDI FT232R UART, which was attached to
-the same computer (VID:PID, 0403:6001).
+The first time I discovered that, I blamed it on an attached FTDI UART chip, but as it
+turned out, that was not the reason it didn't work.
 
-After unplugging the FTDI, the Launchpad Pro worked as expected.  
+It "simply" was a power issue.
 
-Strange...
+So, if your Launchpad Pro shows that firework demo, check your USB cable!  
+Seriously. That thing draws a lot of current and most USB cables simply
+do not conform to the USB standard.
+
+Mine "looked quite good" from the outside.  
+With its ~5.5mm diameter, I assumed it had AWG 22 (~60mOhm/m) or better, but it in fact
+has ~drumroll~ AWG 28 (~240mOhm/m) and two thick plastic strings to fill the gaps.
+
+Well, we all know that companies try to save money wherever they can, but that's just
+fraud...
+
+Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (configured).  
+[...]
 
 ---
 ## Common Launchpad Mk1 ("Classic") class methods overview (valid for all devices)
