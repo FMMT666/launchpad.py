@@ -44,8 +44,9 @@ This only affects Windows 10.
     - added "fireworks demo" note (device not recognized)
     - reworked string scrolling for MK1 and MK2 Launchpads:
       - no spaces between characters
-      - no artefacts left on screen
-      
+      - no artifacts left on screen (right to left scrolling)
+      - scrolling from left to right still has some issues ("quick hack drawback" :)
+    - implemented same scrolling behaviour for the Pro Launchpad
 
 ### CHANGES 2016/11/XX:
 
@@ -599,6 +600,10 @@ using the, indeed much more comfortable, RGB notation.
     <red/green> specify the color and intensity (0..3 each).
     <direction> determines the direction of scrolling.
     Dirty hack: <waitms>, by default 150, delays the scrolling speed.
+    
+    WARNING:
+    Too short times will overflow the Launchpad's buffer and mess up
+    the screen.
     
     For future compatibility, it is highly recommended to use
     <direction> and <waitms> as a named arguments, e.g.:

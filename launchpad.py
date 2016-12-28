@@ -606,11 +606,15 @@ class Launchpad( LaunchpadBase ):
 					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
-			string = " " + string
-			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
-				if n > 7:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+			# TODO: Just a quick hack (screen is erased before scrolling begins).
+			#       Characters at odd positions from the right (1, 3, 5), with pixels at the left,
+			#       e.g. 'C' will have artifacts at the left (pixel repeated).
+			string = " " + string + " " # just to avoid artifacts on full width characters
+#			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
+			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
 				if n <= len(string)*8:
+					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+				if n > 7:
 					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
@@ -997,13 +1001,11 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- If <blue> is omitted, "Classic" compatibility mode is turned on and the old
 	#-- 0..3 color intensity range is streched by 21 to 0..63.
 	#--
-	#-- The "no scroll" characters are sent 8 times to have a comparable speed.
-	#-- ^^^ WAT?
+	#-- NEW   12/2016: More than one char on display \o/
+	#-- IDEA: variable spacing for seamless scrolling, e.g.: "__/\_"
+	#-- TODO: That <blue> compatibility thing sucks... Should be removed.
 	#-------------------------------------------------------------------------------------
-	def LedCtrlString( self, string, red, green, blue = None, direction = 0, waitms = 150 ):
-
-		# TODO: The delay was a dirty hack.
-		#       It won't go :-/
+	def LedCtrlString( self, string, red, green, blue = None, direction = None, waitms = 150 ):
 
 		# compatibility mode
 		if blue is None:
@@ -1018,26 +1020,34 @@ class LaunchpadPro( LaunchpadBase ):
 		min( blue, 63 )
 		max( blue,  0 )
 
-		if direction == -1:
+		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
+
+		if direction == self.SCROLL_LEFT:
+			string += " " # just to avoid artifacts on full width characters
+			for n in range( (len(string) + 1) * 8 ):
+				if n <= len(string)*8:
+					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+				if n > 7:
+					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+				time.wait(waitms)
+		elif direction == self.SCROLL_RIGHT:
+			# TODO: Just a quick hack (screen is erased before scrolling begins).
+			#       Characters at odd positions from the right (1, 3, 5), with pixels at the left,
+			#       e.g. 'C' will have artifacts at the left (pixel repeated).
+			string = " " + string + " " # just to avoid artifacts on full width characters
+#			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
+			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
+				if n <= len(string)*8:
+					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+				if n > 7:
+					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+				time.wait(waitms)
+		else:
 			for i in string:
-				for offsx in range(5,-8,-1):
-					self.LedCtrlChar(i, red, green, blue, offsx = offsx)
-					# TESTING ONLY (slowdown for S/Mini)
-					time.wait(waitms);
-		elif direction == 0:
-			for i in string:
-				for offsx in range(4):
+				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green, blue)
-					# TESTING ONLY (slowdown for S/Mini)
-					time.wait(waitms);
-		elif direction == 1:
-			for i in string:
-				for offsx in range(-5,8):
-					self.LedCtrlChar(i, red, green, blue, offsx = offsx)
-					# TESTING ONLY (slowdown for S/Mini)
 					time.wait(waitms);
 
-		
 
 	#-------------------------------------------------------------------------------------
 	#-- Quickly sets all all LEDs to the same color, given by <colorcode>.
