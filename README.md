@@ -17,17 +17,17 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2016/11/27:
+## STATUS 2016/12/29:
 
 What's hot, what's not?
 
-    Launchpad Mk1   - class "Launchpad()"     all features; LEDs and buttons
-    Launchpad/S     - class "Launchpad()"     all features; LEDs and buttons
-    Launchpad Mini  - class "Launchpad()"     all features; LEDs and buttons
+    Launchpad Mk1   - class "Launchpad()"     all features, LEDs and buttons
+    Launchpad/S     - class "Launchpad()"     all features, LEDs and buttons
+    Launchpad Mini  - class "Launchpad()"     all features, LEDs and buttons
 
-    Launchpad Mk2   - class "LaunchpadMk2()"  growing;      LEDs     buttons untested
+    Launchpad Mk2   - class "LaunchpadMk2()"  in work;      LEDs and buttons (RAW only)
 
-    Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs and buttons
+    Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs and buttons (RAW only)
 
 Good news: Now working with macOS Sierra. Thanks, [Stewart!][13].  
 
@@ -42,8 +42,8 @@ This only affects Windows 10.
 ### CHANGES 2016/12/XX:
 
     - added "fireworks demo" note (device not recognized)
-    - reworked string scrolling for MK1 and MK2 Launchpads:
-      - no spaces between characters
+    - reworked string scrolling for Mk1 and Mk2 Launchpads:
+      - characters now adjacent
       - no artifacts left on screen (right to left scrolling)
       - scrolling from left to right still has some issues ("quick hack drawback" :)
     - implemented same scrolling behaviour for the Pro Launchpad
@@ -59,7 +59,7 @@ This only affects Windows 10.
         lp_pro = LaunchpadPro()
       Except for a few, low level functions (e.g. "LedCtrlRaw()"), this and
       probably all future classes will remain compatible to the good, old
-      "Classic" Launchpad (MK1).
+      "Classic" Launchpad (Mk1).
     - added method Check(); Checks whether a device is attached.
     - added demo code for Pro (including automatic device recognition)
     - added Pro RGB LED control
@@ -103,20 +103,23 @@ This only affects Windows 10.
 ## Upcoming attractions, notes and thoughts
 
   More and more reported issues are directly related to PyGame.  
-  As nice as it was, it has reached its end, so finding a more (platform)
-  compatible lib (that actually works), is prio no. 1 now...
+  As nice as it was, it has reached its end, so I am looking for a
+  more (platform) compatible lib (that actually works), but only after
+  the rest is build in...
 
-  - find a more platform compatible MIDI lib
-  - some missing "Pro" functions, buttons, etc...
-  - some missing "Mk2" functions, check compatibility
-  - maybe "Mk2" should be the base class for the "Pro" and not the other way round?
-  - device search string should be case insensitive
-  - better event system
-  - custom bitmaps and graphics
-  - better custom font support
-  - Why the **** didn't I use [r,g,b] lists for colors, instead single args??? (*sigh*)
-  - background color in char and string methods
-  - string scroll: screen update bug if rightmost column is filled (not deleted)
+  - "Pro": ButtonStateXY() missing
+  - "Mk2": ButtonStateXY() missing
+  - "All": fix manual text scrolling
+  - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
+  - "Pro": implement native text scrolling
+  - "All": fix Windoze 10 SysEx messages (if possible)
+  - "All": device search string should be case insensitive
+  - "All": custom bitmaps and graphics
+  - "All": event system
+  - "All": better custom font support
+  - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
+  - "All": make this a library
+  - "All": upload it somewhere (lol)
   - ...
 
 
@@ -188,9 +191,9 @@ enabled, due to this restriction!
   
 Supported and tested red/green LED Launchpad devices, here referred  to as "Classic":
 
-  - Launchpad (the original, old "MK1")
+  - Launchpad (the original, old "Mk1")
   - Launchpad S
-  - Launchpad Mini (MK1)
+  - Launchpad Mini (Mk1)
 
 Supported and tested full RGB Launchpad devices:
   
@@ -258,7 +261,7 @@ Install that with:
 
 #### Hardware
 
-Notice that the original Launchpad MK1 requires an USB driver.  
+Notice that the original Launchpad Mk1 requires an USB driver.  
 Get it from [here][14] (Novation USB Driver-2.7.dmg).
 
 As it seems, all newer Launchpads work right out of the box, no driver required.
@@ -386,7 +389,7 @@ using the, indeed much more comfortable, RGB notation.
 
     Opens the a Launchpad and initializes it.  
     Please notice that some devices have up to six MIDI entries!.
-    A dump by ListAll(), with a "Pro", a MK1 "Mini" and a "MK2" might look like:
+    A dump by ListAll(), with a "Pro", a Mk1 "Mini" and a "Mk2" might look like:
     
         ('ALSA', 'Midi Through Port-0', 0, 1, 0)
         ('ALSA', 'Midi Through Port-0', 1, 0, 0)
@@ -409,7 +412,7 @@ using the, indeed much more comfortable, RGB notation.
               <name>   OPTIONAL, only consider devices whose names contain
                        the string <name>. The default names for the classes are:
                          Launchpad()     -> "Launchpad"
-                         LaunchpadMk2()  -> "MK2"
+                         LaunchpadMk2()  -> "Mk2"
                          LaunchpadPro()  -> "Pro"
                        It is sufficient to search for a part of the string, e.g.
                        "chpad S" will find a device named "Launchpad S" or even
@@ -796,6 +799,10 @@ using the, indeed much more comfortable, RGB notation.
 
 
 ### LedCtrlString( string, red, green, blue = None, direction = 0, waitms = 150 )
+
+    Notice that the Launchpad Pro has string scrolling capabilities built in, but
+    this function provides the old, Mk1 compatible functionality. Advantages
+    are custom fonts and symbols (in the future).
 
     Scrolls a string <str> across the Launchpad's main, 8x8 matrix.
     <red/green/blue> specify the color and intensity (0..63 each).
