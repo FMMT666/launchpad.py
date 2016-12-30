@@ -1076,11 +1076,11 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Returns the raw value of the last button change as a list
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
 	#-- [ <button>, <value> ], in which <button> is the raw number of the button and
 	#-- <value> an intensity value from 0..127.
 	#-- >0 = button pressed; 0 = button released
-	#-- A constant force ("push longer") is suppressed here...
+	#-- A constant force ("push longer") is suppressed here... (TODO)
 	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
@@ -1091,6 +1091,35 @@ class LaunchpadPro( LaunchpadBase ):
 			
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 				return [ a[0][0][1], a[0][0][2] ]
+			else:
+				return []
+		else:
+			return []
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
+	#-- <value> is the intensity from 0..127.
+	#-- >0 = button pressed; 0 = button released
+	#-- A constant force ("push longer") is suppressed here... (TODO)
+	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
+	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
+	#-- Compatibility would require checking via "== True" and not "is True".
+	#-------------------------------------------------------------------------------------
+	def ButtonStateXY( self, mode = "classic" ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+			
+			if a[0][0][0] == 144 or a[0][0][0] == 176:
+			
+				if mode.lower() != "pro":
+					x = (a[0][0][1] - 1) % 10
+				else:
+					x = a[0][0][1] % 10
+				y = ( 99 - a[0][0][1] ) / 10;
+			
+				return [ x, y, a[0][0][2] ]
 			else:
 				return []
 		else:
@@ -1181,6 +1210,37 @@ class LaunchpadMk2( LaunchpadPro ):
 	# Overrides "LaunchpadPro" method
 	def Check( self, number = 0, name = "MK2" ):
 		return super( LaunchpadMk2, self ).Check( number = number, name = name );
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
+	#-- <svalue> the intensity. Because the Mk2 does not come with full analog capabilities,
+	#-- unlike the "Pro", the intensity values for the "Mk2" are either 0 or 127.
+	#-- 127 = button pressed; 0 = button released
+	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
+	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
+	#-- Compatibility would require checking via "== True" and not "is True".
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def ButtonStateXY( self ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+			
+			if a[0][0][0] == 144 or a[0][0][0] == 176:
+
+				if a[0][0][1] >= 104:
+					x = a[0][0][1] - 104
+					y = 0
+				else:
+					x = ( a[0][0][1] - 1) % 10
+					y = ( 99 - a[0][0][1] ) / 10;
+			
+				return [ x, y, a[0][0][2] ]
+			else:
+				return []
+		else:
+			return []
 	
 
 	#-------------------------------------------------------------------------------------

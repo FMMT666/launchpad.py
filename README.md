@@ -17,17 +17,18 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2016/12/29:
+## STATUS 2016/12/30:
 
-What's hot, what's not?
+What's hot, what's not?  
+(Also see "Upcoming attractions" somewhere below...)
 
     Launchpad Mk1   - class "Launchpad()"     all features, LEDs and buttons
     Launchpad/S     - class "Launchpad()"     all features, LEDs and buttons
     Launchpad Mini  - class "Launchpad()"     all features, LEDs and buttons
 
-    Launchpad Mk2   - class "LaunchpadMk2()"  in work;      LEDs and buttons (RAW only)
+    Launchpad Mk2   - class "LaunchpadMk2()"  all features, LEDs and buttons
 
-    Launchpad Pro   - class "LaunchpadPro()"  in work;      LEDs and buttons (RAW only)
+    Launchpad Pro   - class "LaunchpadPro()"  all features, LEDs and buttons
 
 Good news: Now working with macOS Sierra. Thanks, [Stewart!][13].  
 
@@ -49,6 +50,8 @@ This only affects Windows 10.
     - implemented same scrolling behaviour for the Pro Launchpad
     - Mk2 LedCtrlXY() now does nothing if x/y are out of range (were clamped to 0 or 8 before)
     - added LedCtrlXYByRGB() for Mk2/Pro; pass color arguments as list [r,g,b]
+    - tried to clarify "Mk1" color and x/y origin mode for Pro pads in the doc
+    - added ButtonStateXY() for Mk2 and Pro
 
 ### CHANGES 2016/11/XX:
 
@@ -109,12 +112,11 @@ This only affects Windows 10.
   more (platform) compatible lib (that actually works), but only after
   the rest is build in...
 
-  - "Pro": ButtonStateXY() missing
-  - "Mk2": ButtonStateXY() missing
+  - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": implement native text scrolling
-  - "All": fix Windoze 10 SysEx messages (if possible)
+  - "All": fix Windoze 10 SysEx messages (if possible);
   - "All": device search string should be case insensitive
   - "All": custom bitmaps and graphics
   - "All": event system
@@ -191,7 +193,7 @@ So with Windows 10, you're limited to:
 Please also notice that the "Ableton Live mode" cannot automatically be
 enabled, due to this restriction!
   
-Supported and tested red/green LED Launchpad devices, here referred  to as "Classic":
+Supported and tested red/green LED Launchpad devices, here referred  to as "Classic" or "Mk1":
 
   - Launchpad (the original, old "Mk1")
   - Launchpad S
@@ -637,7 +639,7 @@ using the, indeed much more comfortable, RGB notation.
 
 ### ButtonStateRaw()
 
-    Returns the state of the last occured button event in the queue in RAW mode.
+    Returns the state of the buttons in RAW mode.
 
       PARAMS:
       RETURN: [ ]                        An empty list if no event occured, otherwise...
@@ -648,7 +650,7 @@ using the, indeed much more comfortable, RGB notation.
 
 ### ButtonStateXY()
 
-    Returns the state of the last occured button event in the queue in X/Y mode.
+    Returns the state of buttons in X/Y mode.
 
       PARAMS:
       RETURN: [ ]                        An empty list if no event occured, otherwise...
@@ -698,7 +700,7 @@ using the, indeed much more comfortable, RGB notation.
     be sent for each message. For a faster version, hence less comfortable version,
     see LedCtrlRawByCode() below (though even sending 10 bytes is pretty fast on the Pro).
     
-    If <blue> is omitted, this method runs in "Classic" compatibility mode, which only
+    If <blue> is omitted, this method runs in "Mk1" compatibility mode, which only
     had red/green LEDs and intensities ranging from 0..3. In that mode, the input
     arguments are multiplied by 21, to map 0..3 to 0..63.
     
@@ -728,15 +730,15 @@ using the, indeed much more comfortable, RGB notation.
     Controls an LED via its x/y coordinates and red, green or blue intensity values.
     An additional <mode> parameter determines the origin of the x-axis.
     
-    If <blue> is omitted, this method operates in "Classic" compatibility mode.
-    The classic Launchpad only had 2 bit intensity values (0..3). In compatibility
+    If <blue> is omitted, this method operates in "Mk1" compatibility mode.
+    The Mk1 Launchpad only had 2 bit intensity values (0..3). In compatibility
     mode, these values are now multiplied by 21, to extend the range to 0..63.
     That way, old, existing code, written for the classic Launchpads does not
     need to be changed.
     
     For "Pro" only:
       By default, if <mode> is omitted, the origin of the x axis is the left side
-      of the 8x8 matrix, like in "Classic" mode (those devices had no round buttons
+      of the 8x8 matrix, like in the "Mk1" mode (those devices had no round buttons
       on the left).
       If <mode> is set to "pro" (string), x=0 will light up the round buttons on the
       left side. Please also see the table for X/Y modes somewhere at the end of this
@@ -748,10 +750,10 @@ using the, indeed much more comfortable, RGB notation.
     
       PARAMS: <x>      x coordinate of the LED to control
               <y>      y coordinate of the LED to control
-              <red>    red   LED intensity 0..63 (or 0..3 in "Classic" mode)
-              <green>  green LED intensity 0..63 (or 0..3 in "Classic" mode)
-              <blue>   blue  LED intensity 0..63 (omit  for  "Classic" mode)
-              <mode>   OPTIONAL: "classic" selects old x/y origin  >>> PRO ONLY <<<
+              <red>    red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <green>  green LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <blue>   blue  LED intensity 0..63 (omit  for  "Mk1" mode)
+              <mode>   OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
       RETURN:
 
 
@@ -765,7 +767,7 @@ using the, indeed much more comfortable, RGB notation.
       PARAMS: <x>          x coordinate of the LED to control
               <y>          y coordinate of the LED to control
               <colorcode>  a number from 0..127
-              <mode>       OPTIONAL: "classic" selects old x/y origin >>> PRO ONLY <<<
+              <mode>       OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
       RETURN:
 
 
@@ -779,7 +781,7 @@ using the, indeed much more comfortable, RGB notation.
       PARAMS: <x>          x coordinate of the LED to control
               <y>          y coordinate of the LED to control
               <colorlist>  a list with [ R, G, B ] color codes; each from 0..63
-              <mode>       OPTIONAL: "classic" selects old x/y origin >>> PRO ONLY <<<
+              <mode>       OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
       RETURN:
       
       EXAMPLES:
@@ -797,15 +799,15 @@ using the, indeed much more comfortable, RGB notation.
     
       lp.LedCtrlChar( 'a', 3, 2, offsx = xvar )
       
-    If <blue> is ommited, this methods runs in "Classic" compatibility
+    If <blue> is ommited, this methods runs in "Mk1" compatibility
     mode and multiplies the <red> and <green> intensity values with 21, to
     adapt the old 0..3 range to the new 0..63 one of the "Pro" mode.
-    That way, it is compatible to old, existing "Classic" code.
+    That way, it is compatible to old, existing "Mk1" code.
 
       PARAMS: <char>   one field string to display; e.g.: 'A'
-              <red>    red   LED intensity 0..63 (or 0..3 in "Classic" mode)
-              <green>  green LED intensity 0..63 (or 0..3 in "Classic" mode)
-              <blue>   blue  LED intensity 0..63 (omit  for  "Classic" mode)
+              <red>    red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <green>  green LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <blue>   blue  LED intensity 0..63 (omit  for  "Mk1" mode)
               <offsx>  x offset of the character on the main, 8x8 matrix (-8..8)
                        Negative is left and positive right.
               <offsy>  no function
@@ -829,7 +831,7 @@ using the, indeed much more comfortable, RGB notation.
     <direction> determines the direction of scrolling.
     Dirty hack: <waitms>, by default 150, delays the scrolling speed.
     
-    If <blue> is omitted, "Classic" compatibility mode is turned on and the old
+    If <blue> is omitted, "Mk1" compatibility mode is turned on and the old
     0..3 <red/green> intensity values are strechted to 0..63.
     
     For future compatibility, it is highly recommended to use
@@ -839,9 +841,9 @@ using the, indeed much more comfortable, RGB notation.
 
 
       PARAMS: <string>     a string to display; e.g.: 'Hello'
-              <red>        red   LED intensity 0..63 (or 0..3 in "Classic" mode)
-              <green>      green LED intensity 0..63 (or 0..3 in "Classic" mode)
-              <blue>       green LED intensity 0..63 (omit  for  "Classic" mode)
+              <red>        red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <green>      green LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <blue>       green LED intensity 0..63 (omit  for  "Mk1" mode)
               <direction> -1 -> scroll right to left
                            0 -> do not scroll, just show the character
                            1 -> scroll left to right
@@ -860,9 +862,9 @@ using the, indeed much more comfortable, RGB notation.
 
 ### ButtonStateRaw()
 
-    Returns the state of the last occured button event in the queue in RAW mode.
+    Returns the state of the buttons in RAW mode.
     
-    Notice that this is not directly compatible with the "Classic" ButtonStateRaw()
+    Notice that this is not directly compatible with the "Mk1" ButtonStateRaw()
     method, which returns [ <button>, <True/False> ].
 
       PARAMS:
@@ -871,6 +873,23 @@ using the, indeed much more comfortable, RGB notation.
               <button> is the button number, the second field, <value> determines
               the intensity (0..127) with which the button was pressed.
               0 means that the button was released.
+
+
+### ButtonStateXY( [mode] )
+
+    Returns the state of the buttons in X/Y mode.
+    
+    Notice that this is not directly compatible with the "Mk1" ButtonStateRaw()
+    method, which returns [ <button>, <True/False> ].
+
+      PARAMS: <mode>       OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
+      RETURN: [ ]                    An empty list if no event occured, otherwise...
+              [ <x>, <y>, <value> ]  ... a list with three fields:
+              <x> and <y> are the button's coordinates. The third field, <value> determines
+              the intensity (0..127) with which the button was pressed.
+              0 means that the button was released.
+              Notice that "Mk2" Pads will only return either 0 or 127.
+              They don't have the full analog mode like the "Pro" has.
 
 
 ---
