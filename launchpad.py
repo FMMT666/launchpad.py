@@ -279,7 +279,7 @@ class Midi:
 				if quiet == False:
 					print(md)
 					sys.stdout.flush()
-				if string.find( md[1], name ) >= 0:
+				if md[1].lower().find( name.lower() ) >= 0:
 					if output == True and md[3] > 0:
 						ret.append( i )
 					if input == True and md[2] > 0:
@@ -868,13 +868,6 @@ class LaunchpadPro( LaunchpadBase ):
 		green = limit( green, 0, 63 )
 		blue  = limit( blue,  0, 63 )
 			
-		#~ red = min( red, 63 )
-		#~ red = max( red, 0 )
-		#~ green = min( green, 63 )
-		#~ green = max( green, 0 )
-		#~ blue = min( blue, 63 )
-		#~ blue = max( blue, 0 )
-
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
 
 
@@ -955,11 +948,6 @@ class LaunchpadPro( LaunchpadBase ):
 		if x < 0 or x > 9 or y < 0 or y > 9:
 			return
 
-		# limit color values to 0..63
-		# NOPE: do this in LedCtrlRaw()
-#		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
-#		lstColor = [ limit( i, 0, 63) for i in lstColor ]
-		
 		# rotate matrix to the right, column 9 overflows from right to left, same row
 		if mode.lower() != "pro":
 			x = ( x + 1 ) % 10
@@ -986,14 +974,6 @@ class LaunchpadPro( LaunchpadBase ):
 			red   *= 21
 			green *= 21
 			blue   =  0
-
-		# NOPE: already in LedStrlRaw()
-		#~ min( red, 63 )
-		#~ max( red,  0 )
-		#~ min( green, 63 )
-		#~ max( green,  0 )
-		#~ min( blue, 63 )
-		#~ max( blue,  0 )
 
 		for i in range(81, 1, -10):
 			for j in range(8):
@@ -1024,14 +1004,6 @@ class LaunchpadPro( LaunchpadBase ):
 			green *= 21
 			blue   =  0
 			
-		# NOPE: already in LedCtrlRaw()
-		#~ min( red, 63 )
-		#~ max( red,  0 )
-		#~ min( green, 63 )
-		#~ max( green,  0 )
-		#~ min( blue, 63 )
-		#~ max( blue,  0 )
-
 		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
 
 		if direction == self.SCROLL_LEFT:
@@ -1265,14 +1237,13 @@ class LaunchpadMk2( LaunchpadPro ):
 			blue   = 0
 			red   *= 21
 			green *= 21
-			
-		red = min( red, 63 )
-		red = max( red, 0 )
-		green = min( green, 63 )
-		green = max( green, 0 )
-		blue = min( blue, 63 )
-		blue = max( blue, 0 )
 
+		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
+
+		red   = limit( red,   0, 63 )
+		green = limit( green, 0, 63 )
+		blue  = limit( blue,  0, 63 )
+		
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
 
 
@@ -1355,10 +1326,9 @@ class LaunchpadMk2( LaunchpadPro ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
 	def LedCtrlXYByCode( self, x, y, colorcode ):
-		x = min( x, 8 )
-		x = max( x, 0 )
-		y = min( y, 8 )
-		y = max( y, 0 )
+
+		if x < 0 or x > 8 or y < 0 or y > 8:
+			return
 
 		# top row (round buttons)
 		if y == 0:

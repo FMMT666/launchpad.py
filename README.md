@@ -49,9 +49,11 @@ This only affects Windows 10.
       - scrolling from left to right still has some issues ("quick hack drawback" :)
     - implemented same scrolling behaviour for the Pro Launchpad
     - Mk2 LedCtrlXY() now does nothing if x/y are out of range (were clamped to 0 or 8 before)
+    - MK2 LedCtrlXYByCode() now also exits if x/y values are out of range
     - added LedCtrlXYByRGB() for Mk2/Pro; pass color arguments as list [r,g,b]
     - tried to clarify "Mk1" color and x/y origin mode for Pro pads in the doc
     - added ButtonStateXY() for Mk2 and Pro
+    - device name search patterns now are case insensitive
 
 ### CHANGES 2016/11/XX:
 
@@ -110,14 +112,14 @@ This only affects Windows 10.
   More and more reported issues are directly related to PyGame.  
   As nice as it was, it has reached its end, so I am looking for a
   more (platform) compatible lib (that actually works), but only after
-  the rest is build in...
+  the rest got built in...
 
   - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
+  - "All": new demo code
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": implement native text scrolling
   - "All": fix Windoze 10 SysEx messages (if possible);
-  - "All": device search string should be case insensitive
   - "All": custom bitmaps and graphics
   - "All": event system
   - "All": better custom font support
@@ -426,6 +428,9 @@ using the, indeed much more comfortable, RGB notation.
       RETURN: True     success
               False    error
 
+	As of 12/2016, the name search patterns are case insensitive, hence strings like "mk2", "pRo"
+	or even "lAunCHpAd MiNI" are valid too.
+
     Notice that the default name for the class Launchpad(), the "Mk1" or "Classic" Launchpads,
     will also react to an attached "Pro" or "Mk2" model. In that case, it's required to either
     enter the complete name (as shown by "ListAll()").
@@ -470,7 +475,8 @@ using the, indeed much more comfortable, RGB notation.
       if lp.Check( 0, "Pro" ):         # check for "Pro"
 		lp = launchpad.LaunchpadPro()  # "reload" the new class for the "Pro"
 		lp.Open()                      # equals lp.Open( 0, "Pro" )
-      
+    
+    Search patterns are case insensitive.  
     
       PARAMS: see Open()
       
