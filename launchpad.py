@@ -861,13 +861,19 @@ class LaunchpadPro( LaunchpadBase ):
 			blue   = 0
 			red   *= 21
 			green *= 21
+
+		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
+		
+		red   = limit( red,   0, 63 )
+		green = limit( green, 0, 63 )
+		blue  = limit( blue,  0, 63 )
 			
-		red = min( red, 63 )
-		red = max( red, 0 )
-		green = min( green, 63 )
-		green = max( green, 0 )
-		blue = min( blue, 63 )
-		blue = max( blue, 0 )
+		#~ red = min( red, 63 )
+		#~ red = max( red, 0 )
+		#~ green = min( green, 63 )
+		#~ green = max( green, 0 )
+		#~ blue = min( blue, 63 )
+		#~ blue = max( blue, 0 )
 
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
 
@@ -937,21 +943,25 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- EXPERIMENTAL
 	#-- New approach to color arguments.
-	#-- <lstColor> list of length 3 with RGB color information, [<r>,<g>,<b>]
+	#-- Controls a grid LED by its coordinates <x>, <y> and a list of colors <lstColor>.
+	#-- <lstColor> is a list of length 3, with RGB color information, [<r>,<g>,<b>]
 	#-------------------------------------------------------------------------------------
-	# TODO: ASkr, Undocumented!
 	def LedCtrlXYByRGB( self, x, y, lstColor, mode = "classic" ):
 
-		if type( lstColor ) is not list:
+		if type( lstColor ) is not list or len( lstColor ) < 3:
 			return
 
 		if x < 0 or x > 9 or y < 0 or y > 9:
 			return
+
+		# limit color values to 0..63
+		# NOPE: do this in LedCtrlRaw()
+#		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
+#		lstColor = [ limit( i, 0, 63) for i in lstColor ]
 		
 		# rotate matrix to the right, column 9 overflows from right to left, same row
-		if mode != "pro":
+		if mode.lower() != "pro":
 			x = ( x + 1 ) % 10
 			
 		# swap y
@@ -977,12 +987,13 @@ class LaunchpadPro( LaunchpadBase ):
 			green *= 21
 			blue   =  0
 
-		min( red, 63 )
-		max( red,  0 )
-		min( green, 63 )
-		max( green,  0 )
-		min( blue, 63 )
-		max( blue,  0 )
+		# NOPE: already in LedStrlRaw()
+		#~ min( red, 63 )
+		#~ max( red,  0 )
+		#~ min( green, 63 )
+		#~ max( green,  0 )
+		#~ min( blue, 63 )
+		#~ max( blue,  0 )
 
 		for i in range(81, 1, -10):
 			for j in range(8):
@@ -1012,13 +1023,14 @@ class LaunchpadPro( LaunchpadBase ):
 			red   *= 21
 			green *= 21
 			blue   =  0
-
-		min( red, 63 )
-		max( red,  0 )
-		min( green, 63 )
-		max( green,  0 )
-		min( blue, 63 )
-		max( blue,  0 )
+			
+		# NOPE: already in LedCtrlRaw()
+		#~ min( red, 63 )
+		#~ max( red,  0 )
+		#~ min( green, 63 )
+		#~ max( green,  0 )
+		#~ min( blue, 63 )
+		#~ max( blue,  0 )
 
 		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
 
@@ -1238,10 +1250,9 @@ class LaunchpadMk2( LaunchpadPro ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
 	def LedCtrlXY( self, x, y, red, green, blue = None ):
-		x = min( x, 8 )
-		x = max( x, 0 )
-		y = min( y, 8 )
-		y = max( y, 0 )
+
+		if x < 0 or x > 8 or y < 0 or y > 8:
+			return
 
 		# top row (round buttons)
 		if y == 0:
@@ -1251,6 +1262,30 @@ class LaunchpadMk2( LaunchpadPro ):
 			led = 91-(10*y) + x
 		
 		self.LedCtrlRaw( led, red, green, blue )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- New approach to color arguments.
+	#-- Controls a grid LED by its coordinates <x>, <y> and a list of colors <lstColor>.
+	#-- <lstColor> is a list of length 3, with RGB color information, [<r>,<g>,<b>]
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def LedCtrlXYByRGB( self, x, y, lstColor ):
+
+		if type( lstColor ) is not list or len( lstColor ) < 3:
+			return
+
+		if x < 0 or x > 8 or y < 0 or y > 8:
+			return
+
+		# top row (round buttons)
+		if y == 0:
+			led = 104 + x
+		else:
+			# swap y
+			led = 91-(10*y) + x
+
+		self.LedCtrlRaw( led, lstColor[0], lstColor[1], lstColor[2] )
 
 
 	#-------------------------------------------------------------------------------------

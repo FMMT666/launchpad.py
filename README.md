@@ -47,6 +47,8 @@ This only affects Windows 10.
       - no artifacts left on screen (right to left scrolling)
       - scrolling from left to right still has some issues ("quick hack drawback" :)
     - implemented same scrolling behaviour for the Pro Launchpad
+    - Mk2 LedCtrlXY() now does nothing if x/y are out of range (were clamped to 0 or 8 before)
+    - added LedCtrlXYByRGB() for Mk2/Pro; pass color arguments as list [r,g,b]
 
 ### CHANGES 2016/11/XX:
 
@@ -363,6 +365,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     LedCtrlRawByCode( number, [colorcode] )
     LedCtrlXY( x, y, red, green, [blue] )
     LedCtrlXYByCode( x, y, colorcode )
+	LedCtrlXYByRGB( x, y, colorlist )
     LedCtrlChar( char, red, green, [blue], [offsx], [offsy] )
     LedCtrlString( string, red, green, [blue], [direction], [waitms] )
     LedAllOn( [colorcode] )
@@ -748,7 +751,7 @@ using the, indeed much more comfortable, RGB notation.
               <red>    red   LED intensity 0..63 (or 0..3 in "Classic" mode)
               <green>  green LED intensity 0..63 (or 0..3 in "Classic" mode)
               <blue>   blue  LED intensity 0..63 (omit  for  "Classic" mode)
-              <mode>   OPTIONAL: "Classic" selects old x/y origin  >>> PRO ONLY <<<
+              <mode>   OPTIONAL: "classic" selects old x/y origin  >>> PRO ONLY <<<
       RETURN:
 
 
@@ -762,8 +765,25 @@ using the, indeed much more comfortable, RGB notation.
       PARAMS: <x>          x coordinate of the LED to control
               <y>          y coordinate of the LED to control
               <colorcode>  a number from 0..127
-              <mode>       OPTIONAL: "Classic" selects old x/y origin >>> PRO ONLY <<<
+              <mode>       OPTIONAL: "classic" selects old x/y origin >>> PRO ONLY <<<
       RETURN:
+
+
+### LedCtrlXYByRGB( x, y, colorlist, [mode] )
+
+    Controls an LED via its x/y coordinates and a list of colors in RGB format.
+    
+    This function does the same as LedCtrlXY() does, except that the color information
+    is now passed in as list [R,G,B].
+    
+      PARAMS: <x>          x coordinate of the LED to control
+              <y>          y coordinate of the LED to control
+              <colorlist>  a list with [ R, G, B ] color codes; each from 0..63
+              <mode>       OPTIONAL: "classic" selects old x/y origin >>> PRO ONLY <<<
+      RETURN:
+      
+      EXAMPLES:
+              LP.LedCtrlXYByRGB( 3, 7, [63, 42, 0] )
 
 
 ### LedCtrlChar( char, red, green, [blue], offsx = 0, offsy = 0 )
