@@ -103,7 +103,7 @@ import sys
 from pygame import midi
 from pygame import time
 
-from charset import *
+from launchpad_py.charset import *
 
 
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
