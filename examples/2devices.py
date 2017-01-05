@@ -1,6 +1,5 @@
-
 #
-# Quick demo of using multiple Launchpads with "launchpad.py"
+# Quick demo of using multiple Launchpads with "launchpad_py"
 #
 # ASkr 2/2015
 # www.askrprojects.net
@@ -8,15 +7,15 @@
 
 
 import random
-import launchpad
+import launchpad_py
 from pygame import time
 
 
 def main():
 
 	# create two Launchpad instances
-	lp1 = launchpad.Launchpad()
-	lp2 = launchpad.Launchpad()
+	lp1 = launchpad_py.Launchpad()
+	lp2 = launchpad_py.Launchpad()
 
 	# open them
 	lp1.Open(0)

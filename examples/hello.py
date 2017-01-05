@@ -1,22 +1,19 @@
-
 #
-# Quick usage of "launchpad.py"
-# For more info, see the "launchpad.py" file itself...
+# Quick usage of "launchpad_py"
+# For more info, see the "launchpad_py/__init__.py" file...
 #
 # ASkr 7/2013
 # www.askrprojects.net
 #
 
-
 import random
-import launchpad
+import launchpad_py
 from pygame import time
-
 
 
 def main():
 
-	LP = launchpad.Launchpad()  # creates a Launchpad instance (first Launchpad found)
+	LP = launchpad_py.Launchpad()  # creates a Launchpad instance (first Launchpad found)
 	LP.Open()                   # start it
 
 

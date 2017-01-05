@@ -131,14 +131,7 @@ This only affects Windows 10.
 
 ---
 ## Package
-The "distribution" consists of:
-
-  - launchpad.py
-  - launchpad_charset.py
-  - launchpad_demo.py
-
-You only need the first two files.
-Both, "launchpad.py" as well as "launchpad_demo.py" contain demo code.
+The "distribution" consists of the `launchpad_py` module (which can be installed with `python setup.py install`) and the runnable sample code contained in the `examples` folder.
 
 
 ---
