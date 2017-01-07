@@ -1,90 +1,11 @@
 #!/usr/bin/python
 #
-# 2016/01/XX:
-#  - basic Launchpad Pro support now built in; working on more...
-#  - added RGB LED control
-#  - added X/Y LED control (RGB and colorcode)
-#  - added a lot more stuff for "Pro"
-#  - added "Mk2" support (new class)
+# A Novation Launchpad control suite for Python.
 #
-# 2016/01/16:
-#  - preparations for Launchpad Pro support (new base class)
-#
-# 2015/02/21:
-#  - multiple Launchpad support now built-in
-#
-# 2015/02/10:
-#  - Tagged stuff for refactoring with REFAC2015. The original code was
-#    quickly hacked together within a weekend. Looks like a lot of this
-#    badly needs some changes :)
-#  - The S/Mini variants, escpecially in conjunction with a fast PC
-#    are waaaays faster that the original Launchpad.
-#    While this is quite nice for the real-time behaviour of all the
-#    buttons and LEDs, the character drawing functions now need a
-#    timer.
-#    -> temporarily "fixed" with a delay :)
-#
+# https://github.com/FMMT666/launchpad.py
 # 
-# This provides complete Python enabled control over a Novation Launchpad.
-#
-#
-# TODO/NEXT:
-#  - bad pointer (midi) on close
-#  - defines for buttons
-#  - docstrings
-#  - ...
-#
-#
-# REQUIREMENTS:
-#  - Python >= v2.7
-#  - Pygame v1.9.1 (newer versions come with a broken MIDI implementation)
-#
-#
-# TESTSUITES:
-#  - Windows XP, 32 bit (Python 2.7.x, Pygame 1.9.1 (read below))
-#  - Raspberry-Pi, Wheezy (standard installation, Python 2.7.3 + Pygame 1.9.1)
-#  - Linux 64 bit (Python 2.7.x, Pygame 1.9.1)
-#  - several others
-#  - does _not_ work on Mac OS X (for now)
-#
-#
-# ANYTHING MISSING?
-#  - Regarding Launchpad's functionality, it's pretty complete.
-#  - Lot of stuff missing in the code (exception handling, error andling, etc...)
-#
-#
-# KNOWN ISSUES
-#  - The Launchpad.Close() function does not work (bad pointer) and will
-#    crash the application upon calling it.
-#  - A lot of traffic (e.g. using the provided text-scrolling feature)
-#    will lead to an extreme lag with big buffer sizes.
-#    Unfortunately, the Pygame MIDI implementation does not allow to reduce
-#    the buffer size on mist systems...
-#
-#
-#  >>>
-#  >>> NOTICE FOR WINDOWS USERS:
-#  >>>
-#  >>>  MIDI implementation in PyGame 1.9.2+ is broken and running this will
-#  >>>  bring up an 'insufficient memory' error ( pygame.midi.Input() ).
-#  >>>
-#  >>>  SOLUTION: use v1.9.1
-#  >>>
-#
-#
-#
-#  >>>
-#  >>> NOTICE FOR RASPBERRY-PI USERS:
-#  >>>
-#  >>>  Due to some bugs in PyGame's MIDI implementation, the buttons of the Launchpad
-#  >>>  won't work after you restarted a program (LEDs are not affected).
-#  >>>
-#  >>>  WORKAROUND #2: Simply hit one of the AUTOMAP keys (the topmost 8 buttons)
-#  >>>                 For whatever reason, this makes the MIDI button  events
-#  >>>                 appearing again...
-#  >>>
-#  >>>  WORKAROUND #1: Pull the Launchpad's plug out and restart... (annoying).
-#  >>>
+# ASkr 1/2017
+# www.askrprojects.net
 #
 #
 #
@@ -103,7 +24,10 @@ import sys
 from pygame import midi
 from pygame import time
 
-from charset import *
+try:
+	from charset import *
+except ImportError:
+	sys.exit("error loading Launchpad charset")
 
 
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
