@@ -117,6 +117,8 @@ This only affects Windows 10.
   - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
   - "All": new demo code
+  - "Pro": flash LEDs
+  - "Pro": pulse LEDs
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": implement native text scrolling
   - "All": fix Windoze 10 SysEx messages (if possible);
