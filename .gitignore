@@ -1,7 +1,13 @@
 *DEADJOE*
 *testing.py
 *.pyc
+*.pyo
 *.nogit.*
 *.html
 *.*~
 *~
+
+# setuptools
+/dist
+/build
+/*.egg-info
