@@ -120,6 +120,7 @@ This only affects Windows 10.
 
   - "All": make this a library/package
   - "Doc": notes about installing/using this directly from Github
+  - "All": implement function to clear the button buffer
   - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
   - "All": new demo code
@@ -176,7 +177,7 @@ For compatibility with existing code, use
 
       import launchpad_py as launchpad
 
-### Direct Usage
+### Direct usage
 
 If you don't want to or cannot install the package on your system, simply
 copy the two files
@@ -201,6 +202,20 @@ or
       ...
       lp = LP.Launchpad()
       ...
+
+### Universal loading template code
+
+      import sys
+      
+      try:
+        import launchpad_py as launchpad
+      except ImportError:
+        try:
+          import launchpad
+        except ImportError:
+          sys.exit("error loading lauchpad.py")
+
+Also see example folder for more code...
 
 ---
 ## License

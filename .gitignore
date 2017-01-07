@@ -1,13 +1,12 @@
-*DEADJOE*
-*testing.py
-*.pyc
-*.pyo
-*.nogit.*
-*.html
-*.*~
-*~
+*
 
-# setuptools
-/dist
-/build
-/*.egg-info
+!.gitignore
+!/images
+!/images/*
+!/examples
+!/examples/*
+!/launchpad_py
+!/launchpad_py/*
+
+!README.md
+!setup.py
