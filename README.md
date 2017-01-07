@@ -17,7 +17,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2016/12/30:
+## STATUS 2017/01/07:
 
 What's hot, what's not?  
 (Also see "Upcoming attractions" somewhere below...)
@@ -39,6 +39,10 @@ This only affects Windows 10.
 
 ---
 ## NEWS
+
+### CHANGES 2017/01/XX:
+
+    - launchpad.py is now available as an [optionally] installable package;
 
 ### CHANGES 2016/12/XX:
 
@@ -114,9 +118,14 @@ This only affects Windows 10.
   more (platform) compatible lib (that actually works), but only after
   the rest got built in...
 
+  - "All": make this a library/package
+  - "Doc": notes about installing/using this directly from Github
+  - "All": implement function to clear the button buffer
   - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
   - "All": new demo code
+  - "Pro": flash LEDs
+  - "Pro": pulse LEDs
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": implement native text scrolling
   - "All": fix Windoze 10 SysEx messages (if possible);
@@ -124,22 +133,89 @@ This only affects Windows 10.
   - "All": event system
   - "All": better custom font support
   - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
-  - "All": make this a library
   - "All": upload it somewhere (lol)
   - ...
 
 
 ---
-## Package
-The "distribution" consists of:
+## Installation/Usage
 
-  - launchpad.py
-  - launchpad_charset.py
-  - launchpad_demo.py
+### Install as Python package
 
-You only need the first two files.
-Both, "launchpad.py" as well as "launchpad_demo.py" contain demo code.
+From the base directory, simply execute the command
 
+      python setup.py install
+
+or 
+
+      sudo python setup.py install
+
+if superuser access is required.
+
+Load and use the module with
+
+      import launchpad_py
+      ...
+      ...
+      # Mk1 Launchpad:
+      lp = launchpad_py.Launchpad()
+      # Mk2 Launchpad:
+      lp = launchpad_py.LaunchpadMk2()
+      # Pro Launchpad:
+      lp = launchpad_py.LaunchpadPro()
+
+or if you dislike typing that much, use
+
+      import launchpad_py as lppy
+      ...
+      ...
+      lp = lppy.Launchpad()
+      lp = lppy.LaunchpadMk2()
+      lp = lppy.LaunchpadPro()
+
+For compatibility with existing code, use
+
+      import launchpad_py as launchpad
+
+### Direct usage
+
+If you don't want to or cannot install the package on your system, simply
+copy the two files
+
+      launchpad.py
+      charset.py
+
+to your working directory.  
+Use those files as described above, but without the "_py":
+
+      import launchpad
+      ...
+      ...
+      # Mk1 Launchpad:
+      lp = launchpad.Launchpad()
+      ...
+
+or
+
+      import launchpad as LP
+      ...
+      ...
+      lp = LP.Launchpad()
+      ...
+
+### Universal loading template code
+
+      import sys
+      
+      try:
+        import launchpad_py as launchpad
+      except ImportError:
+        try:
+          import launchpad
+        except ImportError:
+          sys.exit("error loading lauchpad.py")
+
+Also see example folder for more code...
 
 ---
 ## License

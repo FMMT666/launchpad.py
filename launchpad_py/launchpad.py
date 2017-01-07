@@ -1,96 +1,11 @@
 #!/usr/bin/python
-
 #
-# Novation Launchpad Python V0.8a
-# 7/2013, 2/2015, 1/2016 ASkr(FMMT666)
-# www.askrprojects.net
+# A Novation Launchpad control suite for Python.
 #
-#
-# 2016/01/XX:
-#  - basic Launchpad Pro support now built in; working on more...
-#  - added RGB LED control
-#  - added X/Y LED control (RGB and colorcode)
-#  - added a lot more stuff for "Pro"
-#  - added "Mk2" support (new class)
-#
-# 2016/01/16:
-#  - preparations for Launchpad Pro support (new base class)
-#
-# 2015/02/21:
-#  - multiple Launchpad support now built-in
-#
-# 2015/02/10:
-#  - Tagged stuff for refactoring with REFAC2015. The original code was
-#    quickly hacked together within a weekend. Looks like a lot of this
-#    badly needs some changes :)
-#  - The S/Mini variants, escpecially in conjunction with a fast PC
-#    are waaaays faster that the original Launchpad.
-#    While this is quite nice for the real-time behaviour of all the
-#    buttons and LEDs, the character drawing functions now need a
-#    timer.
-#    -> temporarily "fixed" with a delay :)
-#
+# https://github.com/FMMT666/launchpad.py
 # 
-# This provides complete Python enabled control over a Novation Launchpad.
-#
-#
-# TODO/NEXT:
-#  - bad pointer (midi) on close
-#  - defines for buttons
-#  - docstrings
-#  - ...
-#
-#
-# REQUIREMENTS:
-#  - Python >= v2.7
-#  - Pygame v1.9.1 (newer versions come with a broken MIDI implementation)
-#
-#
-# TESTSUITES:
-#  - Windows XP, 32 bit (Python 2.7.x, Pygame 1.9.1 (read below))
-#  - Raspberry-Pi, Wheezy (standard installation, Python 2.7.3 + Pygame 1.9.1)
-#  - Linux 64 bit (Python 2.7.x, Pygame 1.9.1)
-#  - several others
-#  - does _not_ work on Mac OS X (for now)
-#
-#
-# ANYTHING MISSING?
-#  - Regarding Launchpad's functionality, it's pretty complete.
-#  - Lot of stuff missing in the code (exception handling, error andling, etc...)
-#
-#
-# KNOWN ISSUES
-#  - The Launchpad.Close() function does not work (bad pointer) and will
-#    crash the application upon calling it.
-#  - A lot of traffic (e.g. using the provided text-scrolling feature)
-#    will lead to an extreme lag with big buffer sizes.
-#    Unfortunately, the Pygame MIDI implementation does not allow to reduce
-#    the buffer size on mist systems...
-#
-#
-#  >>>
-#  >>> NOTICE FOR WINDOWS USERS:
-#  >>>
-#  >>>  MIDI implementation in PyGame 1.9.2+ is broken and running this will
-#  >>>  bring up an 'insufficient memory' error ( pygame.midi.Input() ).
-#  >>>
-#  >>>  SOLUTION: use v1.9.1
-#  >>>
-#
-#
-#
-#  >>>
-#  >>> NOTICE FOR RASPBERRY-PI USERS:
-#  >>>
-#  >>>  Due to some bugs in PyGame's MIDI implementation, the buttons of the Launchpad
-#  >>>  won't work after you restarted a program (LEDs are not affected).
-#  >>>
-#  >>>  WORKAROUND #2: Simply hit one of the AUTOMAP keys (the topmost 8 buttons)
-#  >>>                 For whatever reason, this makes the MIDI button  events
-#  >>>                 appearing again...
-#  >>>
-#  >>>  WORKAROUND #1: Pull the Launchpad's plug out and restart... (annoying).
-#  >>>
+# ASkr 01/2013..01/2017
+# www.askrprojects.net
 #
 #
 #
@@ -109,7 +24,10 @@ import sys
 from pygame import midi
 from pygame import time
 
-from launchpad_charset import *
+try:
+	from charset import *
+except ImportError:
+	sys.exit("error loading Launchpad charset")
 
 
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
@@ -1338,153 +1256,4 @@ class LaunchpadMk2( LaunchpadPro ):
 			led = 91-(10*y) + x
 		
 		self.LedCtrlRawByCode( led, colorcode )
-
-
-
-########################################################################################
-########################################################################################
-########################################################################################
-def main():
-
-	# THIS SHOULD ALL BE REWRITTEN...
-
-	LP = Launchpad()
-
-	print("--------------------------------------------------")
-	LP.ListAll()
-	
-	# Check if there's a Pro attached.
-	# If yes, just loop in here and never return...
-	if LP.Check( 0, "Pro" ) or LP.Check( 0, "MK2" ):
-		# lol :-)
-		if LP.Check( 0, "Pro" ):
-			print("--------------------------------------------------")
-			print("Launchpad Pro found")
-			print(">>> Make sure the device is in 'LIVE' mode!")
-			print(">>> Push 'Setup' + top left matrix button.")
-			lp = LaunchpadPro()
-			lp.Open(0,"Pro")
-		else:
-			print("--------------------------------------------------")
-			print("Launchpad Mk2 found")
-			lp = LaunchpadMk2()
-			lp.Open(0,"MK2")
-		
-		lp.LedCtrlString( '*burp*', 63, 0, 63, direction = -1, waitms = 50 )
-		
-		color = 0
-		led = 0
-		while( True ):
-			lp.LedCtrlRawByCode( led, color )
-			color+=1
-			led+=1
-			if color > 128:
-				color = 0
-			if led > 111:
-				led = 1
-			
-
-	print("--------------------------------------------------")
-	
-	# "Classic" demo code ahead...
-	if LP.Check() == False:
-		print("No standard Launchpad found.")
-		return
-
-	print("Launchpad Classic found")
-
-	# open the first "Classic" Launchpad
-	LP.Open()
-
-
-	# the latter of these two messages might not finish (MIDI buffer too large,
-	# MIDI speed too low...)
-	LP.LedCtrlString( '*', 0, 3, direction = -1 ) # erase test
-	LP.LedCtrlString( '*', 0, 3, direction =  1 ) # erase test
-	print("HELLO")
-	LP.LedCtrlString( 'HELLO', 3, 0, direction = 0 ) # display HELLO in red
-	print("USER")
-	LP.LedCtrlString( 'USER', 0, 3, direction = -1 ) # scroll USER in green, from right to left
-	
-	# try to give it some extra time:
-	# TESTING S/MINI
-#	time.wait( 5000 )
-
-	print("---\nTurning on all LEDs.")
-	LP.LedAllOn()
-	time.wait( 3000 )
-
-
-	# control of automap buttons and LEDs
-	print("---\nAutomap buttons.")
-	for n in range(3):
-		for i in range(0,8):
-			LP.LedCtrlAutomap( i, 3, 0 )
-			time.wait(50)
-		for i in range(0,8):
-			LP.LedCtrlAutomap( i, 0, 3 )
-			time.wait(50)
-	for i in range(0,8):
-		LP.LedCtrlAutomap( i, 0, 0 )
-
-
-	# random output until button "arm" (lower right) is pressed
-	print("---\nRandom madness. Stop by hitting the ARM button (lower right)")
-	print("Remember the PyGame MIDI bug:")
-	print("If the ARM button has no effect, hit an automap button (top row)")
-	print("and try again...")
-	while 1:
-		LP.LedCtrlRaw( random.randint(0,127), random.randint(0,3), random.randint(0,3) )
-		time.wait( 10 )
-		but = LP.ButtonStateRaw()
-		if but != []:
-			print( but[0] )
-			if but[0] == 120:
-				break
-
-	# fast update method
-	print("---\nFast update via color list.")
-	g = LP.LedGetColor( 0, 3 )
-	r = LP.LedGetColor( 3, 0 )
-	y = LP.LedGetColor( 3, 3 )
-	ledTab = [ ]
-	for i in range( 80 ):
-		ledTab.append( r )
-		ledTab.append( g )
-		ledTab.append( y )
-	LP.LedCtrlRawRapid( ledTab )
-
-		
-	# turn off every pressed key
-	print("---\nPress some buttons. End by pushing ARM.")
-	while 1:
-		but = LP.ButtonStateRaw()
-		if but != []:
-			print( but )
-			if but == [ 120, True ]:
-				break
-			LP.LedCtrlRaw( but[0], 3 if but[1] else 0, 0 )
-
-
-	# query buttons via the "xy return strategy"
-	print("---\nPress some buttons. End by pushing ARM.")
-	while True:
-		time.wait( 10 )
-		but = LP.ButtonStateXY()
-		if but != []:
-			LP.LedCtrlXY( but[0], but[1], 3, 0 )
-			print( but )
-			if but == [ 8, 8, True ]:
-				break
-
-	print("---\nGoodbye...")
-
-	LP.Reset()
-			
-	LP.Close()
-
-	
-if __name__ == '__main__':
-	main()
-
 

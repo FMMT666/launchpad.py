@@ -1,0 +1,6 @@
+*
+
+!.gitignore
+!__init__.py
+!launchpad.py
+!charset.py
