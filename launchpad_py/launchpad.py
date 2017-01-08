@@ -52,6 +52,7 @@ class Midi:
 			try:
 				Midi.instanceMidi = Midi.__Midi()
 			except:
+				# TODO: maybe sth like sys.exit()?
 				print("unable to initialize MIDI")
 				Midi.instanceMidi = None
 
@@ -295,6 +296,22 @@ class LaunchpadBase( object ):
 	def ListAll( self ):
 		self.midi.SearchDevices( "*", True, True, False )
 
+
+	#-------------------------------------------------------------------------------------
+	#-- Clears the button buffer (The Launchpads remember everything...)
+	#-- Because of empty reads (timeouts), there's nothing more we can do here, but
+	#-- repeat the polls and wait a little...
+	#-------------------------------------------------------------------------------------
+	def ButtonFlush( self ):
+		doReads = 0
+		# wait for that amount of consecutive read fails to exit
+		while doReads < 3:
+			if self.midi.ReadCheck():
+				doReads = 0
+				a = self.midi.ReadRaw()
+			else:
+				doReads += 1
+				time.wait( 5 )
 
 
 ########################################################################################
@@ -579,7 +596,6 @@ class Launchpad( LaunchpadBase ):
 				return [ a[0][0][1] - 104, 0, True if a[0][0][2] > 0 else False ]
 				
 		return []
-
 
 
 ########################################################################################
@@ -970,7 +986,7 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- [ <button>, <value> ], in which <button> is the raw number of the button and
 	#-- <value> an intensity value from 0..127.
 	#-- >0 = button pressed; 0 = button released
-	#-- A constant force ("push longer") is suppressed here... (TODO)
+	#-- A constant force ("push longer") is suppressed here... ("208" Pressure Value)
 	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
@@ -978,6 +994,23 @@ class LaunchpadPro( LaunchpadBase ):
 	def ButtonStateRaw( self ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
+
+			# Note:
+			#  Beside "144" (Note On, grid buttons), "208" (Pressure Value, grid buttons) and
+			#  "176" (Control Change, outer buttons), random (broken) SysEx messages
+			#  can appear here:
+			#   ('###', [[[240, 0, 32, 41], 4]])
+			#   ('-->', [])
+			#   ('###', [[[2, 16, 45, 0], 4]])
+			#   ('###', [[[247, 0, 0, 0], 4]])
+			#  ---
+			#   ('###', [[[240, 0, 32, 41], 4]])
+			#   ('-->', [])
+			#  1st one is a SysEx Message (240, 0, 32, 41, 2, 16 ), with command Mode Status (45)
+			#  in "Ableton Mode" (0) [would be 1 for Standalone Mode). "247" is the SysEx termination.
+			#  Additionally, it's interrupted by a read failure.
+			#  The 2nd one is simply cut. Notice that that these are commands usually send TO the
+			#  Launchpad...
 			
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 				return [ a[0][0][1], a[0][0][2] ]
@@ -1000,7 +1033,7 @@ class LaunchpadPro( LaunchpadBase ):
 	def ButtonStateXY( self, mode = "classic" ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
-			
+
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 			
 				if mode.lower() != "pro":

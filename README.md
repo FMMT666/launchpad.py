@@ -44,6 +44,7 @@ This only affects Windows 10.
 
     - launchpad.py is now available as an [optionally] installable package;
     - fixed unintentional installs under Python 3 dist-packages
+    - added ButtonFlush() method to empty the button buffer
 
 ### CHANGES 2016/12/XX:
 
@@ -121,13 +122,13 @@ This only affects Windows 10.
 
   - "Doc": split installation and usage (and condense that a little)
   - "Doc": add git clone instructions
-  - "All": implement function to clear the button buffer
   - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
   - "Pro": flash LEDs
   - "Pro": pulse LEDs
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": implement native text scrolling
+  - "All": replace MIDI cmd numbers with sth human readable (144->Note On; 176->Control Change, etc...)
   - "All": fix Windoze 10 SysEx messages (if possible);
   - "All": custom bitmaps and graphics
   - "All": event system
@@ -413,14 +414,15 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 [...]
 
 ---
-## Common Launchpad Mk1 ("Classic") class methods overview (valid for all devices)
+## Common class methods overview (valid for all devices)
 
 ### Device control functions
 
     Open( [name], [number] )
     Close()
     Reset()
-
+    ButtonFlush()
+    
 
 ### Utility functions
 
@@ -446,6 +448,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     ButtonChanged()
     ButtonStateRaw()
     ButtonStateXY()
+    ButtonFlush()
 
 
 ---
@@ -459,7 +462,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     LedCtrlRawByCode( number, [colorcode] )
     LedCtrlXY( x, y, red, green, [blue] )
     LedCtrlXYByCode( x, y, colorcode )
-	LedCtrlXYByRGB( x, y, colorlist )
+    LedCtrlXYByRGB( x, y, colorlist )
     LedCtrlChar( char, red, green, [blue], [offsx], [offsy] )
     LedCtrlString( string, red, green, [blue], [direction], [waitms] )
     LedAllOn( [colorcode] )
@@ -467,9 +470,10 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
 ### Button functions
 
-	ButtonStateRaw()
+    ButtonStateRaw()
+    ButtonStateXY()
+    ButtonFlush()
 
-    work in progress...
 
 ### Color codes
 
@@ -577,6 +581,17 @@ using the, indeed much more comfortable, RGB notation.
 ### Close()
 
     Bug in PyGame. Don't call it (yet)...
+
+      PARAMS:
+      RETURN:
+
+
+### ButtonFlush()
+
+    Flushes the Launchpads button buffer.
+    If you do not poll the buttons frequently or even if your software is not running,
+    the Launchpad will store each button event in its buffer.
+    This function can be used to clear all button events.
 
       PARAMS:
       RETURN:
