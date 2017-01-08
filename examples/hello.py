@@ -16,7 +16,7 @@ except ImportError:
 	try:
 		import launchpad
 	except ImportError:
-		sys.exit("error loading lauchpad.py")
+		sys.exit("error loading launchpad.py")
 
 import random
 from pygame import time
@@ -32,13 +32,13 @@ def main():
 	# check what we have here and override lp if necessary
 	if lp.Check( 0, "pro" ):
 		lp = launchpad.LaunchpadPro()
-		if lp.Open(0,"pRo"):
+		if lp.Open(0,"pro"):
 			print("Launchpad Pro")
 			mode = "Pro"
 			
-	elif lp.Check( 0, "mK2" ):
+	elif lp.Check( 0, "mk2" ):
 		lp = launchpad.LaunchpadMk2()
-		if lp.Open( 0, "Mk2" ):
+		if lp.Open( 0, "mk2" ):
 			print("Launchpad Mk2")
 			mode = "Mk2"
 			

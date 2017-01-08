@@ -43,6 +43,7 @@ This only affects Windows 10.
 ### CHANGES 2017/01/XX:
 
     - launchpad.py is now available as an [optionally] installable package;
+    - fixed unintentional installs under Python 3 dist-packages
 
 ### CHANGES 2016/12/XX:
 
@@ -118,12 +119,11 @@ This only affects Windows 10.
   more (platform) compatible lib (that actually works), but only after
   the rest got built in...
 
-  - "All": make this a library/package
-  - "Doc": notes about installing/using this directly from Github
+  - "Doc": split installation and usage (and condense that a little)
+  - "Doc": add git clone instructions
   - "All": implement function to clear the button buffer
   - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
-  - "All": new demo code
   - "Pro": flash LEDs
   - "Pro": pulse LEDs
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
@@ -142,11 +142,17 @@ This only affects Windows 10.
 
 ### Install as Python package
 
-From the base directory, simply execute the command
+#### Via pip
+
+t.b.d...
+
+#### From local file system
+
+If you downloaded the Launchpad.py source package, simply execute the command
 
       python setup.py install
 
-or 
+from the base directory or 
 
       sudo python setup.py install
 
@@ -176,6 +182,14 @@ or if you dislike typing that much, use
 For compatibility with existing code, use
 
       import launchpad_py as launchpad
+
+#### Install directly from Github
+
+Instead of downloading the source distribution, you can directly install it from Github
+by executing
+
+      pip2 install git+https://github.com/FMMT666/launchpad.py
+
 
 ### Direct usage
 
