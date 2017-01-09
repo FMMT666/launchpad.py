@@ -25,7 +25,7 @@ from pygame import midi
 from pygame import time
 
 try:
-	from charset import *
+	from launchpad_py.charset import *
 except ImportError:
 	sys.exit("error loading Launchpad charset")
 
@@ -198,7 +198,8 @@ class Midi:
 				if quiet == False:
 					print(md)
 					sys.stdout.flush()
-				if md[1].lower().find( name.lower() ) >= 0:
+				encoding = sys.getdefaultencoding()
+				if md[1].decode(encoding).lower().find( name.lower() ) >= 0:
 					if output == True and md[3] > 0:
 						ret.append( i )
 					if input == True and md[2] > 0:
@@ -536,9 +537,9 @@ class Launchpad( LaunchpadBase ):
 			string += " "
 			for n in range( (len(string) + 1) * 8 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
 			# TODO: Just a quick hack (screen is erased before scrolling begins).
@@ -548,9 +549,9 @@ class Launchpad( LaunchpadBase ):
 #			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
 			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
 			for i in string:
@@ -944,9 +945,9 @@ class LaunchpadPro( LaunchpadBase ):
 			string += " " # just to avoid artifacts on full width characters
 			for n in range( (len(string) + 1) * 8 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
 			# TODO: Just a quick hack (screen is erased before scrolling begins).
@@ -956,9 +957,9 @@ class LaunchpadPro( LaunchpadBase ):
 #			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
 			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
 			for i in string:
