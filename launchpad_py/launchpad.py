@@ -982,6 +982,14 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- (fake to) reset the Launchpad
+	#-- Turns off all LEDs
+	#-------------------------------------------------------------------------------------
+	def Reset( self ):
+		self.LedAllOn( 0 )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
 	#-- [ <button>, <value> ], in which <button> is the raw number of the button and
 	#-- <value> an intensity value from 0..127.
@@ -1133,6 +1141,28 @@ class LaunchpadMk2( LaunchpadPro ):
 	# Overrides "LaunchpadPro" method
 	def Check( self, number = 0, name = "MK2" ):
 		return super( LaunchpadMk2, self ).Check( number = number, name = name );
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Quickly sets all all LEDs to the same color, given by <colorcode>.
+	#-- If <colorcode> is omitted, "white" is used.
+	#-------------------------------------------------------------------------------------
+	def LedAllOn( self, colorcode = None ):
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+		else:
+			colorcode = min( colorcode, 127 )
+			colorcode = max( colorcode, 0 )
+		
+		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 24, 14, colorcode ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- (fake to) reset the Launchpad
+	#-- Turns off all LEDs
+	#-------------------------------------------------------------------------------------
+	def Reset( self ):
+		self.LedAllOn( 0 )
 
 
 	#-------------------------------------------------------------------------------------

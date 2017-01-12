@@ -45,6 +45,7 @@ This only affects Windows 10.
     - launchpad.py is now available as an [optionally] installable package;
     - fixed unintentional installs under Python 3 dist-packages
     - added ButtonFlush() method to empty the button buffer
+    - added Pro LedAllOn() and Mk2 Reset()
 
 ### CHANGES 2016/12/XX:
 
@@ -277,8 +278,9 @@ and the following LED control functions WILL NOT WORK:
   - LedCtrlChar()
   - LedCtrlXY()
   - LedCtrlXYByRGB()
+  - Reset() [will work on Mk1 only]
 
-So with Windows 10, you're limited to:
+So with Windows 10, for now, you're limited to:
 
   - LedCtrlRawByCode()
   - LedCtrlXYByCode()

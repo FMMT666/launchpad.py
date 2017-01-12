@@ -59,7 +59,7 @@ def main():
 		lp.LedCtrlString( "HELLO ", 0, 63, 0, -1 )
 
 
-	# random output until button "arm" (lower right) is pressed
+	# random output
 	print("---\nRandom madness. Stop by creating 10 button events.")
 	print("Notice that sometimes, old Mk1 units don't recognize any button")
 	print("events before you press one of the (top) automap buttons")
