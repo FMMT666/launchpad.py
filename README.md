@@ -30,11 +30,11 @@ What's hot, what's not?
 
     Launchpad Pro   - class "LaunchpadPro()"  all features, LEDs and buttons
 
-Good news: Now working with macOS Sierra. Thanks, [Stewart!][13].  
+Good news: Now partly(!) working with macOS Sierra. Thanks, [Stewart!][13].  
 
-Bad news. As it seems, the MIDI SysEx messages don't work in Windows 10.  
+Bad news. As it seems, the MIDI SysEx messages don't work in Windows 10 and macOS Sierra.  
 As for now, the LEDs can only be controlled by "LedCtrlRawByCode()" and "LedCtrlXYByCode()".  
-This only affects Windows 10.
+This "only" affects Windows 10 and macOS.
 
 
 ---
@@ -46,6 +46,7 @@ This only affects Windows 10.
     - fixed unintentional installs under Python 3 dist-packages
     - added ButtonFlush() method to empty the button buffer
     - added Pro LedAllOn() and Mk2 Reset()
+    - added macOS notes
 
 ### CHANGES 2016/12/XX:
 
@@ -121,6 +122,8 @@ This only affects Windows 10.
   more (platform) compatible lib (that actually works), but only after
   the rest got built in...
 
+  - "All": fix Windoze 10 and macOS SysEx messages (if possible);
+  - "All": build in the new (*censored yet*) MIDI lib
   - "Doc": split installation and usage (and condense that a little)
   - "Doc": add git clone instructions
   - "Pro": support full analog reads (button already pressed, but intensity changes)
@@ -130,7 +133,6 @@ This only affects Windows 10.
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": implement native text scrolling
   - "All": replace MIDI cmd numbers with sth human readable (144->Note On; 176->Control Change, etc...)
-  - "All": fix Windoze 10 SysEx messages (if possible);
   - "All": custom bitmaps and graphics
   - "All": event system
   - "All": better custom font support
@@ -253,7 +255,6 @@ The licensor cannot revoke these freedoms as long as you follow the license term
   - [Pygame][3] v1.9.1 (macOS: Pygame v1.9.2b8 via pip)
   
 It does not work with Python 3.  
-Python 3 requires PyGame v1.9.2, which was built without any MIDI functionality.
 
 Launchpad.py was tested under
 
@@ -261,14 +262,14 @@ Launchpad.py was tested under
   - Windows XP, 32 bit
   - Windows 7, 32 bit, 64 bit
   - Windows 10, 64 bit (*LIMITED OPERATION*, see below)
-  - macOS Sierra
+  - macOS Sierra       (*LIMITED OPERATION*, see below)
   - [Raspberry-Pi 1/2][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
   - Beagle Bone (Black)
   - Banana Pi (Pro/M2/R1)
   - pcDuino V3
   - ...
 
-As recently discovered (2016/10/25), MIDI SysEx messages are broken in Windows 10
+As recently discovered (2016/10/25), MIDI SysEx messages are broken in Windows 10, macOS
 and the following LED control functions WILL NOT WORK:
 
   - LedSetLayout()
@@ -280,7 +281,7 @@ and the following LED control functions WILL NOT WORK:
   - LedCtrlXYByRGB()
   - Reset() [will work on Mk1 only]
 
-So with Windows 10, for now, you're limited to:
+So with Windows 10 and macOS, for now, you're limited to:
 
   - LedCtrlRawByCode()
   - LedCtrlXYByCode()
@@ -322,7 +323,7 @@ name it once shipped the first red/green LED with!
       which is required for launchpad.py to work.
       
       Notice that the automatic switching into "Ableton Live Mode" does NOT work
-      with Windows 10, due to the SysEx messages issue.
+      with Windows 10 and macOS, due to the SysEx messages issue.
 
 ### For Launchpad Mk2 users
 
@@ -364,6 +365,13 @@ Notice that the original Launchpad Mk1 requires an USB driver.
 Get it from [here][14] (Novation USB Driver-2.7.dmg).
 
 As it seems, all newer Launchpads work right out of the box, no driver required.
+
+### For macOS users
+
+      As described above, all LED controls that use SysEx messages will not work.
+      This affects the Apple Python, as well as the MacPorts version.
+      Brew untested, but "should" [tm] make no difference.
+
      
 ### For Windows users
 
@@ -616,6 +624,7 @@ using the, indeed much more comfortable, RGB notation.
 ### Reset()
 
     Resets the Launchpad and (quickly) turns off all LEDs.
+    Notice that only the Mk1 performs a 
 
       PARAMS:
       RETURN:
