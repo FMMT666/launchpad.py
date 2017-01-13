@@ -1225,7 +1225,8 @@ class LaunchpadMk2( LaunchpadPro ):
 		green = limit( green, 0, 63 )
 		blue  = limit( blue,  0, 63 )
 		
-		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
+#		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
+		self.midi.RawWriteMulti( [  [[0xf0, 240,0,32],0],   [[41,2,16,11],0],  [[number, red,green,blue],0], [[0xf7],0]  ] )
 
 
 	#-------------------------------------------------------------------------------------
