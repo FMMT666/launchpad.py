@@ -711,7 +711,9 @@ class LaunchpadPro( LaunchpadBase ):
 	def Open( self, number = 0, name = "Pro" ):
 		retval = super( LaunchpadPro, self ).Open( number = number, name = name )
 		if retval == True:
-			self.LedSetMode( 0 )
+			# avoid sending this to an Mk2
+			if name.lower() == "pro":
+				self.LedSetMode( 0 )
 
 		return retval
 
@@ -741,6 +743,7 @@ class LaunchpadPro( LaunchpadBase ):
 			return
 		
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 34, mode ] )
+		time.wait(10)
 
 
 	#-------------------------------------------------------------------------------------
@@ -753,6 +756,7 @@ class LaunchpadPro( LaunchpadBase ):
 			return
 			
 		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 33, mode ] )
+		time.wait(10)
 
 
 	#-------------------------------------------------------------------------------------
@@ -1126,20 +1130,20 @@ class LaunchpadMk2( LaunchpadPro ):
 
 	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Launchpad MIDI devices.
-	#-- Uses search string "MK2", by default.
+	#-- Uses search string "Mk2", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
-	def Open( self, number = 0, name = "MK2" ):
+	def Open( self, number = 0, name = "Mk2" ):
 		return super( LaunchpadMk2, self ).Open( number = number, name = name );
 
 
 	#-------------------------------------------------------------------------------------
 	#-- Checks if a device exists, but does not open it.
 	#-- Does not check whether a device is in use or other, strange things...
-	#-- Uses search string "MK2", by default.
+	#-- Uses search string "Mk2", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
-	def Check( self, number = 0, name = "MK2" ):
+	def Check( self, number = 0, name = "Mk2" ):
 		return super( LaunchpadMk2, self ).Check( number = number, name = name );
 
 

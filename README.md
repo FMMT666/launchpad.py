@@ -57,7 +57,7 @@ This "only" affects Windows 10 and macOS.
       - scrolling from left to right still has some issues ("quick hack drawback" :)
     - implemented same scrolling behaviour for the Pro Launchpad
     - Mk2 LedCtrlXY() now does nothing if x/y are out of range (were clamped to 0 or 8 before)
-    - MK2 LedCtrlXYByCode() now also exits if x/y values are out of range
+    - Mk2 LedCtrlXYByCode() now also exits if x/y values are out of range
     - added LedCtrlXYByRGB() for Mk2/Pro; pass color arguments as list [r,g,b]
     - tried to clarify "Mk1" color and x/y origin mode for Pro pads in the doc
     - added ButtonStateXY() for Mk2 and Pro
@@ -555,7 +555,7 @@ using the, indeed much more comfortable, RGB notation.
               
               # open the 1st "Mk2"
               lp = launchpad.LaunchpadMk2()  # notice the "Mk2" class!
-              lp.Open()                      # equals Open( 0, "MK2" )
+              lp.Open()                      # equals Open( 0, "Mk2" )
               
               # open the 1st "Pro"
               lp = launchpad.LaunchpadPro()  # notice the "Pro" class!
@@ -570,7 +570,7 @@ using the, indeed much more comfortable, RGB notation.
     
     Like Open(), this method uses different default names for the different classes:
       Launchpad()     -> "Launchpad"
-      LaunchpadMk2()  -> "MK2"
+      LaunchpadMk2()  -> "Mk2"
       LaunchpadPro()  -> "Pro"
       
     Notice that it's absolutely safe to query for an "Pro" or "Mk2" from all classes, e.g.:
