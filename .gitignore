@@ -10,3 +10,7 @@
 
 !README.md
 !setup.py
+
+# *** BRANCH TESTLOCAL ONLY ***
+!/tests
+!/tests/*
