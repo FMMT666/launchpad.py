@@ -17,10 +17,11 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/01/07:
+## STATUS 2017/01/15:
 
 What's hot, what's not?  
-(Also see "Upcoming attractions" somewhere below...)
+
+### Devices
 
     Launchpad Mk1   - class "Launchpad()"     all features, LEDs and buttons
     Launchpad/S     - class "Launchpad()"     all features, LEDs and buttons
@@ -30,12 +31,26 @@ What's hot, what's not?
 
     Launchpad Pro   - class "LaunchpadPro()"  all features, LEDs and buttons
 
-Good news: Now partly(!) working with macOS Sierra. Thanks, [Stewart!][13].  
+### OS
 
 Bad news. As it seems, the MIDI SysEx messages don't work in Windows 10 and macOS Sierra.  
 As for now, the LEDs can only be controlled by "LedCtrlRawByCode()" and "LedCtrlXYByCode()".  
 This "only" affects Windows 10 and macOS.
 
+    Linux    full    functionality; all buttons, all LED functions
+    Windows  limited functionality; all buttons, but only two LED functions
+    macOS    limited functionality; all buttons, but only two LED functions
+
+I spent the last couple of days (1/2017) with testing new MIDI libraries, that work on all
+three major systems, Linux, Windows and macOS.  
+Well, as it seems, the SysEx messages issues are not only PyGame related, but more of a
+fundamental problem on Windows and macOS.  
+
+While I managed to light up LEDs with SysEx messages on Windows 10, macOS still does absolutely nothing.
+And even while the new Windows 10 code basically works with a Mk2 Launchpad, which I used for the
+tests, two LEDs always additionally light up, no matter what SysEx message is sent.
+
+And so the search continues...
 
 ---
 ## NEWS
@@ -47,6 +62,7 @@ This "only" affects Windows 10 and macOS.
     - added ButtonFlush() method to empty the button buffer
     - added Pro LedAllOn() and Mk2 Reset()
     - added macOS notes
+    - some minor tweaks for the Mk2
 
 ### CHANGES 2016/12/XX:
 
@@ -361,7 +377,7 @@ Install that with:
 
 #### Hardware
 
-Notice that the original Launchpad Mk1 requires an USB driver.  
+Notice that the original Launchpad Mk1 requires an USB driver. Thanks, [Stewart!][13].  
 Get it from [here][14] (Novation USB Driver-2.7.dmg).
 
 As it seems, all newer Launchpads work right out of the box, no driver required.
