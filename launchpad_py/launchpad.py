@@ -742,7 +742,7 @@ class LaunchpadPro( LaunchpadBase ):
 		if mode < 0 or mode > 0x0d:
 			return
 		
-		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 34, mode ] )
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 16, 34, mode ] )
 		time.wait(10)
 
 
@@ -755,7 +755,7 @@ class LaunchpadPro( LaunchpadBase ):
 		if mode < 0 or mode > 1:
 			return
 			
-		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 33, mode ] )
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 16, 33, mode ] )
 		time.wait(10)
 
 
@@ -806,7 +806,7 @@ class LaunchpadPro( LaunchpadBase ):
 		green = limit( green, 0, 63 )
 		blue  = limit( blue,  0, 63 )
 			
-		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
 
 
 	#-------------------------------------------------------------------------------------
@@ -982,7 +982,7 @@ class LaunchpadPro( LaunchpadBase ):
 			colorcode = min( colorcode, 127 )
 			colorcode = max( colorcode, 0 )
 		
-		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 14, colorcode ] )
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 16, 14, colorcode ] )
 
 
 	#-------------------------------------------------------------------------------------
@@ -1158,7 +1158,7 @@ class LaunchpadMk2( LaunchpadPro ):
 			colorcode = min( colorcode, 127 )
 			colorcode = max( colorcode, 0 )
 		
-		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 24, 14, colorcode ] )
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 24, 14, colorcode ] )
 
 
 	#-------------------------------------------------------------------------------------
@@ -1198,7 +1198,7 @@ class LaunchpadMk2( LaunchpadPro ):
 				return []
 		else:
 			return []
-	
+
 
 	#-------------------------------------------------------------------------------------
 	#-- Controls a grid LED by its position <number> and a color, specified by
@@ -1229,19 +1229,7 @@ class LaunchpadMk2( LaunchpadPro ):
 		green = limit( green, 0, 63 )
 		blue  = limit( blue,  0, 63 )
 		
-		# the original, fails on Windoze 10 and macOS
-		self.midi.RawWriteSysEx( [ 240, 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
-
-		# nope, the manual assembled version fails to... 
-#		self.midi.RawWriteMulti( [  [[0xf0, 240,0,32], 0],   [[41,2,24,11], 0],  [[number, red,green,blue], 0], [[0xf7], 0]  ] )
-
-		# maybe splitting that up?
-#		self.midi.RawWriteMulti( [  [[0xf0, 240,  0, 32], 0] ] )
-#		self.midi.RawWriteMulti( [  [[  41,   2, 24, 11], 0]   ] )
-#		self.midi.RawWriteMulti( [  [[number, red,green,blue], 0]   ] )
-#		self.midi.RawWriteMulti( [  [[0xf7], 0]  ] ) 
-		   
-
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 16, 11, number, red, green, blue ] )
 
 
 	#-------------------------------------------------------------------------------------

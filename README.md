@@ -17,7 +17,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/01/15:
+## STATUS 2017/04/09:
 
 What's hot, what's not?  
 
@@ -33,27 +33,17 @@ What's hot, what's not?
 
 ### OS
 
-Bad news. As it seems, the MIDI SysEx messages don't work in Windows 10 and macOS Sierra.  
-As for now, the LEDs can only be controlled by "LedCtrlRawByCode()" and "LedCtrlXYByCode()".  
-This "only" affects Windows 10 and macOS.
++++ BREAKING +++  
++++ FIXED THOSE SYSEX "OS ISSUES" (which was actually - well, me :-)
 
-    Linux    full    functionality; all buttons, all LED functions
-    Windows  limited functionality; all buttons, but only two LED functions
-    macOS    limited functionality; all buttons, but only two LED functions
-
-I spent the last couple of days (1/2017) with testing new MIDI libraries, that work on all
-three major systems, Linux, Windows and macOS.  
-Well, as it seems, the SysEx messages issues are not only PyGame related, but more of a
-fundamental problem on Windows and macOS.  
-
-While I managed to light up LEDs with SysEx messages on Windows 10, macOS still does absolutely nothing.
-And even while the new Windows 10 code basically works with a Mk2 Launchpad, which I used for the
-tests, two LEDs always additionally light up, no matter what SysEx message is sent.
-
-And so the search continues...
+Now full functionality with Windows 10 and macOS.
 
 ---
 ## NEWS
+
+### CHANGES 2017/04/09:
+
+    - Windows 10 and macOS SysEx issues are fixed \o\ \o/ /o/
 
 ### CHANGES 2017/01/XX:
 
@@ -138,7 +128,6 @@ And so the search continues...
   more (platform) compatible lib (that actually works), but only after
   the rest got built in...
 
-  - "All": fix Windoze 10 and macOS SysEx messages (if possible);
   - "All": build in the new (*censored yet*) MIDI lib
   - "Doc": split installation and usage (and condense that a little)
   - "Doc": add git clone instructions
@@ -277,34 +266,14 @@ Launchpad.py was tested under
   - Linux, 32 bit, 64 bit
   - Windows XP, 32 bit
   - Windows 7, 32 bit, 64 bit
-  - Windows 10, 64 bit (*LIMITED OPERATION*, see below)
-  - macOS Sierra       (*LIMITED OPERATION*, see below)
+  - Windows 10, 64 bit
+  - macOS Sierra
   - [Raspberry-Pi 1/2][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
   - Beagle Bone (Black)
   - Banana Pi (Pro/M2/R1)
   - pcDuino V3
   - ...
 
-As recently discovered (2016/10/25), MIDI SysEx messages are broken in Windows 10, macOS
-and the following LED control functions WILL NOT WORK:
-
-  - LedSetLayout()
-  - LedSetMode()
-  - LedCtrlRaw()
-  - LedAllOn()
-  - LedCtrlChar()
-  - LedCtrlXY()
-  - LedCtrlXYByRGB()
-  - Reset() [will work on Mk1 only]
-
-So with Windows 10 and macOS, for now, you're limited to:
-
-  - LedCtrlRawByCode()
-  - LedCtrlXYByCode()
-
-Please also notice that the "Ableton Live mode" cannot automatically be
-enabled, due to this restriction!
-  
 Supported and tested red/green LED Launchpad devices, here referred  to as "Classic" or "Mk1":
 
   - Launchpad (the original, old "Mk1")
@@ -337,9 +306,6 @@ name it once shipped the first red/green LED with!
         
       As of 2016/01/24, the "Pro" is now automatically set to "Ableton Live mode",
       which is required for launchpad.py to work.
-      
-      Notice that the automatic switching into "Ableton Live Mode" does NOT work
-      with Windows 10 and macOS, due to the SysEx messages issue.
 
 ### For Launchpad Mk2 users
 
@@ -382,21 +348,12 @@ Get it from [here][14] (Novation USB Driver-2.7.dmg).
 
 As it seems, all newer Launchpads work right out of the box, no driver required.
 
-### For macOS users
-
-      As described above, all LED controls that use SysEx messages will not work.
-      This affects the Apple Python, as well as the MacPorts version.
-      Brew untested, but "should" [tm] make no difference.
-
-     
 ### For Windows users
 
-      MIDI implementation in PyGame 1.9.2+ is broken and running this will
+      MIDI implementation in PyGame 1.9.2+ is broken and running this might
       bring up an 'insufficient memory' error ( pygame.midi.Input() ).
 
-      SOLUTION: use v1.9.1
-      
-      Also notice the Windows 10 limitations above (LED controls).
+      SOLUTION: use v1.9.1 (or try v1.9.3)
 
 ### For Linux and especially Raspberry-Pi users:
 
@@ -593,8 +550,8 @@ using the, indeed much more comfortable, RGB notation.
     
       lp = lauchpad.Launchpad()        # Launchpad "Mk1" or "Classic" class
       if lp.Check( 0, "Pro" ):         # check for "Pro"
-		lp = launchpad.LaunchpadPro()  # "reload" the new class for the "Pro"
-		lp.Open()                      # equals lp.Open( 0, "Pro" )
+        lp = launchpad.LaunchpadPro()  # "reload" the new class for the "Pro"
+        lp.Open()                      # equals lp.Open( 0, "Pro" )
     
     Search patterns are case insensitive.  
     
@@ -736,8 +693,8 @@ using the, indeed much more comfortable, RGB notation.
       EXAMPLES:
               # scroll a red 'A' from left to right
               for x in range( -8, 9 ):
-			    lp.LedCtrlChar( 'A', 3, 0, offsx = x )
-			    time.wait( 100 )
+                lp.LedCtrlChar( 'A', 3, 0, offsx = x )
+                time.wait( 100 )
 		
 
 ### LedCtrlString( string, red, green, direction = 0, waitms = 150 )
@@ -954,8 +911,8 @@ using the, indeed much more comfortable, RGB notation.
       EXAMPLES:
               # scroll a purple 'A' from left to right
               for x in range( -8, 9 ):
-			    lp.LedCtrlChar( 'A', 63, 0, 63, offsx = x )
-			    time.wait( 100 )
+                lp.LedCtrlChar( 'A', 63, 0, 63, offsx = x )
+                time.wait( 100 )
 
 
 ### LedCtrlString( string, red, green, blue = None, direction = 0, waitms = 150 )
