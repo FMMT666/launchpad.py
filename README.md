@@ -257,7 +257,12 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 ## Requirements
 
   - [Python][2] 2
-  - [Pygame][3] v1.9.1 (macOS: Pygame v1.9.2b8 via pip)
+  - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3
+
+Some Pygame versions do not work on some OSes (e.g. v1.9.2 might cause trouble
+with Windows 7/10). I cannot tell you any more than just "try them!".  
+The latest fixes (4/2017) were tested with v1.9.3 (via pip from Python 2.7.13)
+and Windows 10 (x64). That seems to work fine again...
   
 It does not work with Python 3.  
 
