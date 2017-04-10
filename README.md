@@ -128,21 +128,22 @@ Now full functionality with Windows 10 and macOS.
   more (platform) compatible lib (that actually works), but only after
   the rest got built in...
 
+  - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
+  - "Pro": flash LEDs
+  - "Pro": pulse LEDs
+  - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
+  - "Pro": implement native text scrolling
+  - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": build in the new (*censored yet*) MIDI lib
   - "Doc": split installation and usage (and condense that a little)
   - "Doc": add git clone instructions
-  - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "All": fix manual text scrolling
-  - "Pro": flash LEDs
-  - "Pro": pulse LEDs
-  - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
-  - "Pro": implement native text scrolling
   - "All": replace MIDI cmd numbers with sth human readable (144->Note On; 176->Control Change, etc...)
   - "All": custom bitmaps and graphics
   - "All": event system
   - "All": better custom font support
   - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
-  - "All": upload it somewhere (lol)
+  - "All": upload to PyPI
   - ...
 
 
@@ -794,6 +795,10 @@ using the, indeed much more comfortable, RGB notation.
 
 ### LedCtrlRaw( number, red, green, [blue] )
 
+    +++ NOTICE:
+    +++   It is recommended to always call this with a "blue" parameter.
+    +++   The compatibility mode will be removed soon. 
+    
     Controls an LED via its number and red, green and blue intensity values.
     
     This method uses system-exclusive MIDI messages, which require 10 bytes to
@@ -827,6 +832,10 @@ using the, indeed much more comfortable, RGB notation.
 
 ### LedCtrlXY( x, y, red, green, [blue], [mode] )
 
+    +++ NOTICE:
+    +++   It is recommended to always call this with a "blue" parameter.
+    +++   The compatibility mode will be removed soon. 
+    
     Controls an LED via its x/y coordinates and red, green or blue intensity values.
     An additional <mode> parameter determines the origin of the x-axis.
     
@@ -890,6 +899,10 @@ using the, indeed much more comfortable, RGB notation.
 
 ### LedCtrlChar( char, red, green, [blue], offsx = 0, offsy = 0 )
 
+    +++ NOTICE:
+    +++   It is recommended to always call this with a "blue" parameter.
+    +++   The compatibility mode will be removed soon.
+    
     Sends character <char> in colors <red/green/blue> (0..63 each) and
     lateral offset <offsx> (-8..8) to the Launchpad.
     <offsy> does not have yet any function.
@@ -920,8 +933,13 @@ using the, indeed much more comfortable, RGB notation.
                 time.wait( 100 )
 
 
-### LedCtrlString( string, red, green, blue = None, direction = 0, waitms = 150 )
+### LedCtrlString( string, red, green, [blue], direction = 0, waitms = 150 )
 
+    +++ NOTICE:
+    +++   It is recommended to always call this with a "blue" parameter.
+    +++   The compatibility mode will be removed soon (and the output on
+    +++   Mk2 and Pro pads might be messed up).
+    
     Notice that the Launchpad Pro has string scrolling capabilities built in, but
     this function provides the old, Mk1 compatible functionality. Advantages
     are custom fonts and symbols (in the future).
