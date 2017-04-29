@@ -9,4 +9,7 @@
 !/launchpad_py/*
 
 !README.md
+!README
+!MANIFEST.in
+!LICENSE.txt
 !setup.py

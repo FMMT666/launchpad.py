@@ -1,0 +1,16 @@
+
+
+launchpad.py
+============
+
+A Novation Launchpad control suite for Python.
+
+If you ever dreamed of using your Launchpad for completely other stuff than music: Welcome !-)  
+
+Compatible with most [tm] single board computers.
+
+For details and additional documentation, see:  
+
+  https://github.com/FMMT666/launchpad.py
+
+

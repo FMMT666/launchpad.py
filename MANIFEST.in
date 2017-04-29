@@ -1,0 +1,4 @@
+include examples/hello.py
+include README.md
+include LICENSE.txt
+include images/lppro_colorcodes.png
