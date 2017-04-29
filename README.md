@@ -17,7 +17,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/04/09:
+## STATUS 2017/04/30:
 
 What's hot, what's not?  
 
@@ -40,6 +40,10 @@ Now full functionality with Windows 10 and macOS.
 
 ---
 ## NEWS
+
+### CHANGES 2017/04/30:
+
+    - launchpad.py is now available via PyPI, the Python Package Index.
 
 ### CHANGES 2017/04/09:
 
@@ -143,7 +147,6 @@ Now full functionality with Windows 10 and macOS.
   - "All": event system
   - "All": better custom font support
   - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
-  - "All": upload to PyPI
   - ...
 
 
@@ -154,7 +157,19 @@ Now full functionality with Windows 10 and macOS.
 
 #### Via pip
 
-t.b.d...
+Simply execute
+
+    pip install launchpad_py
+
+or
+
+    sudo pip install launchpad_py
+
+(in case you need superuser rights) to install it.  
+Notice that the required dependencies (see below) are not automatically resolved.  
+
+You need to install PyGame separately.
+
 
 #### From local file system
 
