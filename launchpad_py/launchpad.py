@@ -1331,7 +1331,37 @@ class LaunchpadMk2( LaunchpadPro ):
 ###
 ### For 2-color Launch Control XL 
 ########################################################################################
+
 class LaunchControlXL( LaunchpadBase ):
+
+	# LED AND BUTTON NUMBERS IN XY MODE (X/Y)
+	# The two "template" buttons on the top right cannot be controlled (NOP)
+	#
+	#          0   1   2   3   4   5   6   7      8    9
+	#         
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	#        |0/1|   |   |   |   |   |   |   |  |NOP||NOP|  0
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	#        |   |   |   |   |   |   |   |   |  |   ||   |  1
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	#        |   |   |   |   |   |5/2|   |   |  |   ||   |  2
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	#                                               8/9
+	#                                              +---+
+	#                                              |   |    3(!)
+	#                                              +---+
+	#                                              |   |    4(!)
+	#                                              +---+
+	#                                              |   |    5
+	#                                              +---+
+	#                                              |   |    6
+	#                                              +---+
+	#        +---+---+---+---+---+---+---+---+  
+	#     3  |   |   |   |   |   |   |   |   |              3(!)
+	#        +---+---+---+---+---+---+---+---+  
+	#     4  |   |   |   |   |   |   |   |   |              4(!)
+	#        +---+---+---+---+---+---+---+---+  
+
 
 	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Control XL MIDI devices.
@@ -1398,16 +1428,44 @@ class LaunchControlXL( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	def LedCtrlXY( self, x, y, red, green ):
 		# TODO: Note about the y coords
-		if x < 0 or x > 10 or y < 0 or y > 9:
+		if x < 0 or x > 9 or y < 0 or y > 6:
 			return
 
-		if x < 9:
+		if x < 8:
 			color = self.LedGetColor( red, green )
-			index = y*8 + x
 		else:
-			# TODO: LEDs on the right (as x=9..10 and y=0..7)
-			pass
+			# the "special buttons" only have one color
+			color = self.LedGetColor( 3, 3 )
+			
+
+		if x < 8:
+			index = y*8 + x
+		#-----
+		elif x == 8:
+			#----- device, mute, solo, record
+			if y > 2:
+				index = 37 + y
+			#----- up
+			elif y == 1:
+				index = 44
+			#----- left
+			elif y == 2:
+				index = 46
+			else:
+				return
+		#-----
+		elif x == 9:
+			#----- device, mute, solo, record
+			if y > 2:
+				index = 37 + y
+			#----- down
+			elif y == 1:
+				index = 45
+			#----- right
+			elif y == 2:
+				index = 47
+			else:
+				return
 
 		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 120, 0, index, color ] )
-
 
