@@ -1324,3 +1324,56 @@ class LaunchpadMk2( LaunchpadPro ):
 		
 		self.LedCtrlRawByCode( led, colorcode )
 
+
+
+########################################################################################
+### CLASS LaunchControlXL ~~~PRELIMINARY~~~
+###
+### For 2-color Launch Control XL 
+########################################################################################
+class LaunchControlXL( LaunchpadBase ):
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Control XL MIDI devices.
+	#-- Uses search string "Control XL", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def Open( self, number = 0, name = "Control XL" ):
+		return super( LaunchControlXL, self ).Open( number = number, name = name );
+
+
+	#-------------------------------------------------------------------------------------
+	#-- reset the Launchpad
+	#-- Turns off all LEDs
+	#-------------------------------------------------------------------------------------
+	def Reset( self ):
+		self.midi.RawWrite( 176, 0, 0 )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns a Launchpad compatible "color code byte"
+	#-- NOTE: In here, number is 0..7 (left..right)
+	#-------------------------------------------------------------------------------------
+	def LedGetColor( self, red, green ):
+		led = 0
+		
+		red = min( int(red), 3 ) # make int and limit to <=3
+		red = max( red, 0 )      # no negative numbers
+
+		green = min( int(green), 3 ) # make int and limit to <=3
+		green = max( green, 0 )      # no negative numbers
+
+		led |= red
+		led |= green << 4 
+		
+		return led
+
+		
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its raw <number>; with <green/red> brightness: 0..3
+	#-- For LED numbers, see grid description on top of class.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRaw( self, number, red, green ):
+		led = self.LedGetColor( red, green )
+		self.midi.RawWrite( 144, number, led )
+
