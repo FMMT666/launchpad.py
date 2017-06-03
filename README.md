@@ -13,33 +13,41 @@ What about the brand new Launchpad Pro support? [Right][9]!
 
 Hey - and the Mac? Yep, that finally works too. [Look][12] \o/  
 
+Upcoming attraction: [Launch Control XL][15].
+
 Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/04/30:
+## STATUS 2017/06/04:
 
 What's hot, what's not?  
 
 ### Devices
 
-    Launchpad Mk1   - class "Launchpad()"     all features, LEDs and buttons
-    Launchpad/S     - class "Launchpad()"     all features, LEDs and buttons
-    Launchpad Mini  - class "Launchpad()"     all features, LEDs and buttons
+    Launchpad Mk1     - class "Launchpad()"       all features, LEDs and buttons
+    Launchpad/S       - class "Launchpad()"       all features, LEDs and buttons
+    Launchpad Mini    - class "Launchpad()"       all features, LEDs and buttons
 
-    Launchpad Mk2   - class "LaunchpadMk2()"  all features, LEDs and buttons
+    Launchpad Mk2     - class "LaunchpadMk2()"    all features, LEDs and buttons
 
-    Launchpad Pro   - class "LaunchpadPro()"  all features, LEDs and buttons
+    Launchpad Pro     - class "LaunchpadPro()"    all features, LEDs and buttons
+    
+    Launch Control XL - class "LaunchControlXL()" work in progress
 
 ### OS
 
 +++ BREAKING +++  
-+++ FIXED THOSE SYSEX "OS ISSUES" (which was actually - well, me :-)
 
 Now full functionality with Windows 10 and macOS.
 
 ---
 ## NEWS
+
+### CHANGES 2017/06/XX:
+
+    - added support for the Launch Control XL pad
+    - added XL LedCtrlXY()
 
 ### CHANGES 2017/04/30:
 
@@ -1246,4 +1254,5 @@ FMMT666(ASkr)
 [11]: https://creativecommons.org/licenses/by/4.0/
 [12]: https://twitter.com/FMMT666/status/802869723910275072/video/1
 [13]: https://github.com/FMMT666/launchpad.py/issues/9
-[14]:https://novationmusic.de/support/product-downloads?product=Launchpad+MK1
+[14]: https://novationmusic.de/support/product-downloads?product=Launchpad+MK1
+[15]: https://twitter.com/FMMT666/status/871094540140240896

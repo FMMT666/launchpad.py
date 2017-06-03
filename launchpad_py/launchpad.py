@@ -1351,10 +1351,24 @@ class LaunchControlXL( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- all LEDs on
+	#-- <colorcode> is here for backwards compatibility with the newer "Mk2" and "Pro"
+	#-- classes. If it's "0", all LEDs are turned off. In all other cases turned on,
+	#-- like the function name implies :-/
+	#-------------------------------------------------------------------------------------
+	def LedAllOn( self, colorcode = None ):
+		if colorcode == 0:
+			self.Reset()
+		else:
+			self.midi.RawWrite( 176, 0, 127 )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Returns a Launchpad compatible "color code byte"
 	#-- NOTE: In here, number is 0..7 (left..right)
 	#-------------------------------------------------------------------------------------
 	def LedGetColor( self, red, green ):
+		# TODO: copy and clear bits
 		led = 0
 		
 		red = min( int(red), 3 ) # make int and limit to <=3
@@ -1374,6 +1388,26 @@ class LaunchControlXL( LaunchpadBase ):
 	#-- For LED numbers, see grid description on top of class.
 	#-------------------------------------------------------------------------------------
 	def LedCtrlRaw( self, number, red, green ):
+		# the order of the LEDs is really a mess
 		led = self.LedGetColor( red, green )
 		self.midi.RawWrite( 144, number, led )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its coordinates <x> and <y>  with <green/red> brightness 0..3
+	#-------------------------------------------------------------------------------------
+	def LedCtrlXY( self, x, y, red, green ):
+		# TODO: Note about the y coords
+		if x < 0 or x > 10 or y < 0 or y > 9:
+			return
+
+		if x < 9:
+			color = self.LedGetColor( red, green )
+			index = y*8 + x
+		else:
+			# TODO: LEDs on the right (as x=9..10 and y=0..7)
+			pass
+
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 120, 0, index, color ] )
+
 
