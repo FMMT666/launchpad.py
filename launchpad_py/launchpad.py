@@ -1327,13 +1327,41 @@ class LaunchpadMk2( LaunchpadPro ):
 
 
 ########################################################################################
-### CLASS LaunchControlXL ~~~PRELIMINARY~~~
+### CLASS LaunchControlXL
 ###
 ### For 2-color Launch Control XL 
 ########################################################################################
-
 class LaunchControlXL( LaunchpadBase ):
 
+	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
+	# The two "template" buttons on the top right cannot be controlled (NOP)
+	#
+	#         
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	#        |   |   |   |   |   |   |   |   |  |NOP||NOP| 
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	#        |   |   |   |   |   |   |   |   |  |104||105| 
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	#        |   |   |   |   |   |   |   |   |  |106||107| 
+	#        +---+---+---+---+---+---+---+---+  +---++---+
+	# 
+	#                                              +---+
+	#                                              |105| 
+	#                                              +---+
+	#                                              |106| 
+	#                                              +---+
+	#                                              |107| 
+	#                                              +---+
+	#                                              |108| 
+	#                                              +---+
+	#        +---+---+---+---+---+---+---+---+  
+	#        | 41| 42| 43| 44| 57| 58| 59| 60| 
+	#        +---+---+---+---+---+---+---+---+  
+	#        | 73| 74| 75| 76| 89| 90| 91| 92| 
+	#        +---+---+---+---+---+---+---+---+  
+	#
+	#
+	#
 	# LED AND BUTTON NUMBERS IN XY MODE (X/Y)
 	# The two "template" buttons on the top right cannot be controlled (NOP)
 	#
@@ -1367,9 +1395,43 @@ class LaunchControlXL( LaunchpadBase ):
 	#-- Opens one of the attached Control XL MIDI devices.
 	#-- Uses search string "Control XL", by default.
 	#-------------------------------------------------------------------------------------
-	# Overrides "LaunchpadPro" method
-	def Open( self, number = 0, name = "Control XL" ):
-		return super( LaunchControlXL, self ).Open( number = number, name = name );
+	# Overrides "LaunchpadBase" method
+	def Open( self, number = 0, name = "Control XL", template = 0 ):
+
+		# The user template number adds to the MIDI commands.
+		# Make sure that the Control XL is set to the corresponding mode by
+		# holding down one of the template buttons and selecting the template
+		# with the lowest button row 1..8 (variable here stores that as 0..7 for
+		# user or 8..15 for the factory templates).
+		# By default, user template 0 is enabled
+		self.UserTemplate = template
+		
+		retval = super( LaunchControlXL, self ).Open( number = number, name = name );
+		if retval == True:
+			self.TemplateSet( self.UserTemplate )
+
+		return retval
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "Pro", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "Control XL" ):
+		return super( LaunchpadPro, self ).Check( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the layout template.
+	#-- 1..8 selects the user and 9..16 the factory setups.
+	#-------------------------------------------------------------------------------------
+	def TemplateSet( self, templateNum ):
+		if templateNum < 1 or templateNum > 16:
+			return
+		else:
+			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 119, templateNum-1 ] )
 
 
 	#-------------------------------------------------------------------------------------
@@ -1387,7 +1449,7 @@ class LaunchControlXL( LaunchpadBase ):
 	#-- like the function name implies :-/
 	#-------------------------------------------------------------------------------------
 	def LedAllOn( self, colorcode = None ):
-		if colorcode == 0:
+		if colorcode is None or colorcode == 0:
 			self.Reset()
 		else:
 			self.midi.RawWrite( 176, 0, 127 )
@@ -1468,4 +1530,28 @@ class LaunchControlXL( LaunchpadBase ):
 				return
 
 		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 120, 0, index, color ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change as a list:
+	#-- [ <button>, <True/False> ]
+	#-------------------------------------------------------------------------------------
+	def ButtonStateRaw( self ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+			
+			#--- pressed
+			if    a[0][0][0] == 144:
+				return [ a[0][0][1], True ]  # always has a[0][0][2] == 127
+			#--- released
+			elif  a[0][0][0] == 128:
+				return [ a[0][0][1], False ] # always has a[0][0][2] == 0
+			#--- the cursor buttons (notice the 176 control change command instead of 144)
+			elif  a[0][0][0] == 176 and a[0][0][1] >= 104 and a[0][0][1] <= 107:
+				return [ a[0][0][1], False if a[0][0][2] == 0 else True ]
+			else:
+				return []
+		else:
+			return []
+
 

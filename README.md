@@ -48,7 +48,9 @@ Now full functionality with Windows 10 and macOS.
 
     - added support for the Launch Control XL pad
     - added XL LedCtrlXY()
-
+    - added XL ButtonStateRaw()
+    - added XL TemplateSet()
+    
 ### CHANGES 2017/04/30:
 
     - launchpad.py is now available via PyPI, the Python Package Index.
@@ -140,6 +142,9 @@ Now full functionality with Windows 10 and macOS.
   more (platform) compatible lib (that actually works), but only after
   the rest got built in...
 
+  - "CXL": add potentiometer support
+  - "CXL": add docs
+  - "CXL": add class to standard loader (pad auto-detect)
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": flash LEDs
   - "Pro": pulse LEDs
@@ -319,7 +324,22 @@ name it once shipped the first red/green LED with!
 
 
 ---
-## Notes (from the source)
+## Random Notes
+
+### Button, value and potentiometer polling
+
+ Until now (6/2017), Launchpad.py does not have an event system built in. You need to poll the buttons' or
+ potentiometer's values manually.  
+ Notice that actually nothing will gets lost, but every event you create will be buffered (until you run out
+ or memory :). If you don't poll the button, value or potentiometer regulary, your might end up with thousands
+ of old states and values, blocking the current input.  
+ Especially rotating a potentiometer or pushing a slider, creates an event for each single value that
+ was sampled. This can easily be hundreds of messages in a few seconds.
+
+ So either poll regulary or use the ButtonFlush() method to clear everything.
+
+ Also notice that the buffer might be filled right after you started your application...
+  
 
 ### For Launchpad Mk1 users (the original "Classic" Launchpad):
 
@@ -341,6 +361,12 @@ name it once shipped the first red/green LED with!
       USE CLASS "LaunchpadMk2":
       
         lp = launchpad.LaunchpadMk2()
+
+### For Launch Control XL users
+
+      USE CLASS "LaunchControlXL":
+      
+        lp = launchpad.LaunchControlXL()
 
 ### For Mac users
 
@@ -495,13 +521,53 @@ using the, indeed much more comfortable, RGB notation.
 
 ![RGB color palette](/images/lppro_colorcodes.png)
 
+
+
+---
+## Launch Control XL class methods overview
+
+*WORK IN PROGESS*
+
+### Device
+    Open( [name], [number], [template] )
+    TemplateSet( template )
+
+
+### LED functions
+
+    LedSetMode( mode )
+    LedGetColorByName( name )
+    LedCtrlRaw( number, red, gree )
+    LedCtrlXY( x, y, red, green )
+    LedAllOn( [colorcode] )
+
+
+### Button functions
+
+    ButtonStateRaw()
+    ButtonFlush()
+
+
+### Potentiometer functions
+
+    TODO
+
+
+
 ---
 ## Detailed description of common Launchpad methods
 
-### Open( [number], [name] )
+### Open( [number], [name], [template (*1*)] )
 
     Opens the a Launchpad and initializes it.  
     Please notice that some devices have up to six MIDI entries!.
+    
+    Notice that <template> is only valid for the Launch Control XL pad.
+    A number of 1..8 selects and activates a user template (1 by default)
+    or 9..16 a factory one.
+    This corresponds to holding down one of the "Template buttons" and
+    selecting the template number via the bottom button row.
+    
     A dump by ListAll(), with a "Pro", a Mk1 "Mini" and a "Mk2" might look like:
     
         ('ALSA', 'Midi Through Port-0', 0, 1, 0)
@@ -1033,6 +1099,13 @@ using the, indeed much more comfortable, RGB notation.
               They don't have the full analog mode like the "Pro" has.
 
 
+
+---
+## Detailed description of Launch Control XL specific methods
+
+*WORK IN PROGRESS *
+
+
 ---
 ## Button and LED codes, Launchpad Mk1 "Classic" (red/green LEDs)
 
@@ -1231,7 +1304,123 @@ using the, indeed much more comfortable, RGB notation.
 
 
 
+---
+## Button, LED and potentiometer codes, Launch Control XL
 
+### Buttons and LEDs
+
+#### RAW mode
+
+        +---+---+---+---+---+---+---+---+  +---++---+
+        | 13| 29| 45| 61| 77| 93|109|125|  |NOP||NOP| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+        | 14| 30| 46| 62| 78| 94|110|126|  |104||105| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+        | 15| 31| 47| 63| 79| 95|111|127|  |106||107| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+ 
+                                              +---+
+                                              |105| 
+                                              +---+
+                                              |106| 
+                                              +---+
+                                              |107| 
+                                              +---+
+                                              |108| 
+                                              +---+
+        +---+---+---+---+---+---+---+---+  
+        | 41| 42| 43| 44| 57| 58| 59| 60| 
+        +---+---+---+---+---+---+---+---+  
+        | 73| 74| 75| 76| 89| 90| 91| 92| 
+        +---+---+---+---+---+---+---+---+  
+
+
+#### X/Y mode
+
+The two "template" buttons on the top right cannot be controlled (NOP)
+
+          0   1   2   3   4   5   6   7      8    9
+         
+        +---+---+---+---+---+---+---+---+  +---++---+
+     0  |0/1|   |   |   |   |   |   |   |  |NOP||NOP|  0
+        +---+---+---+---+---+---+---+---+  +---++---+
+     1  |   |   |   |   |   |   |   |   |  |   ||   |  1
+        +---+---+---+---+---+---+---+---+  +---++---+
+     2  |   |   |   |   |   |5/2|   |   |  |   ||   |  2
+        +---+---+---+---+---+---+---+---+  +---++---+
+                                               8/9
+                                              +---+
+                                              |   |    3(!)
+                                              +---+
+                                              |   |    4(!)
+                                              +---+
+                                              |   |    5
+                                              +---+
+                                              |   |    6
+                                              +---+
+        +---+---+---+---+---+---+---+---+  
+     3  |   |   |   |   |   |   |   |   |              3(!)
+        +---+---+---+---+---+---+---+---+  
+     4  |   |   |   |3/4|   |   |   |   |              4(!)
+        +---+---+---+---+---+---+---+---+  
+
+
+### Potentiometers
+
+#### RAW mode
+
+        +---+---+---+---+---+---+---+---+  +---++---+
+        | 13| 14| 15| 16| 17| 18| 19| 20|  |   ||   | 
+        +---+---+---+---+---+---+---+---+  +---++---+
+        | 29| 30| 31| 32| 33| 34| 35| 36|  |   ||   | 
+        +---+---+---+---+---+---+---+---+  +---++---+
+        | 49| 50| 51| 52| 53| 54| 55| 56|  |   ||   | 
+        +---+---+---+---+---+---+---+---+  +---++---+
+ 
+        +---+---+---+---+---+---+---+---+     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+        | 77| 78| 79| 80| 81| 82| 83| 84|     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+        +---+---+---+---+---+---+---+---+     +---+
+        
+        +---+---+---+---+---+---+---+---+  
+        |   |   |   |   |   |   |   |   | 
+        +---+---+---+---+---+---+---+---+  
+        |   |   |   |   |   |   |   |   | 
+        +---+---+---+---+---+---+---+---+  
+
+
+#### X/Y mode
+
+          0   1   2   3   4   5   6   7
+
+        +---+---+---+---+---+---+---+---+  +---++---+
+     0  |   |   |2/0|   |   |   |   |   |  |   ||   | 
+        +---+---+---+---+---+---+---+---+  +---++---+
+     1  |   |   |   |   |   |   |   |   |  |   ||   | 
+        +---+---+---+---+---+---+---+---+  +---++---+
+     2  |   |   |   |   |   |   |6/2|   |  |   ||   | 
+        +---+---+---+---+---+---+---+---+  +---++---+
+ 
+        +---+---+---+---+---+---+---+---+     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+     3  |   |   |   |   |   |5/3|   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |
+        +---+---+---+---+---+---+---+---+     +---+
+        
+        +---+---+---+---+---+---+---+---+  
+        |   |   |   |   |   |   |   |   | 
+        +---+---+---+---+---+---+---+---+  
+        |   |   |   |   |   |   |   |   | 
+        +---+---+---+---+---+---+---+---+  
 
 
 
