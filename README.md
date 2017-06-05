@@ -52,6 +52,7 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added XL InputChanged()
     - added XL InputFlush()
     - added XL docs
+    - updated "hello.py" example to work with Control XL
     
 ### CHANGES 2017/04/30:
 
