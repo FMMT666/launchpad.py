@@ -139,9 +139,8 @@ Now full functionality also on Windows 10 and macOS based systems.
 ---
 ## Upcoming attractions, notes and thoughts
 
-  - "CXL": add docs
-  - "CXL": add potentiometer support
-  - "CXL": add class to standard loader (pad auto-detect)
+  - "CXL": x/y support (if it makes sense...)
+  - "Pro": change ButtonStateXY() to return True/False? (would be required for analog readings and compat to XL...)
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": flash LEDs
   - "Pro": pulse LEDs
@@ -1204,6 +1203,15 @@ using the, indeed much more comfortable, RGB notation.
               <button> and <potnum> are the RAW button or potentiometer numbers, the second field
               either determines the state of the button ("True" if pressed, "False" if released) or
               returns the value of the potentiometer that was changed.
+              
+      EXAMPLES:
+      
+        xlEvent = lp.InputStateRaw()
+        if xlEvent != []:
+          if xlEvent[1] is True or xlEvent[1] is False:
+            print( "Button        ", xlEvent[0], xlEvent[1] )
+          else:
+            print( "Potentiometer ", xlEvent[0], xlEvent[1] )
 
 
 ---
