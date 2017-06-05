@@ -19,27 +19,25 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/06/04:
+## STATUS 2017/06/05:
 
 What's hot, what's not?  
 
 ### Devices
 
-    Launchpad Mk1     - class "Launchpad()"       all features, LEDs and buttons
-    Launchpad/S       - class "Launchpad()"       all features, LEDs and buttons
-    Launchpad Mini    - class "Launchpad()"       all features, LEDs and buttons
+    Launchpad Mk1     - class "Launchpad()"       LEDs and buttons
+    Launchpad/S       - class "Launchpad()"       LEDs and buttons
+    Launchpad Mini    - class "Launchpad()"       LEDs and buttons
 
-    Launchpad Mk2     - class "LaunchpadMk2()"    all features, LEDs and buttons
+    Launchpad Mk2     - class "LaunchpadMk2()"    LEDs and buttons
 
-    Launchpad Pro     - class "LaunchpadPro()"    all features, LEDs and buttons
+    Launchpad Pro     - class "LaunchpadPro()"    LEDs and buttons (digitally only (yet))
     
-    Launch Control XL - class "LaunchControlXL()" work in progress
+    Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
 
 ### OS
 
-+++ BREAKING +++  
-
-Now full functionality with Windows 10 and macOS.
+Now full functionality also on Windows 10 and macOS based systems.
 
 ---
 ## NEWS
@@ -48,8 +46,12 @@ Now full functionality with Windows 10 and macOS.
 
     - added support for the Launch Control XL pad
     - added XL LedCtrlXY()
-    - added XL ButtonStateRaw()
+    - added XL ButtonStateRaw(), later renamed to InputStateRaw()
     - added XL TemplateSet()
+    - added XL potentiometer support (via InputStateRaw())
+    - added XL InputChanged()
+    - added XL InputFlush()
+    - added XL docs
     
 ### CHANGES 2017/04/30:
 
@@ -137,13 +139,8 @@ Now full functionality with Windows 10 and macOS.
 ---
 ## Upcoming attractions, notes and thoughts
 
-  More and more reported issues are directly related to PyGame.  
-  As nice as it was, it has reached its end, so I am looking for a
-  more (platform) compatible lib (that actually works), but only after
-  the rest got built in...
-
-  - "CXL": add potentiometer support
   - "CXL": add docs
+  - "CXL": add potentiometer support
   - "CXL": add class to standard loader (pad auto-detect)
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": flash LEDs
@@ -330,13 +327,13 @@ name it once shipped the first red/green LED with!
 
  Until now (6/2017), Launchpad.py does not have an event system built in. You need to poll the buttons' or
  potentiometer's values manually.  
- Notice that actually nothing will gets lost, but every event you create will be buffered (until you run out
- or memory :). If you don't poll the button, value or potentiometer regulary, your might end up with thousands
+ Notice that actually nothing will get lost, but every event you create will be buffered (until you run out
+ or memory :). If you don't poll the buttons or potentiometers regulary, your might end up with thousands
  of old states and values, blocking the current input.  
  Especially rotating a potentiometer or pushing a slider, creates an event for each single value that
  was sampled. This can easily be hundreds of messages in a few seconds.
 
- So either poll regulary or use the ButtonFlush() method to clear everything.
+ So either poll regulary or use the ButtonFlush()/InputFlush() method to clear everything.
 
  Also notice that the buffer might be filled right after you started your application...
   
@@ -456,10 +453,12 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
 ### Device control functions
 
-    Open( [name], [number] )
+    Open( [name], [number], [template (*1*)] )
     Close()
     Reset()
     ButtonFlush()
+    
+    (*1*) Control XL only
     
 
 ### Utility functions
@@ -529,40 +528,33 @@ using the, indeed much more comfortable, RGB notation.
 *WORK IN PROGESS*
 
 ### Device
-    Open( [name], [number], [template] )
     TemplateSet( template )
 
 
 ### LED functions
 
-    LedSetMode( mode )
-    LedGetColorByName( name )
+    LedGetColor( red, green )
     LedCtrlRaw( number, red, gree )
     LedCtrlXY( x, y, red, green )
     LedAllOn( [colorcode] )
 
 
-### Button functions
+### Input functions
 
-    ButtonStateRaw()
-    ButtonFlush()
-
-
-### Potentiometer functions
-
-    TODO
-
+    InputChanged()
+    InputFlush()
+    InputStateRaw()
 
 
 ---
 ## Detailed description of common Launchpad methods
 
-### Open( [number], [name], [template (*1*)] )
+### Open( [number], [name], [template (1)] )
 
     Opens the a Launchpad and initializes it.  
     Please notice that some devices have up to six MIDI entries!.
     
-    Notice that <template> is only valid for the Launch Control XL pad.
+    (1) Notice that <template> is only valid for the Launch Control XL pad.
     A number of 1..8 selects and activates a user template (1 by default)
     or 9..16 a factory one.
     This corresponds to holding down one of the "Template buttons" and
@@ -582,20 +574,29 @@ using the, indeed much more comfortable, RGB notation.
         ('ALSA', 'Launchpad Mini MIDI 1', 1, 0, 0)
         ('ALSA', 'Launchpad MK2 MIDI 1', 0, 1, 0)
         ('ALSA', 'Launchpad MK2 MIDI 1', 1, 0, 0)
-
+        ('ALSA', 'Launch Control XL MIDI 1', 0, 1, 1)
+        ('ALSA', 'Launch Control XL MIDI 1', 1, 0, 1)
+    
     You'll only need to count the entries if you have two or more identical Launchpads attached.
     
-      PARAMS: <number> OPTIONAL, number of Launchpad to open.
-                       1st device = 0, 2nd device = 1, ...
-                       Defaults to 0, the 1st device, if not given.
-              <name>   OPTIONAL, only consider devices whose names contain
-                       the string <name>. The default names for the classes are:
-                         Launchpad()     -> "Launchpad"
-                         LaunchpadMk2()  -> "Mk2"
-                         LaunchpadPro()  -> "Pro"
-                       It is sufficient to search for a part of the string, e.g.
-                       "chpad S" will find a device named "Launchpad S" or even
-                       "Novation Launchpad S"
+      PARAMS: <number>   OPTIONAL, number of Launchpad to open.
+                         1st device = 0, 2nd device = 1, ...
+                         Defaults to 0, the 1st device, if not given.
+              <name>     OPTIONAL, only consider devices whose names contain
+                         the string <name>. The default names for the classes are:
+                           Launchpad()       -> "Launchpad"
+                           LaunchpadMk2()    -> "Mk2"
+                           LaunchpadPro()    -> "Pro"
+                           LaunchControlXL() -> "Control XL"
+                         It is sufficient to search for a part of the string, e.g.
+                         "chpad S" will find a device named "Launchpad S" or even
+                         "Novation Launchpad S"
+              <template> OPTIONAL, ONLY CONTROL XL
+                         The Launch Control XL supports eight user and eight factory settings,
+                         selectable via the two "Template" burrons on the top right.
+                         By default, Launchpad.py uses the template "User 1".
+                         1.. 8 -> select user template    1..8
+                         9..16 -> select factory template 1..8
 
       RETURN: True     success
               False    error
@@ -622,12 +623,21 @@ using the, indeed much more comfortable, RGB notation.
               lp.Open( name = "Launchpad Mini", number = 0)
               
               # open the 1st "Mk2"
-              lp = launchpad.LaunchpadMk2()  # notice the "Mk2" class!
-              lp.Open()                      # equals Open( 0, "Mk2" )
+              lp = launchpad.LaunchpadMk2()    # notice the "Mk2" class!
+              lp.Open()                        # equals Open( 0, "Mk2" )
               
               # open the 1st "Pro"
-              lp = launchpad.LaunchpadPro()  # notice the "Pro" class!
-              lp.Open()                      # equals Open( 0, "Pro" )
+              lp = launchpad.LaunchpadPro()    # notice the "Pro" class!
+              lp.Open()                        # equals Open( 0, "Pro" )
+              
+              # open the 1st "XL" with user template 3
+              lp = launchpad.LaunchControlXL( template = 3 )
+              lp.Open()
+              
+              # open the 1st "XL" with factory template 2
+              lp = launchpad.LaunchControlXL( template = 10 )
+              lp.Open()
+
 
 
 ### Check( [number], [name] )
@@ -637,9 +647,10 @@ using the, indeed much more comfortable, RGB notation.
     without opening anything.
     
     Like Open(), this method uses different default names for the different classes:
-      Launchpad()     -> "Launchpad"
-      LaunchpadMk2()  -> "Mk2"
-      LaunchpadPro()  -> "Pro"
+      Launchpad()        -> "Launchpad"
+      LaunchpadMk2()     -> "Mk2"
+      LaunchpadPro()     -> "Pro"
+      LaunchControlXL()  -> "Control XL"
       
     Notice that it's absolutely safe to query for an "Pro" or "Mk2" from all classes, e.g.:
     
@@ -765,7 +776,7 @@ using the, indeed much more comfortable, RGB notation.
       PARAMS: 
       RETURN:
 
-		
+
 ### LedCtrlChar( char, red, green, offsx = 0, offsy = 0 )
 
     Sends character <char> in colors <red/green> (0..3 each) and
@@ -790,7 +801,7 @@ using the, indeed much more comfortable, RGB notation.
               for x in range( -8, 9 ):
                 lp.LedCtrlChar( 'A', 3, 0, offsx = x )
                 time.wait( 100 )
-		
+
 
 ### LedCtrlString( string, red, green, direction = 0, waitms = 150 )
 
@@ -825,7 +836,7 @@ using the, indeed much more comfortable, RGB notation.
 
       PARAMS:
       RETURN: True/False
-		
+
 
 ### ButtonStateRaw()
 
@@ -1103,7 +1114,96 @@ using the, indeed much more comfortable, RGB notation.
 ---
 ## Detailed description of Launch Control XL specific methods
 
-*WORK IN PROGRESS *
+*WORK IN PROGRESS*
+
+
+### TemplateSet( template )
+
+    Activates one of the user or factory templates, as specified by <template>.
+    
+      PARAMS: 1.. 8    activate user template    1..8
+              9..16    activate factory template 1..8
+      
+      RETURN:
+
+
+### Reset()
+
+    Resets the Launchpad and (quickly) turns off all LEDs.
+    Notice that only the Mk1 performs a 
+
+      PARAMS:
+      RETURN:
+
+
+### LedGetColor( red, green )
+
+    Returns a the special Launchpad color coding format, calculated
+    from a red and green intensity value.
+
+      PARAMS: <red>    red   LED intensity 0..3
+              <green>  green LED intensity 0..3
+      RETURN: number   Launchpad color code
+
+
+### LedCtrlRaw( number, red, green )
+
+    Controls an LED via its number (see table somewhere below)
+
+      PARAMS: <number> number of the LED to control
+              <red>    red   LED intensity 0..3
+              <green>  green LED intensity 0..3
+      RETURN:
+
+
+### LedCtrlXY( x, y, red, green )
+
+    Controls an LED via its coordinates.
+
+      PARAMS: <x>      x coordinate of the LED to control
+              <y>      y coordinate of the LED to control
+              <red>    red   LED intensity 0..3
+              <green>  green LED intensity 0..3
+      RETURN:
+
+
+### InputChanged()
+
+    Returns True if a button or potentiometer event occured. False otherwise.
+
+      PARAMS:
+      RETURN: True/False
+
+
+### InputFlush()
+
+    Flushes the Launch Control XL's input buffer.
+    If you do not poll the buttons or potentiometer values frequently or even if your software
+    is not running, the Launch Control XL will store each event in its buffer.
+    This function can be used to clear all button and potentiometer events.
+
+      PARAMS:
+      RETURN:
+
+
+### InputStateRaw()
+
+    Returns the state of the buttons or the value of the last potentiometer change in RAW mode.
+
+    In case the last event was caused by a button being pressed or released, this function
+    returns the button number and either "True" or "False" or if a potentiometer was rotated,
+    its value (9..127).
+
+    Notice that this is different from other's Launchpad "ButtonStateRaw()" methods, as it
+    forces you to check whether the 2nd field is a number or a boolean value.
+
+      PARAMS:
+      RETURN: [ ]                        An empty list if no event occured, otherwise either
+              [ <button>, <True/False> ] the button number and True or False or
+              [ <potnum>, <value> ]      the potentiometer number and its value 0..127
+              <button> and <potnum> are the RAW button or potentiometer numbers, the second field
+              either determines the state of the button ("True" if pressed, "False" if released) or
+              returns the value of the potentiometer that was changed.
 
 
 ---
@@ -1305,11 +1405,9 @@ using the, indeed much more comfortable, RGB notation.
 
 
 ---
-## Button, LED and potentiometer codes, Launch Control XL
+## Buttons, LED and potentiometer codes, Launch Control XL
 
-### Buttons and LEDs
-
-#### RAW mode
+### RAW mode
 
         +---+---+---+---+---+---+---+---+  +---++---+
         | 13| 29| 45| 61| 77| 93|109|125|  |NOP||NOP| 
@@ -1318,16 +1416,17 @@ using the, indeed much more comfortable, RGB notation.
         +---+---+---+---+---+---+---+---+  +---++---+
         | 15| 31| 47| 63| 79| 95|111|127|  |106||107| 
         +---+---+---+---+---+---+---+---+  +---++---+
- 
-                                              +---+
-                                              |105| 
-                                              +---+
-                                              |106| 
-                                              +---+
-                                              |107| 
-                                              +---+
-                                              |108| 
-                                              +---+
+        
+        +---+---+---+---+---+---+---+---+     +---+
+        |   |   |   |   |   |   |   |   |     |105| 
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |106| 
+        | 77| 78| 79| 80| 81| 82| 83| 84|     +---+
+        |   |   |   |   |   |   |   |   |     |107| 
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |108| 
+        +---+---+---+---+---+---+---+---+     +---+
+        
         +---+---+---+---+---+---+---+---+  
         | 41| 42| 43| 44| 57| 58| 59| 60| 
         +---+---+---+---+---+---+---+---+  
@@ -1335,7 +1434,9 @@ using the, indeed much more comfortable, RGB notation.
         +---+---+---+---+---+---+---+---+  
 
 
-#### X/Y mode
+### X/Y mode
+
+*PRELIMINARY*
 
 The two "template" buttons on the top right cannot be controlled (NOP)
 
@@ -1362,64 +1463,6 @@ The two "template" buttons on the top right cannot be controlled (NOP)
      3  |   |   |   |   |   |   |   |   |              3(!)
         +---+---+---+---+---+---+---+---+  
      4  |   |   |   |3/4|   |   |   |   |              4(!)
-        +---+---+---+---+---+---+---+---+  
-
-
-### Potentiometers
-
-#### RAW mode
-
-        +---+---+---+---+---+---+---+---+  +---++---+
-        | 13| 14| 15| 16| 17| 18| 19| 20|  |   ||   | 
-        +---+---+---+---+---+---+---+---+  +---++---+
-        | 29| 30| 31| 32| 33| 34| 35| 36|  |   ||   | 
-        +---+---+---+---+---+---+---+---+  +---++---+
-        | 49| 50| 51| 52| 53| 54| 55| 56|  |   ||   | 
-        +---+---+---+---+---+---+---+---+  +---++---+
- 
-        +---+---+---+---+---+---+---+---+     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-        |   |   |   |   |   |   |   |   |     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-        | 77| 78| 79| 80| 81| 82| 83| 84|     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-        |   |   |   |   |   |   |   |   |     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-        +---+---+---+---+---+---+---+---+     +---+
-        
-        +---+---+---+---+---+---+---+---+  
-        |   |   |   |   |   |   |   |   | 
-        +---+---+---+---+---+---+---+---+  
-        |   |   |   |   |   |   |   |   | 
-        +---+---+---+---+---+---+---+---+  
-
-
-#### X/Y mode
-
-          0   1   2   3   4   5   6   7
-
-        +---+---+---+---+---+---+---+---+  +---++---+
-     0  |   |   |2/0|   |   |   |   |   |  |   ||   | 
-        +---+---+---+---+---+---+---+---+  +---++---+
-     1  |   |   |   |   |   |   |   |   |  |   ||   | 
-        +---+---+---+---+---+---+---+---+  +---++---+
-     2  |   |   |   |   |   |   |6/2|   |  |   ||   | 
-        +---+---+---+---+---+---+---+---+  +---++---+
- 
-        +---+---+---+---+---+---+---+---+     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-        |   |   |   |   |   |   |   |   |     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-     3  |   |   |   |   |   |5/3|   |   |     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-        |   |   |   |   |   |   |   |   |     +---+
-        |   |   |   |   |   |   |   |   |     |   |
-        +---+---+---+---+---+---+---+---+     +---+
-        
-        +---+---+---+---+---+---+---+---+  
-        |   |   |   |   |   |   |   |   | 
-        +---+---+---+---+---+---+---+---+  
-        |   |   |   |   |   |   |   |   | 
         +---+---+---+---+---+---+---+---+  
 
 

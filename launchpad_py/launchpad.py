@@ -1500,6 +1500,8 @@ class LaunchControlXL( LaunchpadBase ):
 			color = self.LedGetColor( 3, 3 )
 			
 
+		# TODO: double code ahead ("37 + y"); query "y>2" first, then x...
+
 		if x < 8:
 			index = y*8 + x
 		#-----
@@ -1533,10 +1535,24 @@ class LaunchControlXL( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Returns the raw value of the last button change as a list:
-	#-- [ <button>, <True/False> ]
+	#-- Clears the input buffer (The Launchpads remember everything...)
 	#-------------------------------------------------------------------------------------
-	def ButtonStateRaw( self ):
+	def InputFlush( self ):
+		return self.ButtonFlush()
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns True if an event occured.
+	#-------------------------------------------------------------------------------------
+	def InputChanged( self ):
+		return self.midi.ReadCheck();
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button or potentiometer change as a list:
+	#-- [ <button/pot>, <True,False/number> ]
+	#-------------------------------------------------------------------------------------
+	def InputStateRaw( self ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 			
@@ -1546,12 +1562,19 @@ class LaunchControlXL( LaunchpadBase ):
 			#--- released
 			elif  a[0][0][0] == 128:
 				return [ a[0][0][1], False ] # always has a[0][0][2] == 0
-			#--- the cursor buttons (notice the 176 control change command instead of 144)
-			elif  a[0][0][0] == 176 and a[0][0][1] >= 104 and a[0][0][1] <= 107:
-				return [ a[0][0][1], False if a[0][0][2] == 0 else True ]
+			#--- potentiometers and the four cursor buttons
+			elif  a[0][0][0] == 176:
+				# --- cursor buttons
+				if a[0][0][1] >= 104 and a[0][0][1] <= 107:
+					return [ a[0][0][1], False if a[0][0][2] == 0 else True ]
+				# --- potentiometers
+				else:
+					return [ a[0][0][1], a[0][0][2] ]
 			else:
 				return []
 		else:
 			return []
+			
+			
 
 
