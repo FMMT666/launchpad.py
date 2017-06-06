@@ -1,12 +1,5 @@
 from setuptools import setup
 
-import sys
-
-
-if not sys.version_info[0] == 2:
-	sys.exit("Error: Launchpad.py requires Python 2")
-
-
 setup(
 	name = "launchpad_py",
 	version = "0.6.0",
