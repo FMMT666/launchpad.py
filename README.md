@@ -1196,7 +1196,7 @@ using the, indeed much more comfortable, RGB notation.
 
     Notice that this is different from other's Launchpad "ButtonStateRaw()" methods, as it
     forces you to check whether the 2nd field is a number or a boolean value.
-
+    
       PARAMS:
       RETURN: [ ]                        An empty list if no event occured, otherwise either
               [ <button>, <True/False> ] the button number and True or False or
@@ -1416,6 +1416,9 @@ using the, indeed much more comfortable, RGB notation.
 ---
 ## Buttons, LED and potentiometer codes, Launch Control XL
 
+Notice that the two "template" buttons on the top right cannot be controlled (NOP).
+
+
 ### RAW mode
 
         +---+---+---+---+---+---+---+---+  +---++---+
@@ -1447,8 +1450,6 @@ using the, indeed much more comfortable, RGB notation.
 
 *PRELIMINARY*
 
-The two "template" buttons on the top right cannot be controlled (NOP)
-
           0   1   2   3   4   5   6   7      8    9
          
         +---+---+---+---+---+---+---+---+  +---++---+
@@ -1459,19 +1460,20 @@ The two "template" buttons on the top right cannot be controlled (NOP)
      2  |   |   |   |   |   |5/2|   |   |  |   ||   |  2
         +---+---+---+---+---+---+---+---+  +---++---+
                                                8/9
-                                              +---+
-                                              |   |    3(!)
-                                              +---+
-                                              |   |    4(!)
-                                              +---+
-                                              |   |    5
-                                              +---+
-                                              |   |    6
-                                              +---+
+        +---+---+---+---+---+---+---+---+     +---+
+        |   |   |   |   |   |   |   |   |     |   |    3(!)
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |    4(!)
+     3  |   |   |2/3|   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |    5(!)
+        |   |   |   |   |   |   |   |   |     +---+
+        |   |   |   |   |   |   |   |   |     |   |    6
+        +---+---+---+---+---+---+---+---+     +---+
+        
         +---+---+---+---+---+---+---+---+  
-     3  |   |   |   |   |   |   |   |   |              3(!)
+     4  |   |   |   |   |   |   |   |   |              4(!)
         +---+---+---+---+---+---+---+---+  
-     4  |   |   |   |3/4|   |   |   |   |              4(!)
+     5  |   |   |   |3/4|   |   |   |   |              5(!)
         +---+---+---+---+---+---+---+---+  
 
 
