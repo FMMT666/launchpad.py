@@ -61,6 +61,7 @@ def main():
 	# scroll "HELLO" from right to left
 	if mode == "Mk1":
 		lp.LedCtrlString( "HELLO ", 0, 3, -1 )
+	# for all others except the XL...
 	elif mode != "XL":
 		lp.LedCtrlString( "HELLO ", 0, 63, 0, -1 )
 
