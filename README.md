@@ -35,7 +35,7 @@ What's hot, what's not?
     
     Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
     
-    LaunchKey Mini    - class "LaunchKeyMini()"   Buttons, keys and potentiometers
+    LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs)
 
 ### OS
 
@@ -56,7 +56,9 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added XL docs
     - updated "hello.py" example to work with Control XL
     - added EventRaw() for all devices
-    - added preliminary support for the LaunchKey Mini
+    - added preliminary support for the LaunchKey (Mini)
+    - changed XL InputStateRaw(); added 3rd "velocity" field [<number>, <True/False or value>, <velocity> ]
+    - changed LaunchKey device search name from "Launchkey Mini" to just "Launchkey"
     
 ### CHANGES 2017/04/30:
 
@@ -343,7 +345,7 @@ Supported and tested full RGB Launchpad devices:
 Supported completely different stuff:
 
   - Launch Control XL
-  - LaunchKey Mini
+  - LaunchKey (Mini)
 
 Notice that Novation now (1/2016) sells an RGB Launchpad under the same
 name it once shipped the first red/green LED with!
@@ -394,7 +396,10 @@ name it once shipped the first red/green LED with!
       
         lp = launchpad.LaunchControlXL()
 
-### For LaunchKey Mini users
+### For LaunchKey (Mini) users
+
+Even it is named "Mini", it also supports most of the bigger keyboards' functionalities.  
+Notice that some of the button and key numbers collide and cannot be differed.
 
       USE CLASS "LaunchKeyMini":
       
@@ -641,6 +646,7 @@ using the, indeed much more comfortable, RGB notation.
                            LaunchpadMk2()    -> "Mk2"
                            LaunchpadPro()    -> "Pro"
                            LaunchControlXL() -> "Control XL"
+                           LaunchKeyMini()   -> "Launchkey" (should work for all variants)
                          It is sufficient to search for a part of the string, e.g.
                          "chpad S" will find a device named "Launchpad S" or even
                          "Novation Launchpad S"
@@ -704,6 +710,7 @@ using the, indeed much more comfortable, RGB notation.
       LaunchpadMk2()     -> "Mk2"
       LaunchpadPro()     -> "Pro"
       LaunchControlXL()  -> "Control XL"
+      LaunchKeyMini()    -> "Launchkey"
       
     Notice that it's absolutely safe to query for an "Pro" or "Mk2" from all classes, e.g.:
     
@@ -1255,16 +1262,20 @@ using the, indeed much more comfortable, RGB notation.
     Returns the state of the buttons or the value of the last potentiometer change in RAW mode.
 
     In case the last event was caused by a button being pressed or released, this function
-    returns the button number and either "True" or "False" or if a potentiometer was rotated,
-    its value (9..127).
+    returns the button number and either "True" or "False" or if a potentiometer was rotated
+    or a slider moved, its value (0..127).
 
     Notice that this is different from other's Launchpad "ButtonStateRaw()" methods, as it
     forces you to check whether the 2nd field is a number or a boolean value.
-    
+
+    Notice that the Control XL buttons do not support an analog velocity value.
+    For compatibility, either "0" or "127" are returned in the third list field, corresponding
+    to "False" (0) or "True" (127).
+  
       PARAMS:
-      RETURN: [ ]                        An empty list if no event occured, otherwise either
-              [ <button>, <True/False> ] the button number and True or False or
-              [ <potnum>, <value> ]      the potentiometer number and its value 0..127
+      RETURN: [ ]                               An empty list if no event occured, otherwise either
+              [ <button>, <True/False>, 0/127 ] the button number, True or False and the velocity
+              [ <potnum>, <value>     , 0     ] the potentiometer number and its value 0..127
               <button> and <potnum> are the RAW button or potentiometer numbers, the second field
               either determines the state of the button ("True" if pressed, "False" if released) or
               returns the value of the potentiometer that was changed.

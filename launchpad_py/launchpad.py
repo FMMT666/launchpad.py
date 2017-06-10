@@ -1569,7 +1569,8 @@ class LaunchControlXL( LaunchpadBase ):
 
 	#-------------------------------------------------------------------------------------
 	#-- Returns the raw value of the last button or potentiometer change as a list:
-	#-- [ <button/pot>, <True,False/number> ]
+	#-- potentiometers/sliders:  <pot.number>, <value>     , 0 ]
+	#-- buttons:                 <pot.number>, <True/False>, 0 ]
 	#-------------------------------------------------------------------------------------
 	def InputStateRaw( self ):
 		if self.midi.ReadCheck():
@@ -1577,18 +1578,21 @@ class LaunchControlXL( LaunchpadBase ):
 			
 			#--- pressed
 			if    a[0][0][0] == 144:
-				return [ a[0][0][1], True ]  # always has a[0][0][2] == 127
+				return [ a[0][0][1], True, 127 ]
 			#--- released
 			elif  a[0][0][0] == 128:
-				return [ a[0][0][1], False ] # always has a[0][0][2] == 0
+				return [ a[0][0][1], False, 0 ]
 			#--- potentiometers and the four cursor buttons
 			elif  a[0][0][0] == 176:
 				# --- cursor buttons
 				if a[0][0][1] >= 104 and a[0][0][1] <= 107:
-					return [ a[0][0][1], False if a[0][0][2] == 0 else True ]
+					if a[0][0][2] > 0:
+						return [ a[0][0][1], True, a[0][0][2] ]
+					else:
+						return [ a[0][0][1], False, 0 ]
 				# --- potentiometers
 				else:
-					return [ a[0][0][1], a[0][0][2] ]
+					return [ a[0][0][1], a[0][0][2], 0 ]
 			else:
 				return []
 		else:
@@ -1597,7 +1601,7 @@ class LaunchControlXL( LaunchpadBase ):
 
 
 ########################################################################################
-### CLASS LaunchKeyMini
+### CLASS LaunchKey
 ###
 ### For 2-color LaunchKey Keyboards 
 ########################################################################################
@@ -1605,6 +1609,8 @@ class LaunchKeyMini( LaunchpadBase ):
 
 	# LED, BUTTON, KEY AND POTENTIOMETER NUMBERS IN RAW MODE (DEC)
 	# NOTICE THAT THE OCTAVE BUTTONS SHIFT THE KEYS UP OR DOWN BY 12.
+	#
+	# LAUNCHKEY MINI:
 	# 
 	#                   +---+---+---+---+---+---+---+---+
 	#                   | 21| 22|...|   |   |   |   | 28|
@@ -1624,6 +1630,13 @@ class LaunchKeyMini( LaunchpadBase ):
 	#     | C | D | E |...|   |   |   | C2| D2|...|   |   |   |   | C3|
 	#     +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 	#
+	#
+	# LAUNCHKEY 25/49/61:
+	#
+	#    SLIDERS:           41..48
+	#    SLIDER (MASTER):   7
+	#
+	
 
 
 	#-------------------------------------------------------------------------------------
@@ -1631,7 +1644,7 @@ class LaunchKeyMini( LaunchpadBase ):
 	#-- Uses search string "LaunchKey", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
-	def Open( self, number = 0, name = "LaunchKey Mini" ):
+	def Open( self, number = 0, name = "LaunchKey" ):
 		retval = super( LaunchKeyMini, self ).Open( number = number, name = name );
 		return retval
 
@@ -1642,15 +1655,18 @@ class LaunchKeyMini( LaunchpadBase ):
 	#-- Uses search string "Pro", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
-	def Check( self, number = 0, name = "LaunchKey Mini" ):
+	def Check( self, number = 0, name = "LaunchKey" ):
 		return super( LaunchKeyMini, self ).Check( number = number, name = name )
 
 
 	#-------------------------------------------------------------------------------------
 	#-- Returns the raw value of the last button, key or potentiometer change as a list:
-	#-- [ <button/pot/key>, <True,False/number>, <velocity> ]
-	#-- Because of the octave settings cover the complete note range, the button numbers
-	#-- collide with the note numbers.
+	#-- potentiometers:   <pot.number>, <value>     , 0          ] 
+	#-- buttons:          <but.number>, <True/False>, <velocity> ]
+	#-- keys:             <but.number>, <True/False>, <velocity> ]
+	#-- If a button does not provida an analog value, 0 or 127 are returned as velocity values.
+	#-- Because of the octave settings cover the complete note range, the button and potentiometer
+	#-- numbers collide with the note numbers in the lower octaves.
 	#-------------------------------------------------------------------------------------
 	def InputStateRaw( self ):
 		if self.midi.ReadCheck():
