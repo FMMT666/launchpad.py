@@ -314,6 +314,18 @@ class LaunchpadBase( object ):
 				time.wait( 5 )
 
 
+	#-------------------------------------------------------------------------------------
+	#-- Returns a list of all MIDI events, empty list if nothing happened.
+	#-- Useful for debugging or checking new devices.
+	#-------------------------------------------------------------------------------------
+	def EventRaw( self ):
+		if self.midi.ReadCheck():
+			return self.midi.ReadRaw()
+		else:
+			return []
+
+
+
 ########################################################################################
 ### CLASS Launchpad
 ###

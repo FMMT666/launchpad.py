@@ -53,6 +53,7 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added XL InputFlush()
     - added XL docs
     - updated "hello.py" example to work with Control XL
+    - added EventRaw() for all devices
     
 ### CHANGES 2017/04/30:
 
@@ -464,6 +465,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 ### Utility functions
 
     ListAll()
+    EventRaw()
     
     
 ---
@@ -694,6 +696,17 @@ using the, indeed much more comfortable, RGB notation.
 
       PARAMS:
       RETURN:
+
+
+### EventRaw()
+
+    Debug function.
+    Returns an unprocessed list of all MIDI events.
+
+
+      PARAMS:
+      RETURN: []  an empty list if nothing happened or this MIDI message:
+              [[[ <cmd>, <data1>, <data2>, <res> ], <timestamp> ]] 
 
 
 ---
