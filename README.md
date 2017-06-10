@@ -34,6 +34,8 @@ What's hot, what's not?
     Launchpad Pro     - class "LaunchpadPro()"    LEDs and buttons (digitally only (yet))
     
     Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
+    
+    LaunchKey Mini    - class "LaunchKeyMini()"   Buttons, keys and potentiometers
 
 ### OS
 
@@ -54,6 +56,7 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added XL docs
     - updated "hello.py" example to work with Control XL
     - added EventRaw() for all devices
+    - added preliminary support for the LaunchKey Mini
     
 ### CHANGES 2017/04/30:
 
@@ -142,7 +145,8 @@ Now full functionality also on Windows 10 and macOS based systems.
 ## Upcoming attractions, notes and thoughts
 
   - "CXL": x/y support (if it makes sense...)
-  - "Pro": change ButtonStateXY() to return True/False? (would be required for analog readings and compat to XL...)
+  - "LKM": LED support
+  - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": flash LEDs
   - "Pro": pulse LEDs
@@ -205,6 +209,10 @@ Load and use the module with
       lp = launchpad_py.LaunchpadMk2()
       # Pro Launchpad:
       lp = launchpad_py.LaunchpadPro()
+      # Control XL:
+      lp = launchpad_py.LaunchControlXL()
+      # LaunchKey Mini:
+      lp = launchpad_py.LaunchKeyMini()
 
 or if you dislike typing that much, use
 
@@ -214,6 +222,8 @@ or if you dislike typing that much, use
       lp = lppy.Launchpad()
       lp = lppy.LaunchpadMk2()
       lp = lppy.LaunchpadPro()
+      lp = lppy.LaunchControlXL()
+      lp = lppy.LaunchKeyMini()
 
 For compatibility with existing code, use
 
@@ -255,6 +265,8 @@ or
 
 ### Universal loading template code
 
+#### Checks for an installed version first, loads local one as the last resort
+
       import sys
       
       try:
@@ -265,7 +277,18 @@ or
         except ImportError:
           sys.exit("error loading lauchpad.py")
 
-Also see example folder for more code...
+#### Checks for a local version first (file in same folder), uses the installed one secondary
+
+      import sys
+      
+      try:
+        import launchpad as launchpad
+      except ImportError:
+        try:
+          import launchpad_py
+        except ImportError:
+          sys.exit("error loading lauchpad.py")
+
 
 ---
 ## License
@@ -317,6 +340,11 @@ Supported and tested full RGB Launchpad devices:
   - Launchpad Pro
   - Launchpad Mk2
 
+Supported completely different stuff:
+
+  - Launch Control XL
+  - LaunchKey Mini
+
 Notice that Novation now (1/2016) sells an RGB Launchpad under the same
 name it once shipped the first red/green LED with!
 
@@ -365,6 +393,12 @@ name it once shipped the first red/green LED with!
       USE CLASS "LaunchControlXL":
       
         lp = launchpad.LaunchControlXL()
+
+### For LaunchKey Mini users
+
+      USE CLASS "LaunchKeyMini":
+      
+        lp = launchpad.LaunchKeyMini()
 
 ### For Mac users
 
@@ -546,6 +580,23 @@ using the, indeed much more comfortable, RGB notation.
     InputChanged()
     InputFlush()
     InputStateRaw()
+
+
+
+---
+## LaunchKey Mini class methods overview
+
+*WORK IN PROGESS*
+
+### LED functions
+
+    TODO
+
+
+### Input functions
+
+    InputStateRaw()
+
 
 
 ---
@@ -1488,6 +1539,32 @@ Notice that the two "template" buttons on the top right cannot be controlled (NO
         +---+---+---+---+---+---+---+---+  
      5  |   |   |   |3/4|   |   |   |   |              5(!)
         +---+---+---+---+---+---+---+---+  
+
+
+
+---
+## Buttons, LED and potentiometer codes, LaunchKey Mini
+
+Notice that the two "Octave" and the "INCONTROL" buttons cannot be controlled (NOP).
+ 
+                   +---+---+---+---+---+---+---+---+
+                   | 21| 22|...|   |   |   |   | 28|
+     +---+---+---+ +---+---+---+---+---+---+---+---+ +---+  +---+
+     |106|107|NOP| | 40| 41| 42| 43| 48| 49| 50| 51| |108|  |104| 
+     +---+---+---+ +---+---+---+---+---+---+---+---+ +---+  +---+
+     |NOP|NOP|     | 36| 37| 38| 39| 44| 45| 46| 47| |109|  |105| 
+     +---+---+     +---+---+---+---+---+---+---+---+ +---+  +---+
+     
+     +--+-+-+-+--+--+-+-+-+-+-+--+--+-+-+-+--+--+-+-+-+-+-+--+---+
+     |  | | | |  |  | | | | | |  |  | | | |  |  | | | | | |  |   |
+     |  |4| |5|  |  | | | | | |  |  |6| | |  |  | | | | |7|  |   |
+     |  |9| |1|  |  | | | | | |  |  |1| | |  |  | | | | |0|  |   |
+     |  +-+ +-+  |  +-+ +-+ +-+  |  +-+ +-+  |  +-+ +-+ +-+  |   |
+     | 48| 50| 52|   |   |   |   | 60|   |   |   |   |   | 71| 72|
+     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+     | C | D | E |...|   |   |   | C2| D2|...|   |   |   |   | C3|
+     +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
 
 
 
