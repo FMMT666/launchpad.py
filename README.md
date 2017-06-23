@@ -19,7 +19,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/06/05:
+## STATUS 2017/06/24:
 
 What's hot, what's not?  
 
@@ -35,7 +35,7 @@ What's hot, what's not?
     
     Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
     
-    LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs)
+    LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs), no LEDs
 
 ### OS
 
@@ -59,6 +59,9 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added preliminary support for the LaunchKey (Mini)
     - changed XL InputStateRaw(); added 3rd "velocity" field [<number>, <True/False or value>, <velocity> ]
     - changed LaunchKey device search name from "Launchkey Mini" to just "Launchkey"
+    - added LKM InputFlush() and InputChanged() for LaunchKey(Mini)
+    - added LKM docs
+    - added LKM to the hello.py test file
     
 ### CHANGES 2017/04/30:
 
@@ -600,6 +603,8 @@ using the, indeed much more comfortable, RGB notation.
 
 ### Input functions
 
+    InputChanged()
+    InputFlush()
     InputStateRaw()
 
 
@@ -1288,6 +1293,60 @@ using the, indeed much more comfortable, RGB notation.
             print( "Button        ", xlEvent[0], xlEvent[1] )
           else:
             print( "Potentiometer ", xlEvent[0], xlEvent[1] )
+
+
+---
+## Detailed description of LaunchKey (Mini) specific methods
+
+
+### InputChanged()
+
+    Returns True if a button, key or potentiometer event occured. False otherwise.
+
+      PARAMS:
+      RETURN: True/False
+
+
+### InputFlush()
+
+    Flushes the buffer of the LaunchKey (Mini)'s.
+    If you do not poll the buttons, keys or potentiometer values frequently or even if your software
+    is not running, the Launch Control XL will store each event in its buffer.
+    This function can be used to clear all button and potentiometer events.
+
+      PARAMS:
+      RETURN:
+
+
+### InputStateRaw()
+
+    Returns the state of the buttons, keys or the value of the last potentiometer change in RAW mode.
+
+    In case the last event was caused by a button being pressed or released, this function
+    returns the button number and either "True" or "False" or if a potentiometer was rotated
+    or a slider moved, its value (0..127).
+
+    Notice that this is different from other's Launchpad "ButtonStateRaw()" methods, as it
+    forces you to check whether the 2nd field is a number or a boolean value.
+
+      PARAMS:
+      RETURN: [ ]                                    An empty list if no event occured, otherwise either
+              [ <button>, <True/False>, <velocity> ] the button number, True or False and the velocity
+              [ <key>,    <True/False>, <velocity> ] the key number and its velocity 0..127
+              [ <potnum>, <value>     , 0          ] the potentiometer number and its value 0..127
+              <button>, <key> and <potnum> are the RAW button, key or potentiometer numbers, the second
+              field either determines the state of the button or key ("True" if pressed, "False" if released)
+              or returns the value of the potentiometer that was changed.
+              
+      EXAMPLES:
+      
+        lkEvent = lp.InputStateRaw()
+        if lkEvent != []:
+          if lkEvent[1] is True or lkEvent[1] is False:
+            print( "Button/Key    ", lkEvent[0], lkEvent[1], lkEvent[2] )
+          else:
+            print( "Potentiometer ", lkEvent[0], lkEvent[1] )
+
 
 
 ---

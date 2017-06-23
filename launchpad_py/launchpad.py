@@ -1699,3 +1699,18 @@ class LaunchKeyMini( LaunchpadBase ):
 				return []
 		else:
 			return []
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Clears the input buffer (The Launchpads remember everything...)
+	#-------------------------------------------------------------------------------------
+	def InputFlush( self ):
+		return self.ButtonFlush()
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns True if an event occured.
+	#-------------------------------------------------------------------------------------
+	def InputChanged( self ):
+		return self.midi.ReadCheck();
+

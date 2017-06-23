@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # Quick usage of "launchpad.py", LEDs and buttons.
-# Works with all Launchpads: Mk1, Mk2, S/Mini, Pro and XL.
+# Works with all Launchpads: Mk1, Mk2, S/Mini, Pro, XL and LaunchKey
 # 
 #
 # ASkr 7/2013..6/2017
@@ -48,6 +48,12 @@ def main():
 			print("Launch Control XL")
 			mode = "XL"
 			
+	elif lp.Check( 0, "launchkey" ):
+		lp = launchpad.LaunchKeyMini()
+		if lp.Open( 0, "launchkey" ):
+			print("LaunchKey (Mini)")
+			mode = "LKM"
+			
 	else:
 		if lp.Open():
 			print("Launchpad Mk1/S/Mini")
@@ -61,22 +67,27 @@ def main():
 	# scroll "HELLO" from right to left
 	if mode == "Mk1":
 		lp.LedCtrlString( "HELLO ", 0, 3, -1 )
-	# for all others except the XL...
-	elif mode != "XL":
+	# for all others except the XL and the LaunchKey
+	elif mode != "XL" and mode != "LKM":
 		lp.LedCtrlString( "HELLO ", 0, 63, 0, -1 )
 
 
 	# random output
-	print("---\nRandom madness. Create some events. Stops after reaching 0 (first number)")
-	print("Notice that sometimes, old Mk1 units don't recognize any button")
-	print("events before you press one of the (top) automap buttons")
-	print("(or power-cycle the unit...).")
+	if mode == "LKM":
+		print("The LaunchKey(Mini) does not (yet) support LED activation, but you")
+		print("can push some buttons or rotate some knobes now...")
+		print("Auto exit if first number reaches 0")
+	else:
+		print("---\nRandom madness. Create some events. Stops after reaching 0 (first number)")
+		print("Notice that sometimes, old Mk1 units don't recognize any button")
+		print("events before you press one of the (top) automap buttons")
+		print("(or power-cycle the unit...).")
 
 	# Clear the buffer because the Launchpad remembers everything :-)
 	lp.ButtonFlush()
 
 	# Lightshow
-	if mode == "XL":
+	if mode == "XL" or mode == "LKM":
 		butHit = 100
 	else:
 		butHit = 10
@@ -84,12 +95,12 @@ def main():
 	while 1:
 		if mode == "Mk1" or mode == "XL":
 			lp.LedCtrlRaw( random.randint(0,127), random.randint(0,3), random.randint(0,3) )
-		else:
+		elif mode != "LKM":
 			lp.LedCtrlRaw( random.randint(0,127), random.randint(0,63), random.randint(0,63), random.randint(0,63) )
 		
 		time.wait( 5 )
 		
-		if mode == "XL":
+		if mode == "XL" or mode == "LKM":
 			but = lp.InputStateRaw()
 		else:
 			but = lp.ButtonStateRaw()
