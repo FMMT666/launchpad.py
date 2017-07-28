@@ -37,7 +37,7 @@ What's hot, what's not?
     
     LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs), no LEDs
     
-    Dicer             - class "Dicer()"           NOTHING YET
+    Dicer             - class "Dicer()"           IN WORK
 
 
 ### OS
@@ -47,9 +47,10 @@ Now full functionality also on Windows 10 and macOS based systems.
 ---
 ## NEWS
 
-### CHANGES 2017/07/28:
+### CHANGES 2017/07/29:
 
     - added a class for the Dicer
+    - added DCR InputStateRaw() with coolest button mapping ever <3
 
 
 ### CHANGES 2017/06/XX:
@@ -1642,6 +1643,41 @@ Notice that the two "Octave" and the "INCONTROL" buttons cannot be controlled (N
      |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
      | C | D | E |...|   |   |   | C2| D2|...|   |   |   |   | C3|
      +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+
+---
+## Buttons and LED codes, Dicer
+
+Button numbers equal the indicated digit, multiplied with the factor
+of the three small buttons.
+
+    Master, "Play":    01 ..  05
+    Master, "Loop 1":  11 ..  15
+    Master, "Loop 2":  21 ..  15
+
+    Slave,  "Play":   101 .. 105
+    Slave,  "Loop 1": 111 .. 115
+    Slave,  "Loop 2": 121 .. 115
+
+
+              MASTER                            SLAVE
+     +-----+  +-----+  +-----+        +-----+  +-----+  +-----+
+     |#    |  |#    |  |     |        |#   #|  |#   #|  |    #|
+     |  #  |  |     |  |  #  |        |  #  |  |     |  |  #  |
+     |    #|  |    #|  |     |        |#   #|  |#   #|  |#    |
+     +-----+  +-----+  +-----+        +-----+  +-----+  +-----+
+      
+     +-----+            +---+          +----+           +-----+
+     |#   #|            | *1|          |*120|           |    #|
+     |     |            +---+          +----+           |     |
+     |#   #|       +---+                    +----+      |#    |
+     +-----+       |*10|                    |*110|      +-----+
+                   +---+                    +----+
+     +-----+  +---+                             +----+  +-----+
+     |#   #|  |*20|                             |*100|  |     |
+     |  #  |  +---+                             +----+  |  #  |
+     |#   #|                                            |     |
+     +-----+                                            +-----+
 
 
 

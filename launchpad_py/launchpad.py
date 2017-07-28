@@ -1725,24 +1725,26 @@ class Dicer( LaunchpadBase ):
 	# LED, BUTTON, KEY AND POTENTIOMETER NUMBERS IN RAW MODE (DEC)
 	# NOTICE THAT THE OCTAVE BUTTONS SHIFT THE KEYS UP OR DOWN BY 12.
 	#
-	# DICER (WHAT SIDE'S UP?
-	# AND HOW CAN I ASCII THAT? /o\
 	# 
-	#     +----+  +----+  +----+
-	#     |    |  |    |  |    |
-	#     |    |  |    |  |    |
-	#     +----+  +----+  +----+
-	#                  +--+
-	#     +----+       |  |
-	#     |    |    +--+--+
-	#     |    |    |  |
-	#     +----+ +--+--+
-	#            |  |
-	#     +----+ +--+
-	#     |    | 
-	#     |    | 
-	#     +----+ 
-	#
+	#     +-----+  +-----+  +-----+             +-----+  +-----+  +-----+
+	#     |#    |  |#    |  |     |             |#   #|  |#   #|  |    #|
+	#     |  #  |  |     |  |  #  |             |  #  |  |     |  |  #  |
+	#     |    #|  |    #|  |     |             |#   #|  |#   #|  |#    |
+	#     +-----+  +-----+  +-----+             +-----+  +-----+  +-----+
+	# 
+	#     +-----+            +---+               +----+           +-----+
+	#     |#   #|            | *1|               |*120|           |    #|
+	#     |     |            +---+               +----+           |     |
+	#     |#   #|       +---+                         +----+      |#    |
+	#     +-----+       |*10|                         |*110|      +-----+
+	#                   +---+                         +----+
+	#     +-----+  +---+                                  +----+  +-----+
+	#     |#   #|  |*20|                                  |*100|  |     |
+	#     |  #  |  +---+                                  +----+  |  #  |
+	#     |#   #|                                                 |     |
+	#     +-----+                                                 +-----+
+	# 
+	# 
 
 
 	#-------------------------------------------------------------------------------------
@@ -1779,19 +1781,28 @@ class Dicer( LaunchpadBase ):
 			
 			#--- button on master
 			if   a[0][0][0] >= 154 and a[0][0][0] <= 156:
-				if a[0][0][2] == 127:
-					return [ a[0][0][1], True,  a[0][0][2] ] 
+				butNum = a[0][0][1]
+				if butNum >= 60 and butNum <= 64:
+					butNum -= 59
+					butNum += 10 * ( a[0][0][0]-154 )
+					if a[0][0][2] == 127:
+						return [ butNum, True, 127 ]
+					else:
+						return [ butNum, False, 0  ]
 				else:
-					return [ a[0][0][1], False, a[0][0][2] ] 
-			#--- button on slave
+					return []
+			#--- button on master
 			elif a[0][0][0] >= 157 and a[0][0][0] <= 159:
-				if a[0][0][2] == 127:
-					return [ a[0][0][1], True,  a[0][0][2] ] 
+				butNum = a[0][0][1]
+				if butNum >= 60 and butNum <= 64:
+					butNum -= 59
+					butNum += 100 + 10 * ( a[0][0][0]-157 )
+					if a[0][0][2] == 127:
+						return [ butNum, True, 127 ]
+					else:
+						return [ butNum, False, 0  ]
 				else:
-					return [ a[0][0][1], False, a[0][0][2] ] 
-			#--- nothing we can identify...
-			else:
-				return []
+					return []
 		else:
 			return []
 
