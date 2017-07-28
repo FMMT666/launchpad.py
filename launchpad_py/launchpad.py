@@ -1652,7 +1652,7 @@ class LaunchKeyMini( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- Checks if a device exists, but does not open it.
 	#-- Does not check whether a device is in use or other, strange things...
-	#-- Uses search string "Pro", by default.
+	#-- Uses search string "LaunchKey", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
 	def Check( self, number = 0, name = "LaunchKey" ):
@@ -1664,7 +1664,7 @@ class LaunchKeyMini( LaunchpadBase ):
 	#-- potentiometers:   <pot.number>, <value>     , 0          ] 
 	#-- buttons:          <but.number>, <True/False>, <velocity> ]
 	#-- keys:             <but.number>, <True/False>, <velocity> ]
-	#-- If a button does not provida an analog value, 0 or 127 are returned as velocity values.
+	#-- If a button does not provide an analog value, 0 or 127 are returned as velocity values.
 	#-- Because of the octave settings cover the complete note range, the button and potentiometer
 	#-- numbers collide with the note numbers in the lower octaves.
 	#-------------------------------------------------------------------------------------
@@ -1713,4 +1713,85 @@ class LaunchKeyMini( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	def InputChanged( self ):
 		return self.midi.ReadCheck();
+
+
+########################################################################################
+### CLASS Dicer
+###
+### For that Dicer thingy...
+########################################################################################
+class Dicer( LaunchpadBase ):
+
+	# LED, BUTTON, KEY AND POTENTIOMETER NUMBERS IN RAW MODE (DEC)
+	# NOTICE THAT THE OCTAVE BUTTONS SHIFT THE KEYS UP OR DOWN BY 12.
+	#
+	# DICER (WHAT SIDE'S UP?
+	# AND HOW CAN I ASCII THAT? /o\
+	# 
+	#     +----+  +----+  +----+
+	#     |    |  |    |  |    |
+	#     |    |  |    |  |    |
+	#     +----+  +----+  +----+
+	#                  +--+
+	#     +----+       |  |
+	#     |    |    +--+--+
+	#     |    |    |  |
+	#     +----+ +--+--+
+	#            |  |
+	#     +----+ +--+
+	#     |    | 
+	#     |    | 
+	#     +----+ 
+	#
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Dicer devices.
+	#-- Uses search string "dicer", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Open( self, number = 0, name = "Dicer" ):
+		retval = super( Dicer, self ).Open( number = number, name = name );
+		return retval
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "dicer", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "Dicer" ):
+		return super( Dicer, self ).Check( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change as a list:
+	#-- buttons: <but.number>, <True/False>, <velocity> ]
+	#-- If a button does not provide an analog value, 0 or 127 are returned as velocity values.
+	#-- Small buttons select either 154, 155, 156 cmd for master or 157, 158, 159 for slave.
+	#-- Button numbers (1 to 5): 60, 61 .. 64; always
+	#-- Guess it's best to return: 1..5, 11..15, 21..25 for Master and 101..105, ... etc for slave
+	#-------------------------------------------------------------------------------------
+	def InputStateRaw( self ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+			
+			#--- button on master
+			if   a[0][0][0] >= 154 and a[0][0][0] <= 156:
+				if a[0][0][2] == 127:
+					return [ a[0][0][1], True,  a[0][0][2] ] 
+				else:
+					return [ a[0][0][1], False, a[0][0][2] ] 
+			#--- button on slave
+			elif a[0][0][0] >= 157 and a[0][0][0] <= 159:
+				if a[0][0][2] == 127:
+					return [ a[0][0][1], True,  a[0][0][2] ] 
+				else:
+					return [ a[0][0][1], False, a[0][0][2] ] 
+			#--- nothing we can identify...
+			else:
+				return []
+		else:
+			return []
 

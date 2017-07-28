@@ -36,6 +36,9 @@ What's hot, what's not?
     Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
     
     LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs), no LEDs
+    
+    Dicer             - class "Dicer()"           NOTHING YET
+
 
 ### OS
 
@@ -43,6 +46,11 @@ Now full functionality also on Windows 10 and macOS based systems.
 
 ---
 ## NEWS
+
+### CHANGES 2017/07/28:
+
+    - added a class for the Dicer
+
 
 ### CHANGES 2017/06/XX:
 
