@@ -15,6 +15,8 @@ Hey - and the Mac? Yep, that finally works too. [Look][12] \o/
 
 Upcoming attraction: [Launch Control XL][15].
 
+Oh, don't let us forget the [Dicer][16].
+
 Older Launchpads might be documented [here][10].
 
 
@@ -51,6 +53,7 @@ Now full functionality also on Windows 10 and macOS based systems.
 
     - added a class for the Dicer
     - added DCR InputStateRaw() with coolest button mapping ever <3
+    - added DCR LedSetLightShow()
 
 
 ### CHANGES 2017/06/XX:
@@ -614,6 +617,21 @@ using the, indeed much more comfortable, RGB notation.
 
     InputChanged()
     InputFlush()
+    InputStateRaw()
+
+
+---
+## Dicer class methods overview
+
+*WORK IN PROGESS*
+
+### LED functions
+
+    LedSetLightshow()
+
+
+### Input functions
+
     InputStateRaw()
 
 
@@ -1359,6 +1377,51 @@ using the, indeed much more comfortable, RGB notation.
 
 
 ---
+## Detailed description of Dicer specific methods
+
+
+### InputStateRaw()
+
+    Returns the state of the buttons, keys or the value of the last potentiometer change in RAW mode.
+
+    In case the last event was caused by a button being pressed or released, this function
+    returns the button number and either "True" or "False" or if a potentiometer was rotated
+    or a slider moved, its value (0..127).
+
+    Notice that this is different from other's Launchpad "ButtonStateRaw()" methods, as it
+    forces you to check whether the 2nd field is a number or a boolean value.
+
+      PARAMS:
+      RETURN: [ ]                                    An empty list if no event occured, otherwise either
+              [ <button>, <True/False>, <velocity> ] the button number, True or False and the velocity
+              [ <key>,    <True/False>, <velocity> ] the key number and its velocity 0..127
+              [ <potnum>, <value>     , 0          ] the potentiometer number and its value 0..127
+              <button>, <key> and <potnum> are the RAW button, key or potentiometer numbers, the second
+              field either determines the state of the button or key ("True" if pressed, "False" if released)
+              or returns the value of the potentiometer that was changed.
+              
+      EXAMPLES:
+      
+        lkEvent = lp.InputStateRaw()
+        if lkEvent != []:
+          if lkEvent[1] is True or lkEvent[1] is False:
+            print( "Button/Key    ", lkEvent[0], lkEvent[1], lkEvent[2] )
+          else:
+            print( "Potentiometer ", lkEvent[0], lkEvent[1] )
+
+
+### LedSetLightshow( device, enable )
+
+    Enables or disables the built-in LED lightshow of the Dicer.
+    Notice that the dicer will do nothing (else) during the lightshow.
+
+      PARAMS: <device>    0 selects master, 1 selects slave
+              <enable>    True tuirns the lightshow on, False off
+      RETURN:
+
+
+
+---
 ## Button and LED codes, Launchpad Mk1 "Classic" (red/green LEDs)
 
 ### RAW mode
@@ -1703,3 +1766,4 @@ FMMT666(ASkr)
 [13]: https://github.com/FMMT666/launchpad.py/issues/9
 [14]: https://novationmusic.de/support/product-downloads?product=Launchpad+MK1
 [15]: https://twitter.com/FMMT666/status/871094540140240896
+[16]: https://twitter.com/FMMT666/status/891077439023087618

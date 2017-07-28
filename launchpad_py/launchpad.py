@@ -1806,3 +1806,42 @@ class Dicer( LaunchpadBase ):
 		else:
 			return []
 
+	#-------------------------------------------------------------------------------------
+	#-- Enables or diabled the Dicer's built-in lightshow.
+	#-- Device: 0 = Master, 1 = Slave; enable = True/False
+	#-------------------------------------------------------------------------------------
+	def LedSetLightshow( self, device, enable ):
+		# Who needs error checks anyway?
+		self.midi.RawWrite( 186 if device == 0 else 189, 0, 40 if enable == True else 41 )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns a Dicer compatible "color code byte"
+	#-- NOTE: In here, number is 0..7 (left..right)
+	#-------------------------------------------------------------------------------------
+	def LedGetColor( self, red, green ):
+		# TODO: copy and clear bits
+		led = 0
+		
+		red = min( int(red), 3 ) # make int and limit to <=3
+		red = max( red, 0 )      # no negative numbers
+
+		green = min( int(green), 3 ) # make int and limit to <=3
+		green = max( green, 0 )      # no negative numbers
+
+		led |= red
+		led |= green << 4 
+		
+		return led
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls an LED by its raw <number>; with <green/red> brightness: 0..3
+	#-- For LED numbers, see grid description on top of class.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRaw( self, number, red, green ):
+		# the order of the LEDs is really a mess
+		led = self.LedGetColor( red, green )
+		self.midi.RawWrite( 154, number, led )
+
+
