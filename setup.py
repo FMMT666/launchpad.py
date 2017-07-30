@@ -9,7 +9,7 @@ if not sys.version_info[0] == 2:
 
 setup(
 	name = "launchpad_py",
-	version = "0.6.0",
+	version = "0.7.0",
 	description = "A Novation Launchpad control suite for Python",
 	long_description = open('README').read(),
 	author = "FMMT666(ASkr)",
