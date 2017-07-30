@@ -21,7 +21,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/06/24:
+## STATUS 2017/07/xx:
 
 What's hot, what's not?  
 
@@ -39,7 +39,7 @@ What's hot, what's not?
     
     LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs), no LEDs
     
-    Dicer             - class "Dicer()"           IN WORK
+    Dicer             - class "Dicer()"           LED and buttons
 
 
 ### OS
@@ -48,6 +48,12 @@ Now full functionality also on Windows 10 and macOS based systems.
 
 ---
 ## NEWS
+
+### CHANGES 2017/08/XX:
+
+    - changed DCR; renamed InputStateRaw() to ButtonStateRaw()
+    - added DCR LedCtrlRaw()
+
 
 ### CHANGES 2017/07/29:
 
@@ -162,7 +168,6 @@ Now full functionality also on Windows 10 and macOS based systems.
 ## Upcoming attractions, notes and thoughts
 
   - "CXL": x/y support (if it makes sense...)
-  - "LKM": LED support
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": flash LEDs
@@ -230,6 +235,8 @@ Load and use the module with
       lp = launchpad_py.LaunchControlXL()
       # LaunchKey Mini:
       lp = launchpad_py.LaunchKeyMini()
+      # Dicer:
+      lp = launchpad_py.Dicer()
 
 or if you dislike typing that much, use
 
@@ -241,6 +248,7 @@ or if you dislike typing that much, use
       lp = lppy.LaunchpadPro()
       lp = lppy.LaunchControlXL()
       lp = lppy.LaunchKeyMini()
+      lp = lppy.Dicer()
 
 For compatibility with existing code, use
 
@@ -361,6 +369,7 @@ Supported completely different stuff:
 
   - Launch Control XL
   - LaunchKey (Mini)
+  - Dicer
 
 Notice that Novation now (1/2016) sells an RGB Launchpad under the same
 name it once shipped the first red/green LED with!
@@ -419,6 +428,14 @@ Notice that some of the button and key numbers collide and cannot be differed.
       USE CLASS "LaunchKeyMini":
       
         lp = launchpad.LaunchKeyMini()
+
+### For Dicer users
+
+The Dicer uses "page" mode by default. The three small buttons "cue", "loop" and "auto loop"
+select three different pages (per Dicer module) and each of those can be handled independently.
+So, if the "cue" page is active and you try to activate an LED in the "loop" page, that
+will not be visible until you activate that page.
+
 
 ### For Mac users
 
@@ -628,11 +645,12 @@ using the, indeed much more comfortable, RGB notation.
 ### LED functions
 
     LedSetLightshow()
+    LedCtrlRaw()
 
 
-### Input functions
+### Button functions
 
-    InputStateRaw()
+    ButtonStateRaw()
 
 
 
@@ -1380,34 +1398,26 @@ using the, indeed much more comfortable, RGB notation.
 ## Detailed description of Dicer specific methods
 
 
-### InputStateRaw()
+### ButtonStateRaw()
 
-    Returns the state of the buttons, keys or the value of the last potentiometer change in RAW mode.
-
-    In case the last event was caused by a button being pressed or released, this function
-    returns the button number and either "True" or "False" or if a potentiometer was rotated
-    or a slider moved, its value (0..127).
-
-    Notice that this is different from other's Launchpad "ButtonStateRaw()" methods, as it
-    forces you to check whether the 2nd field is a number or a boolean value.
-
+    Returns the state of the buttons in (an already nicely mapped :) RAW mode.
+    The returned numbers of the buttons equal the labels on the Dicer's buttons, with
+    the following extension (also see the LED/button mapping ASCII drawing somewhere below):
+    
+    The three mode buttons "cue", "loop" and "auto loop" act as a modifier and add the following
+    numbers to the button value:
+    
+      master cue:        add   0 => button number:   1..  5
+      master loop:       add  10 => button number:  11.. 15
+      master auto loop:  add  20 => button number:  21.. 25
+      slave  cue:        add 100 => button number: 101..105
+      master loop:       add 110 => button number: 111..115
+      master auto loop:  add 120 => button number: 121..125
+    
       PARAMS:
-      RETURN: [ ]                                    An empty list if no event occured, otherwise either
-              [ <button>, <True/False>, <velocity> ] the button number, True or False and the velocity
-              [ <key>,    <True/False>, <velocity> ] the key number and its velocity 0..127
-              [ <potnum>, <value>     , 0          ] the potentiometer number and its value 0..127
-              <button>, <key> and <potnum> are the RAW button, key or potentiometer numbers, the second
-              field either determines the state of the button or key ("True" if pressed, "False" if released)
-              or returns the value of the potentiometer that was changed.
+      RETURN: [ ]                                 An empty list if no event occured, otherwise
+              [ <button>, <True/False>, <0/127> ] the button number, True or False and the velocity (only 0 or 127).
               
-      EXAMPLES:
-      
-        lkEvent = lp.InputStateRaw()
-        if lkEvent != []:
-          if lkEvent[1] is True or lkEvent[1] is False:
-            print( "Button/Key    ", lkEvent[0], lkEvent[1], lkEvent[2] )
-          else:
-            print( "Potentiometer ", lkEvent[0], lkEvent[1] )
 
 
 ### LedSetLightshow( device, enable )
@@ -1419,6 +1429,38 @@ using the, indeed much more comfortable, RGB notation.
               <enable>    True tuirns the lightshow on, False off
       RETURN:
 
+
+### LedCtrlRaw( number, hue, intensity )
+
+    Control an LED via its number, a hue and intensity information.
+    The number of the LED to control corresponds to the button's labels 1..5,
+    with the following modifiers:
+
+      master cue:        add   0 => button number:   1..  5
+      master loop:       add  10 => button number:  11.. 15
+      master auto loop:  add  20 => button number:  21.. 25
+      slave  cue:        add 100 => button number: 101..105
+      master loop:       add 110 => button number: 111..115
+      master auto loop:  add 120 => button number: 121..125
+    
+    The color shade can be controlled with <hue>, avalue from 0..7:
+    
+      0  red
+      1  red-orange
+      2  orange
+      3  orange-amber
+      4  amber
+      5  yellow
+      6  yellow-green
+      7  green
+
+    I just leave that as it is. Complaints can be sent to Novation :'-)
+        
+    
+      PARAMS: <number>     number of the LED (see Dicer mapping table somewhere below)
+              <hue>        0..7 hue value (see text above)
+              <intensity>  LED intensity value 0..15
+      RETURN:
 
 
 ---
@@ -1711,16 +1753,16 @@ Notice that the two "Octave" and the "INCONTROL" buttons cannot be controlled (N
 ---
 ## Buttons and LED codes, Dicer
 
-Button numbers equal the indicated digit, multiplied with the factor
-of the three small buttons.
+Button numbers equal the labels on the buttons, plus a number, 
+as specified by the mode buttons:
 
-    Master, "Play":    01 ..  05
-    Master, "Loop 1":  11 ..  15
-    Master, "Loop 2":  21 ..  15
+    Master, "cue":        01 ..  05
+    Master, "loop":       11 ..  15
+    Master, "auto loop":  21 ..  15
 
-    Slave,  "Play":   101 .. 105
-    Slave,  "Loop 1": 111 .. 115
-    Slave,  "Loop 2": 121 .. 115
+    Slave,  "cue":       101 .. 105
+    Slave,  "loop:       111 .. 115
+    Slave,  "auto loop": 121 .. 115
 
 
               MASTER                            SLAVE
@@ -1731,13 +1773,13 @@ of the three small buttons.
      +-----+  +-----+  +-----+        +-----+  +-----+  +-----+
       
      +-----+            +---+          +----+           +-----+
-     |#   #|            | *1|          |*120|           |    #|
+     |#   #|            | +0|          |  +0|           |    #|
      |     |            +---+          +----+           |     |
      |#   #|       +---+                    +----+      |#    |
-     +-----+       |*10|                    |*110|      +-----+
+     +-----+       |+10|                    |+110|      +-----+
                    +---+                    +----+
      +-----+  +---+                             +----+  +-----+
-     |#   #|  |*20|                             |*100|  |     |
+     |#   #|  |+20|                             |+100|  |     |
      |  #  |  +---+                             +----+  |  #  |
      |#   #|                                            |     |
      +-----+                                            +-----+

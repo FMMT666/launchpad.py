@@ -1723,7 +1723,7 @@ class LaunchKeyMini( LaunchpadBase ):
 class Dicer( LaunchpadBase ):
 
 	# LED, BUTTON, KEY AND POTENTIOMETER NUMBERS IN RAW MODE (DEC)
-	# NOTICE THAT THE OCTAVE BUTTONS SHIFT THE KEYS UP OR DOWN BY 12.
+	# NOTICE THAT THE OCTAVE BUTTONS SHIFT THE KEYS UP OR DOWN BY 10.
 	#
 	# 
 	#     +-----+  +-----+  +-----+             +-----+  +-----+  +-----+
@@ -1733,13 +1733,13 @@ class Dicer( LaunchpadBase ):
 	#     +-----+  +-----+  +-----+             +-----+  +-----+  +-----+
 	# 
 	#     +-----+            +---+               +----+           +-----+
-	#     |#   #|            | *1|               |*120|           |    #|
+	#     |#   #|            | +0|               |+120|           |    #|
 	#     |     |            +---+               +----+           |     |
 	#     |#   #|       +---+                         +----+      |#    |
-	#     +-----+       |*10|                         |*110|      +-----+
+	#     +-----+       |+10|                         |+110|      +-----+
 	#                   +---+                         +----+
 	#     +-----+  +---+                                  +----+  +-----+
-	#     |#   #|  |*20|                                  |*100|  |     |
+	#     |#   #|  |+20|                                  |+100|  |     |
 	#     |  #  |  +---+                                  +----+  |  #  |
 	#     |#   #|                                                 |     |
 	#     +-----+                                                 +-----+
@@ -1768,14 +1768,16 @@ class Dicer( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Returns the raw value of the last button change as a list:
-	#-- buttons: <but.number>, <True/False>, <velocity> ]
+	#-- Returns (an already nicely mapped and not raw :) value of the last button change as a list:
+	#-- buttons: <number>, <True/False>, <velocity> ]
 	#-- If a button does not provide an analog value, 0 or 127 are returned as velocity values.
 	#-- Small buttons select either 154, 155, 156 cmd for master or 157, 158, 159 for slave.
 	#-- Button numbers (1 to 5): 60, 61 .. 64; always
 	#-- Guess it's best to return: 1..5, 11..15, 21..25 for Master and 101..105, ... etc for slave
+	#-- Actually, as you can see, it's not "raw", but I guess those decade modifiers really
+	#-- make sense here (less brain calculations for you :)
 	#-------------------------------------------------------------------------------------
-	def InputStateRaw( self ):
+	def ButtonStateRaw( self ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 			
@@ -1817,31 +1819,58 @@ class Dicer( LaunchpadBase ):
 
 	#-------------------------------------------------------------------------------------
 	#-- Returns a Dicer compatible "color code byte"
-	#-- NOTE: In here, number is 0..7 (left..right)
+	#-- NOTE: Copied from Launchpad, won't work. The Dicer actually uses:
+	#-- Byte: 0b[0HHHIIII]; HHH: 3 bits hue (000=red up to 111=green) and 4 bits IIII as intensity.
 	#-------------------------------------------------------------------------------------
-	def LedGetColor( self, red, green ):
-		# TODO: copy and clear bits
-		led = 0
-		
-		red = min( int(red), 3 ) # make int and limit to <=3
-		red = max( red, 0 )      # no negative numbers
-
-		green = min( int(green), 3 ) # make int and limit to <=3
-		green = max( green, 0 )      # no negative numbers
-
-		led |= red
-		led |= green << 4 
-		
-		return led
+#	def LedGetColor( self, red, green ):
+#		led = 0
+#		
+#		red = min( int(red), 3 ) # make int and limit to <=3
+#		red = max( red, 0 )      # no negative numbers
+#
+#		green = min( int(green), 3 ) # make int and limit to <=3
+#		green = max( green, 0 )      # no negative numbers
+#
+#		led |= red
+#		led |= green << 4 
+#		
+#		return led
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Controls an LED by its raw <number>; with <green/red> brightness: 0..3
+	#-- Controls an LED by its raw <number>; with <hue> brightness: 0..7 (red to green)
+	#-- and <intensity> 0..15
 	#-- For LED numbers, see grid description on top of class.
 	#-------------------------------------------------------------------------------------
-	def LedCtrlRaw( self, number, red, green ):
-		# the order of the LEDs is really a mess
-		led = self.LedGetColor( red, green )
-		self.midi.RawWrite( 154, number, led )
+	def LedCtrlRaw( self, number, hue, intensity ):
+		
+		if number < 0 or number > 125:
+			return
+		
+		# check if that is a slave device number (>100)
+		if number > 100:
+			number -= 100
+			cmd = 157
+		else:
+			cmd = 154
+			
+		# determine the "page", "hot cue", "loop" or "auto loop"
+		page = number / 10
+		if page > 2:
+			return
 
+		# correct the "page shifted" LED number
+		number = number - ( page * 10 )
+		if number > 5:
+			return
+		
+		# limit the hue range
+		hue = min( int(hue), 7 ) # make int and limit to <=7
+		hue = max( hue, 0 )      # no negative numbers
+
+		# limit the intensity
+		intensity = min( int(intensity), 15 ) # make int and limit to <=15
+		intensity = max( intensity, 0 )       # no negative numbers
+		
+		self.midi.RawWrite( cmd + page, number + 59, (hue << 4) | intensity )
 
