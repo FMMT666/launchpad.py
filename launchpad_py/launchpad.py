@@ -1768,6 +1768,14 @@ class Dicer( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- reset the Dicer
+	#-- Turns off all LEDs, restores power-on state, but does not disable an active light show.
+	#-------------------------------------------------------------------------------------
+	def Reset( self ):
+		self.midi.RawWrite( 186, 0, 0 )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Returns (an already nicely mapped and not raw :) value of the last button change as a list:
 	#-- buttons: <number>, <True/False>, <velocity> ]
 	#-- If a button does not provide an analog value, 0 or 127 are returned as velocity values.
@@ -1809,7 +1817,7 @@ class Dicer( LaunchpadBase ):
 			return []
 
 	#-------------------------------------------------------------------------------------
-	#-- Enables or diabled the Dicer's built-in lightshow.
+	#-- Enables or diabled the Dicer's built-in light show.
 	#-- Device: 0 = Master, 1 = Slave; enable = True/False
 	#-------------------------------------------------------------------------------------
 	def LedSetLightshow( self, device, enable ):

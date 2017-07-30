@@ -53,6 +53,7 @@ Now full functionality also on Windows 10 and macOS based systems.
 
     - changed DCR; renamed InputStateRaw() to ButtonStateRaw()
     - added DCR LedCtrlRaw()
+    - added DCR Reset()
 
 
 ### CHANGES 2017/07/29:
@@ -1398,6 +1399,15 @@ using the, indeed much more comfortable, RGB notation.
 ## Detailed description of Dicer specific methods
 
 
+### Reset()
+
+    Resets the Dicer, (quickly) turns off all LEDs and restores the power-on defaults.
+    Notice that an enabled light show will *not* be stopped.
+
+      PARAMS:
+      RETURN:
+
+
 ### ButtonStateRaw()
 
     Returns the state of the buttons in (an already nicely mapped :) RAW mode.
@@ -1422,11 +1432,11 @@ using the, indeed much more comfortable, RGB notation.
 
 ### LedSetLightshow( device, enable )
 
-    Enables or disables the built-in LED lightshow of the Dicer.
-    Notice that the dicer will do nothing (else) during the lightshow.
+    Enables or disables the built-in LED light show of the Dicer.
+    Notice that the dicer will do nothing (else) during the light show.
 
       PARAMS: <device>    0 selects master, 1 selects slave
-              <enable>    True tuirns the lightshow on, False off
+              <enable>    True turns the light show on, False off
       RETURN:
 
 
