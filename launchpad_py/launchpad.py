@@ -1776,6 +1776,14 @@ class Dicer( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- All LEDs off
+	#-- Turns off all LEDs, does not change or touch any other settings.
+	#-------------------------------------------------------------------------------------
+	def LedAllOff( self ):
+		self.midi.RawWrite( 186, 0, 112 )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Returns (an already nicely mapped and not raw :) value of the last button change as a list:
 	#-- buttons: <number>, <True/False>, <velocity> ]
 	#-- If a button does not provide an analog value, 0 or 127 are returned as velocity values.

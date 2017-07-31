@@ -54,6 +54,7 @@ Now full functionality also on Windows 10 and macOS based systems.
     - changed DCR; renamed InputStateRaw() to ButtonStateRaw()
     - added DCR LedCtrlRaw()
     - added DCR Reset()
+    - added DCR LedAllOff()
 
 
 ### CHANGES 2017/07/29:
@@ -140,7 +141,6 @@ Now full functionality also on Windows 10 and macOS based systems.
       No need to push "Setup - Live" button anymore.
     - added Mk2 LedCtrlRawByCode() and LedCtrlXYByCode()
     - added Pro ButtonStateRaw(); first *damn fast* button reads \o/
-
 
 ### CHANGES 2016/01/10:
 
@@ -647,6 +647,7 @@ using the, indeed much more comfortable, RGB notation.
 
     LedSetLightshow()
     LedCtrlRaw()
+    LedAllOff()
 
 
 ### Button functions
@@ -1470,6 +1471,16 @@ using the, indeed much more comfortable, RGB notation.
       PARAMS: <number>     number of the LED (see Dicer mapping table somewhere below)
               <hue>        0..7 hue value (see text above)
               <intensity>  LED intensity value 0..15
+      RETURN:
+
+
+### LedAllOff()
+
+    Quickly turns off all LEDs on all Dicers.
+    No other settings are affected.
+
+
+      PARAMS:
       RETURN:
 
 
