@@ -39,7 +39,7 @@ What's hot, what's not?
     
     LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs), no LEDs
     
-    Dicer             - class "Dicer()"           LED and buttons
+    Dicer             - class "Dicer()"           LEDs and buttons
 
 
 ### OS
@@ -55,6 +55,9 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added DCR LedCtrlRaw()
     - added DCR Reset()
     - added DCR LedAllOff()
+    - added DCR "shift-lock" support (holding down mode buttons for additional 3*5 button events (per Dicer)
+    - added DCR ModeSet()
+    - added DCR "one page mode" support for buttons and LEDs
 
 
 ### CHANGES 2017/07/29:
@@ -168,6 +171,7 @@ Now full functionality also on Windows 10 and macOS based systems.
 ---
 ## Upcoming attractions, notes and thoughts
 
+  - "DCR": query mode
   - "CXL": x/y support (if it makes sense...)
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
@@ -433,7 +437,12 @@ Notice that some of the button and key numbers collide and cannot be differed.
 ### For Dicer users
 
 The Dicer uses "page" mode by default. The three small buttons "cue", "loop" and "auto loop"
-select three different pages (per Dicer module) and each of those can be handled independently.
+select six different pages (per Dicer module) and each of those can be handled independently.
+
+The first set of the six mode is enabled by simply pushing (and releasing) on of the three mode
+buttons, the second set, "shift-mode" is activated by holding down one of the mode buttons while
+pushing a number button.
+
 So, if the "cue" page is active and you try to activate an LED in the "loop" page, that
 will not be visible until you activate that page.
 
@@ -1409,6 +1418,29 @@ using the, indeed much more comfortable, RGB notation.
       RETURN:
 
 
+### ModeSet( device, mode )
+
+    Enables on of the seven modes (or button and LED "pages") of the Dicer:
+    
+      0  cue
+      1  cue + shift
+      2  loop
+      3  loop + shift
+      4  auto loop 
+      5  auto loop + shift
+      6  one page mode
+      
+    See ButtonStateRaw(), LedCtrlRaw() or the Dicer's button and LED table at the end of this
+    document to see how mode 0..5 work.
+    
+    If the "one page mode" is enabled, the mode buttons themselves do not select a bank anymore,
+    but return a value instead.
+    
+      PARAMS: <device>     0 = master, 1 = slave
+              <mode>       0..6 as specifies above
+      RETURN:
+
+
 ### ButtonStateRaw()
 
     Returns the state of the buttons in (an already nicely mapped :) RAW mode.
@@ -1416,14 +1448,29 @@ using the, indeed much more comfortable, RGB notation.
     the following extension (also see the LED/button mapping ASCII drawing somewhere below):
     
     The three mode buttons "cue", "loop" and "auto loop" act as a modifier and add the following
-    numbers to the button value:
+    numbers to the button value.
+    For "shift" operation, continue to hold down one of the three mode buttons while pressing a number.
     
-      master cue:        add   0 => button number:   1..  5
-      master loop:       add  10 => button number:  11.. 15
-      master auto loop:  add  20 => button number:  21.. 25
-      slave  cue:        add 100 => button number: 101..105
-      master loop:       add 110 => button number: 111..115
-      master auto loop:  add 120 => button number: 121..125
+      Master, "cue":        01 ..  05  +shift:  06 ..  10
+      Master, "loop":       11 ..  15  +shift:  16 ..  20
+      Master, "auto loop":  21 ..  25  +shift:  26 ..  30
+    
+      Slave,  "cue":       101 .. 105  +shift: 106 .. 110
+      Slave,  "loop:       111 .. 115  +shift: 116 .. 120
+      Slave,  "auto loop": 121 .. 115  +shift: 126 .. 130
+      
+    In "one page mode", the mode buttons do not have a special function but return a value upon being pressed:
+    
+      Master, "cue":         6
+      Master, "loop":        7
+      Master, "auto loop":   8
+
+      Slave,  "cue":       106
+      Slave,  "loop:       107
+      Slave,  "auto loop": 108
+    
+    The mode can either be set by pushing/holding down the corresponding buttons
+    or via ModeSet( <device>, <mode> ).
     
       PARAMS:
       RETURN: [ ]                                 An empty list if no event occured, otherwise
@@ -1447,12 +1494,26 @@ using the, indeed much more comfortable, RGB notation.
     The number of the LED to control corresponds to the button's labels 1..5,
     with the following modifiers:
 
-      master cue:        add   0 => button number:   1..  5
-      master loop:       add  10 => button number:  11.. 15
-      master auto loop:  add  20 => button number:  21.. 25
-      slave  cue:        add 100 => button number: 101..105
-      master loop:       add 110 => button number: 111..115
-      master auto loop:  add 120 => button number: 121..125
+      Master, "cue":        01 ..  05  +shift:  06 ..  10
+      Master, "loop":       11 ..  15  +shift:  16 ..  20
+      Master, "auto loop":  21 ..  25  +shift:  26 ..  30
+    
+      Slave,  "cue":       101 .. 105  +shift: 106 .. 110
+      Slave,  "loop:       111 .. 115  +shift: 116 .. 120
+      Slave,  "auto loop": 121 .. 115  +shift: 126 .. 130
+
+    In "one page mode", the mode LEDs can be controlled via:
+    
+      Master, "cue":         6
+      Master, "loop":        7
+      Master, "auto loop":   8
+
+      Slave,  "cue":       106
+      Slave,  "loop:       107
+      Slave,  "auto loop": 108
+
+    The mode can either be set by pushing/holding down the corresponding buttons
+    or via ModeSet( <device>, <mode> ).
     
     The color shade can be controlled with <hue>, avalue from 0..7:
     
@@ -1774,16 +1835,21 @@ Notice that the two "Octave" and the "INCONTROL" buttons cannot be controlled (N
 ---
 ## Buttons and LED codes, Dicer
 
+### Standard Mode
+
 Button numbers equal the labels on the buttons, plus a number, 
-as specified by the mode buttons:
+as specified by the mode buttons.
 
-    Master, "cue":        01 ..  05
-    Master, "loop":       11 ..  15
-    Master, "auto loop":  21 ..  15
+For "shift-lock" operation, continue to hold down one of the
+three mode buttons while pressing a number button.
 
-    Slave,  "cue":       101 .. 105
-    Slave,  "loop:       111 .. 115
-    Slave,  "auto loop": 121 .. 115
+    Master, "cue":        01 ..  05  +shift:  06 ..  10
+    Master, "loop":       11 ..  15  +shift:  16 ..  20
+    Master, "auto loop":  21 ..  25  +shift:  26 ..  30
+
+    Slave,  "cue":       101 .. 105  +shift: 106 .. 110
+    Slave,  "loop:       111 .. 115  +shift: 116 .. 120
+    Slave,  "auto loop": 121 .. 115  +shift: 126 .. 130
 
 
               MASTER                            SLAVE
@@ -1801,6 +1867,40 @@ as specified by the mode buttons:
                    +---+                    +----+
      +-----+  +---+                             +----+  +-----+
      |#   #|  |+20|                             |+100|  |     |
+     |  #  |  +---+                             +----+  |  #  |
+     |#   #|                                            |     |
+     +-----+                                            +-----+
+
+
+### One Page Mode
+
+Button numbers equal the labels on the buttons.
+The mode keys return:
+
+    Master, "cue":         6
+    Master, "loop":        7
+    Master, "auto loop":   8
+
+    Slave,  "cue":       106
+    Slave,  "loop:       107
+    Slave,  "auto loop": 108
+
+
+              MASTER                            SLAVE
+     +-----+  +-----+  +-----+        +-----+  +-----+  +-----+
+     |#    |  |#    |  |     |        |#   #|  |#   #|  |    #|
+     |  #  |  |     |  |  #  |        |  #  |  |     |  |  #  |
+     |    #|  |    #|  |     |        |#   #|  |#   #|  |#    |
+     +-----+  +-----+  +-----+        +-----+  +-----+  +-----+
+      
+     +-----+            +---+          +----+           +-----+
+     |#   #|            | 6 |          | 108|           |    #|
+     |     |            +---+          +----+           |     |
+     |#   #|       +---+                    +----+      |#    |
+     +-----+       | 7 |                    | 107|      +-----+
+                   +---+                    +----+
+     +-----+  +---+                             +----+  +-----+
+     |#   #|  | 8 |                             | 106|  |     |
      |  #  |  +---+                             +----+  |  #  |
      |#   #|                                            |     |
      +-----+                                            +-----+
