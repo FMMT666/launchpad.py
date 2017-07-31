@@ -58,6 +58,7 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added DCR "shift-lock" support (holding down mode buttons for additional 3*5 button events (per Dicer)
     - added DCR ModeSet()
     - added DCR "one page mode" support for buttons and LEDs
+    - added DCR support in hello.py demo
 
 
 ### CHANGES 2017/07/29:

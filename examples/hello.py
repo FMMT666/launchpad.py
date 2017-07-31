@@ -4,7 +4,7 @@
 # Works with all Launchpads: Mk1, Mk2, S/Mini, Pro, XL and LaunchKey
 # 
 #
-# ASkr 7/2013..8/2017
+# FMMT666(ASkr) 7/2013..8/2017
 # www.askrprojects.net
 #
 
@@ -53,6 +53,12 @@ def main():
 		if lp.Open( 0, "launchkey" ):
 			print("LaunchKey (Mini)")
 			mode = "LKM"
+
+	elif lp.Check( 0, "dicer" ):
+		lp = launchpad.Dicer()
+		if lp.Open( 0, "dicer" ):
+			print("Dicer")
+			mode = "Dcr"
 			
 	else:
 		if lp.Open():
@@ -68,7 +74,7 @@ def main():
 	if mode == "Mk1":
 		lp.LedCtrlString( "HELLO ", 0, 3, -1 )
 	# for all others except the XL and the LaunchKey
-	elif mode != "XL" and mode != "LKM":
+	elif mode != "XL" and mode != "LKM" and mode != "Dcr":
 		lp.LedCtrlString( "HELLO ", 0, 63, 0, -1 )
 
 
@@ -89,12 +95,16 @@ def main():
 	# Lightshow
 	if mode == "XL" or mode == "LKM":
 		butHit = 100
+	elif mode == "Dcr":
+		butHit = 30
 	else:
 		butHit = 10
 		
 	while 1:
 		if mode == "Mk1" or mode == "XL":
 			lp.LedCtrlRaw( random.randint(0,127), random.randint(0,3), random.randint(0,3) )
+		elif mode == "Dcr":
+			lp.LedCtrlRaw( random.randint(0,130), random.randint(0,7), random.randint(0,15) )
 		elif mode != "LKM":
 			lp.LedCtrlRaw( random.randint(0,127), random.randint(0,63), random.randint(0,63), random.randint(0,63) )
 		

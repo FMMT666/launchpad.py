@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# ASkr 01/2013..06/2017
+# FMMT666(ASkr) 01/2013..08/2017
 # www.askrprojects.net
 #
 #
