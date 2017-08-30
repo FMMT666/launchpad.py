@@ -211,7 +211,13 @@ or
 (in case you need superuser rights) to install it.  
 Notice that the required dependencies (see below) are not automatically resolved.  
 
-You need to install PyGame separately.
+You need to install `python-rtmidi` separately:
+
+    pip install python-rtmidi
+
+or
+
+    sudo pip install python-rtmidi
 
 
 #### From local file system

@@ -22,7 +22,7 @@ import random
 import sys
 import time
 
-import rtmidi_python as rtmidi
+import rtmidi
 
 try:
 	from charset import *
@@ -165,7 +165,7 @@ class Midi:
 
 			if output == True:
 				midi_out = rtmidi.MidiOut()
-				for port in midi_out.ports:
+				for port in midi_out.get_ports():
 					if quiet == False:
 						print(port, 1, 0)
 						sys.stdout.flush()
@@ -175,7 +175,7 @@ class Midi:
 
 			if input == True:
 				midi_in = rtmidi.MidiIn()
-				for port in midi_in.ports:
+				for port in midi_in.get_ports():
 					if quiet == False:
 						print(port, 0, 1)
 						sys.stdout.flush()
