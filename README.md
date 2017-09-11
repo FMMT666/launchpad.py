@@ -456,7 +456,7 @@ will not be visible until you activate that page.
 
 ### Ubuntu 17.04 or alsa.conf issues
 
-Several users reported errors related to alsa.conf file missing:
+Several users reported errors because of a missing alsa.conf file, e.g.:
 
     ALSA lib conf.c:3009:(snd_config_update_r) Cannot access file /etc/alsa/alsa.conf
     ALSA lib seq.c:935:(snd_seq_open_noupdate) Unknown SEQ default
@@ -466,18 +466,22 @@ your system. Find it with:
 
     find /etc /usr -name "alsa.conf"
 
-If that command can _not_ find the "alsa.conf" (a common place is /usr/share/alsa/alsa.conf), you
+If that command can _not_ find "alsa.conf" (a common place is /usr/share/alsa/alsa.conf), you
 probably don't have Alsa installed at all.
 
-In all other cases, you can create a symbolic link from /etc/alsa/alsa.conf to the reakl file
+In all other cases, you can create a symbolic link from /etc/alsa/alsa.conf to the real, existing file
 (assuming /usr/share/alsa/alsa.conf here).  
 Warning: Double check whether /etc/alsa/alsa.conf _really_ does not exist first!
 
     sudo mkdir /etc/alsa
     sudo ln -s /usr/share/alsa/alsa.conf /etc/alsa/alsa.conf
 
-After that, you might experience that Launchpad.py cannot find any MIDI devices. The output from "lp.ListAll()"
-does not return anything.
+After that, you still might experience that Launchpad.py cannot find any MIDI devices.  
+The output from "lp.ListAll()" does not return anything and executing the "hello.py" example just shows
+something like:
+
+    Exception AttributeError: "'NoneType' object has no attribute 'quit'" in <bound method __Midi.__del__
+    ... of <launchpad_py.launchpad.__Midi instance at 0x7f0860cb3128>> ignored
 
 In this case, the default sequencer entries might be missing in your alsa.conf.  
 You might wish to add this to your alsa.conf:
