@@ -21,7 +21,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/07/xx:
+## STATUS 2017/09/xx:
 
 What's hot, what's not?  
 
@@ -53,6 +53,7 @@ Now full functionality also on Windows 10 and macOS based systems.
 ### CHANGES 2017/09/XX:
 
     - added notes for Ubuntu 17.04 systems and /etc/alsa/alsa.conf issues
+    - added experimental 'Bad Pointer' fix upon exiting (needs more testing (w/ multiple LPads))
 
 ### CHANGES 2017/08/XX:
 

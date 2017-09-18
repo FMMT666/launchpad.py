@@ -86,7 +86,8 @@ class Midi:
 	#-------------------------------------------------------------------------------------
 	def CloseOutput( self ):
 		if self.devOut is not None:
-			self.devOut.close()
+			#self.devOut.close()
+			del self.devOut
 			self.devOut = None
 
 
@@ -116,7 +117,8 @@ class Midi:
 	#-------------------------------------------------------------------------------------
 	def CloseInput( self ):
 		if self.devIn is not None:
-			self.devIn.close()
+			#self.devIn.close()
+			del self.devIn
 			self.devIn = None
 
 
@@ -183,7 +185,8 @@ class Midi:
 		#-- exist(ed) until we start to count them...
 		#-------------------------------------------------------------------------------------
 		def __del__( self ):
-			midi.quit()
+			#midi.quit()
+			pass
 
 
 		#-------------------------------------------------------------------------------------

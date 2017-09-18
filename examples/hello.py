@@ -121,9 +121,8 @@ def main():
 				break
 			print( butHit, " event: ", but )
 
-	# now crash it :-)
-	print("\nNow let's crash PyGame...")
-	print("Don't worry, that's just a bug in PyGame's MIDI implementation.\n\n\n")
+	# now quit...
+	print("Quitting might raise a 'Bad Pointer' error (~almost~ nothing to worry about...:).\n\n")
 
 	lp.Reset() # turn all LEDs off
 	lp.Close() # close the Launchpad (will quit with an error due to a PyGame bug)
