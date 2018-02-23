@@ -201,7 +201,7 @@ class Midi:
 				if quiet == False:
 					print(md)
 					sys.stdout.flush()
-				if md[1].lower().find( name.lower() ) >= 0:
+				if str( md[1].lower() ).find( name.lower() ) >= 0:
 					if output == True and md[3] > 0:
 						ret.append( i )
 					if input == True and md[2] > 0:
