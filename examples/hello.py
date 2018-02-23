@@ -4,7 +4,7 @@
 # Works with all Launchpads: Mk1, Mk2, S/Mini, Pro, XL and LaunchKey
 # 
 #
-# FMMT666(ASkr) 7/2013..8/2017
+# FMMT666(ASkr) 7/2013..2/2018
 # www.askrprojects.net
 #
 

@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# FMMT666(ASkr) 01/2013..08/2017
+# FMMT666(ASkr) 01/2013..02/2018
 # www.askrprojects.net
 #
 #
@@ -551,9 +551,9 @@ class Launchpad( LaunchpadBase ):
 			string += " "
 			for n in range( (len(string) + 1) * 8 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
 			# TODO: Just a quick hack (screen is erased before scrolling begins).
@@ -563,9 +563,9 @@ class Launchpad( LaunchpadBase ):
 #			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
 			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
 			for i in string:
@@ -963,9 +963,9 @@ class LaunchpadPro( LaunchpadBase ):
 			string += " " # just to avoid artifacts on full width characters
 			for n in range( (len(string) + 1) * 8 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
 			# TODO: Just a quick hack (screen is erased before scrolling begins).
@@ -975,9 +975,9 @@ class LaunchpadPro( LaunchpadBase ):
 #			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
 			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
 				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   /16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)/16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
 			for i in string:
@@ -1067,7 +1067,7 @@ class LaunchpadPro( LaunchpadBase ):
 					x = (a[0][0][1] - 1) % 10
 				else:
 					x = a[0][0][1] % 10
-				y = ( 99 - a[0][0][1] ) / 10;
+				y = ( 99 - a[0][0][1] ) // 10;
 			
 				return [ x, y, a[0][0][2] ]
 			else:
@@ -1206,7 +1206,7 @@ class LaunchpadMk2( LaunchpadPro ):
 					y = 0
 				else:
 					x = ( a[0][0][1] - 1) % 10
-					y = ( 99 - a[0][0][1] ) / 10;
+					y = ( 99 - a[0][0][1] ) // 10;
 			
 				return [ x, y, a[0][0][2] ]
 			else:
@@ -1874,7 +1874,7 @@ class Dicer( LaunchpadBase ):
 			cmd = 154
 			
 		# determine the "page", "hot cue", "loop" or "auto loop"
-		page = number / 10
+		page = number // 10
 		if page > 2:
 			return
 
