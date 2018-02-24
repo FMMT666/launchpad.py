@@ -42,6 +42,11 @@ What's hot, what's not?
     Dicer             - class "Dicer()"           LEDs and buttons
 
 
+### Python
+
+Now with Python 3 support \o/
+
+
 ### OS
 
 Now full functionality also on Windows 10 and macOS based systems.  
@@ -53,6 +58,7 @@ Now full functionality also on Windows 10 and macOS based systems.
 ### CHANGES 2018/02/XX:
 
     - added experimental support for Python 3
+    - added Pro example/test file "launchpad_pro.py"
 
 ### CHANGES 2017/09/XX:
 
@@ -184,6 +190,8 @@ Now full functionality also on Windows 10 and macOS based systems.
 
   - "DCR": query mode
   - "CXL": x/y support (if it makes sense...)
+  - "Mk2": example/test code
+  - "Mk1": example/test code
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": flash LEDs
@@ -348,18 +356,24 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 ---
 ## Requirements
 
-  - [Python][2] 2
+  - [Python][2] 2, 3
   - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3
 
 Some Pygame versions do not work on some OSes (e.g. v1.9.2 might cause trouble
-with Windows 7/10). I cannot tell you any more than just "try them!".  
+with Windows 7/10). I cannot tell you any more than just "try!".  
 The latest fixes (4/2017) were tested with v1.9.3 (via pip from Python 2.7.13)
 and Windows 10 (x64). That seems to work fine again...
   
-As of 2/2018, launchpad.py comes with experimental Python 3 support.  
+As of 2/2018, launchpad.py comes with Python 3 support.  
 Tested, so far:  
 
   - Windows 10, Python 3.6.4, PyGame 1.9.3 (via pip), MK2 Pad
+  - macOS Sierra, Python 3.6 (Macports), PyGame 1.9.3 (via pip), Pro Pad
+  - ...
+
+Python 3 will not work for:  
+
+  - stock Ubuntu 16.04.3-LTS (requires building PyGame from sources)
   - ...
 
 Previously, launchpad.py was tested under
@@ -369,7 +383,7 @@ Previously, launchpad.py was tested under
   - Windows 7, 32 bit, 64 bit
   - Windows 10, 64 bit
   - macOS Sierra
-  - [Raspberry-Pi 1/2][4] (Look out for my [Minecraft][5] controller here: [www.askrprojects.net][6])
+  - [Raspberry-Pi 1/2/3][4]
   - Beagle Bone (Black)
   - Banana Pi (Pro/M2/R1)
   - pcDuino V3
