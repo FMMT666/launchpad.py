@@ -21,7 +21,7 @@ Older Launchpads might be documented [here][10].
 
 
 ---
-## STATUS 2017/09/xx:
+## STATUS 2018/02/xx:
 
 What's hot, what's not?  
 
@@ -49,6 +49,10 @@ Now full functionality also on Windows 10 and macOS based systems.
 
 ---
 ## NEWS
+
+### CHANGES 2018/02/XX:
+
+    - added experimental support for Python 3
 
 ### CHANGES 2017/09/XX:
 
@@ -352,9 +356,13 @@ with Windows 7/10). I cannot tell you any more than just "try them!".
 The latest fixes (4/2017) were tested with v1.9.3 (via pip from Python 2.7.13)
 and Windows 10 (x64). That seems to work fine again...
   
-It does not work with Python 3.  
+As of 2/2018, launchpad.py comes with experimental Python 3 support.  
+Tested, so far:  
 
-Launchpad.py was tested under
+  - Windows 10, Python 3.6.4, PyGame 1.9.3 (via pip), MK2 Pad
+  - ...
+
+Previously, launchpad.py was tested under
 
   - Linux, 32 bit, 64 bit
   - Windows XP, 32 bit

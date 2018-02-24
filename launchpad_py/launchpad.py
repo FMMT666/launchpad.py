@@ -20,6 +20,7 @@
 import string
 import random
 import sys
+import array
 
 from pygame import midi
 from pygame import time
@@ -160,7 +161,11 @@ class Midi:
 	#-- Timestamp is not supported and will be sent as '0' (for now)
 	#-------------------------------------------------------------------------------------
 	def RawWriteSysEx( self, lstMessage, timeStamp = 0 ):
-		self.devOut.write_sys_ex( timeStamp, [0xf0] + lstMessage + [0xf7] )
+		# There's a bug in PyGame's (Python 3) list-type message handling, so as a workaround,
+		# we'll use the string-type message instead...
+		#self.devOut.write_sys_ex( timeStamp, [0xf0] + lstMessage + [0xf7] ) # old Python 2
+		self.devOut.write_sys_ex( timeStamp, array.array('B', [0xf0] + lstMessage + [0xf7] ).tostring() )
+
 
 
 	########################################################################################
