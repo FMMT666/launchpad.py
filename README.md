@@ -19,6 +19,8 @@ Oh, don't let us forget the [Dicer][16].
 
 Older Launchpads might be documented [here][10].
 
+Did we mention [Python 3][18] yet?
+
 
 ---
 ## STATUS 2018/02/xx:
@@ -2009,3 +2011,4 @@ FMMT666(ASkr)
 [15]: https://twitter.com/FMMT666/status/871094540140240896
 [16]: https://twitter.com/FMMT666/status/891077439023087618
 [17]: https://github.com/FMMT666/launchpad.py/issues/24
+[18]: https://twitter.com/FMMT666/status/967551405644025857
