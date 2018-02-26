@@ -59,8 +59,9 @@ Now full functionality also on Windows 10 and macOS based systems.
 
 ### CHANGES 2018/02/XX:
 
-    - added experimental support for Python 3
+    - added experimental (aka "seems quite good") support for Python 3
     - added Pro example/test file "launchpad_pro.py"
+    - improving the doc, letter by letter
 
 ### CHANGES 2017/09/XX:
 
@@ -218,8 +219,9 @@ Now full functionality also on Windows 10 and macOS based systems.
 
 ### Install as Python package
 
-#### Via pip
+#### Via pip from PyPI
 
+Please notice that the PyPI version is not always up to date!  
 Simply execute
 
     pip install launchpad_py
@@ -229,9 +231,20 @@ or
     sudo pip install launchpad_py
 
 (in case you need superuser rights) to install it.  
-Notice that the required dependencies (see below) are not automatically resolved.  
+Notice that the required dependencies (see below) are not automatically resolved and you need to install PyGame separately.
 
-You need to install PyGame separately.
+Also make sure that you're using the right "pip", matching your Python 2 or 3 preference.  
+Check with
+
+    pip --version
+
+Which should bring up somewthing like:
+
+    pip 9.0.1 from /usr/lib/python2.7/dist-packages (python 2.7)
+
+For explicitly installing this in an Python 3 environment, use
+
+    pip3 install launchpad_py
 
 
 #### From local file system
@@ -286,7 +299,37 @@ For compatibility with existing code, use
 Instead of downloading the source distribution, you can directly install it from Github
 by executing
 
-      pip2 install git+https://github.com/FMMT666/launchpad.py
+      pip install git+https://github.com/FMMT666/launchpad.py
+
+
+#### Via your system's package manager, e.g. on Raspbian
+
+    ATTENTION Raspberry Pi Raspbian user. This is for you!
+
+Some Linux distributions come with their own PyGame package.  
+Check your manual :)
+
+With "apt", for example, you could either try
+
+    apt search pygame
+
+or
+
+    apt-cache search pygame
+    apt-cache search pygame | grep pygame
+
+Make sure to install the right PyGame version, matching your Python 2 or 3 prefewrence.  
+Sample output from a Raspbian Jesse:
+
+    python-pygame - SDL bindings for games development in Python (Python 2)
+    python3-pygame - SDL bindings for games development in Python (Python 3)
+
+An Ubuntu 17.0.1, which comes with Python 3 as default, outputs
+
+    python-pygame - SDL bindings for games development in Python
+    python-pygame-sdl2 - reimplementation of the Pygame API using SDL2
+
+but this is only a Python 2 installation of PyGame.
 
 
 ### Direct usage
@@ -371,12 +414,16 @@ Tested, so far:
 
   - Windows 10, Python 3.6.4, PyGame 1.9.3 (via pip), MK2 Pad
   - macOS Sierra, Python 3.6 (Macports), PyGame 1.9.3 (via pip), Pro Pad
-  - ...
+  - Raspbian Jessy, RPi3, Python 3.4.2, PyGame 1.9.2a0 (via apt), Mini Pad
 
-Python 3 will not work for:  
+Python 3 will not (yet and out-of-the-box) work for:  
 
   - stock Ubuntu 16.04.3-LTS (requires building PyGame from sources)
-  - ...
+  - stock Ubuntu 17.04       (same)
+  - stock Ubuntu 17.10       (same)
+
+I will probably add some notes about how to compile PyGame on your own...
+
 
 Previously, launchpad.py was tested under
 
@@ -468,6 +515,10 @@ Notice that some of the button and key numbers collide and cannot be differed.
 
 ### For Dicer users
 
+      USE CLASS "Dicer":
+      
+        lp = launchpad.Dicer()
+
 The Dicer uses "page" mode by default. The three small buttons "cue", "loop" and "auto loop"
 select six different pages (per Dicer module) and each of those can be handled independently.
 
@@ -479,7 +530,7 @@ So, if the "cue" page is active and you try to activate an LED in the "loop" pag
 will not be visible until you activate that page.
 
 
-### Ubuntu 17.04 or alsa.conf issues
+### alsa.conf issues
 
 Several users reported errors because of a missing alsa.conf file, e.g.:
 
@@ -524,7 +575,11 @@ You might wish to add this to your alsa.conf:
     type hw
     }
 
-Thanks to [MartinPaulEve][17] for pointing that out.
+Thanks to [MartinPaulEve][17] for pointing that out.  
+Please notice that this "fix" won't work on all systems. While it does, for example,
+work with Ubuntu 17.04, the same error usually just indicates that your system was not
+built with a PyGame compatible ALSA (PortMidi) version.  
+There is no easy fix for this (unless you wish to spend a lot of time completely recompiling your system...)
 
 
 ### For Mac users
@@ -562,12 +617,35 @@ Get it from [here][14] (Novation USB Driver-2.7.dmg).
 
 As it seems, all newer Launchpads work right out of the box, no driver required.
 
+### For Raspberry Pi users
+
+Please notice that some the newer RGB LED Launchpads consume more current than a
+Raspberry Pi can deliver. If you turn on a lot of LEDs, the Launchpad will just reset and show the fireworks demo.  
+At least for the Launchpad Pro, you could use an external power supply adapter. For the Mk2, you
+would need a an "USB-Y" cable, with the "power plug" connected to an external power supply (or other PC).
+
+As written somewhere above, at least for Raspbian (Jesse), you should install Raspbian's PyGame version
+via the package manager or apt. The PyPI version (installation via "pip") will not work due to some missing SDL components.  
+
+Btw, you can check your Raspbian version with the console command
+
+    cat /etc/os-release
+
+Which outputs something comparable to
+
+    PRETTY_NAME="Raspbian GNU/Linux 8 (jessie)"
+    NAME="Raspbian GNU/Linux"
+    VERSION_ID="8"
+    VERSION="8 (jessie)"
+    ...
+
+
 ### For Windows users
 
       MIDI implementation in PyGame 1.9.2+ is broken and running this might
       bring up an 'insufficient memory' error ( pygame.midi.Input() ).
 
-      SOLUTION: use v1.9.1 (or try v1.9.3)
+      SOLUTION: use v1.9.1 or try v1.9.3
 
 ### For Linux and especially Raspberry-Pi users:
 
@@ -594,13 +672,32 @@ did nothing...
 The first time I discovered that, I blamed it on an attached FTDI UART chip, but as it
 turned out, that was not the reason it didn't work.
 
-It "simply" was a power issue.
+It simply was a power issue.
 
 So, if your Launchpad Pro shows that firework demo, check your USB cable!  
 Seriously. That thing draws a lot of current and most USB cables simply
-do not conform to the USB standard.
+do not conform to the USB standard (or your USB port isn't, e.g. Raspberry Pi).
 
-Mine "looked quite good" from the outside.  
+On Linux, you can check that via the console command "dmesg".  
+If the output contains hundreds of "urb status -32" errors, followed by
+
+    ...
+    [ 1414.983069] usb 1-1.5: urb status -32
+    [ 1414.983232] usb 1-1.5: urb status -32
+    [ 1414.983345] usb 1-1.5: urb status -32
+    [ 1414.983456] usb 1-1.5: urb status -32
+    [ 1414.983495] usb 1-1.5: USB disconnect, device number 8
+    [ 1414.983568] usb 1-1.5: urb status -32
+    [ 1414.983692] usb 1-1.5: urb status -32
+    [ 1415.288539] usb 1-1.5: new full-speed USB device number 9 using dwc_otg
+    [ 1415.445968] usb 1-1.5: New USB device found, idVendor=1235, idProduct=0051
+    [ 1415.445984] usb 1-1.5: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+    [ 1415.445992] usb 1-1.5: Product: Launchpad Pro
+    [ 1415.446000] usb 1-1.5: Manufacturer: Focusrite A.E. Ltd
+    [ 1415.446009] usb 1-1.5: SerialNumber: Launchpad Pro
+    ...
+
+My USB cable "looked quite good" from the outside.  
 With its ~5.5mm diameter, I assumed it had AWG 22 (~60mOhm/m) or better, but it in fact
 has ~drumroll~ AWG 28 (~240mOhm/m) and two thick plastic strings to fill the gaps.
 
