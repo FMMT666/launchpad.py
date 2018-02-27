@@ -62,6 +62,7 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added experimental (aka "seems quite good") support for Python 3
     - added Pro example/test file "launchpad_pro.py"
     - improving the doc, letter by letter
+    - added Mk2 example/test file "launchpad_mk2.py"
 
 ### CHANGES 2017/09/XX:
 

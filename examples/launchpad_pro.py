@@ -10,7 +10,6 @@
 import sys
 
 try:
-	# TODO: change to launchpad_py before release
 	import launchpad_py as launchpad
 except ImportError:
 	try:
@@ -85,13 +84,12 @@ def main():
 				lp.LedCtrlXY( x-1, y, colors[3-i+2][0], colors[4-i+2][1], colors[4-i+2][2] )
 		time.wait(500)
 
-	# goodbye...
-	print( " - More to come, goodbye...\n" )
-
 	# turn all LEDs off
+	print( " - Testing Reset()" )
 	lp.Reset()
 
 	# close this instance
+	print( " - More to come, goodbye...\n" )
 	lp.Close()
 
 	
