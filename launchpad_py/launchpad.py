@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # A Novation Launchpad control suite for Python.
 #
@@ -25,10 +25,14 @@ import array
 from pygame import midi
 from pygame import time
 
+
 try:
-	from charset import *
+	from launchpad_py.charset import *
 except ImportError:
-	sys.exit("error loading Launchpad charset")
+	try:
+		from charset import *
+	except ImportError:
+		sys.exit("error loading Launchpad charset")
 
 
 MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect

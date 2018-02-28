@@ -63,6 +63,11 @@ Now full functionality also on Windows 10 and macOS based systems.
     - added Pro example/test file "launchpad_pro.py"
     - improving the doc, letter by letter
     - added Mk2 example/test file "launchpad_mk2.py"
+    - removed the "Python 2 only" restriction from the setup file
+    - changed the imports in __init__.py to work with Python 3
+    - launchpad_py now ready for installations on Python 2 and 3
+    - changed version to v0.8.0
+    - uploaded v0.8.0 to PiPI \o\\o//o/
 
 ### CHANGES 2017/09/XX:
 
@@ -194,8 +199,8 @@ Now full functionality also on Windows 10 and macOS based systems.
 
   - "DCR": query mode
   - "CXL": x/y support (if it makes sense...)
-  - "Mk2": example/test code
   - "Mk1": example/test code
+  - "All": LedCtrlChar() make y-offset work
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "Pro": flash LEDs
