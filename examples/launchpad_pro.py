@@ -83,6 +83,26 @@ def main():
 					x = 10
 				lp.LedCtrlXY( x-1, y, colors[3-i+2][0], colors[4-i+2][1], colors[4-i+2][2] )
 		time.wait(500)
+		
+	i = 1
+	for y in range( i, 10 - i ):
+		for x in range( i, 10 - i ):
+			lp.LedCtrlXY( x, y, 0, 0, 0, mode = "pro" )
+	time.wait(100)
+
+	# ledCtrlChar() test
+	# -> LedCtrlChar( char, red, green, [blue], [offsx], [offsy] )
+	print( " - Testing LedCtrlChar()" )
+	for i in range( -7, 7, 1):
+		lp.LedCtrlChar( 'A', 63, 0, 0, i, 0 )
+		if   i == -6:
+			print( "   - left edge" )
+			time.wait(2000)
+		elif i ==  6:
+			print( "   - right edge" )
+			time.wait(2000)
+		else:
+			time.wait(250)
 
 	# turn all LEDs off
 	print( " - Testing Reset()" )

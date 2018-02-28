@@ -66,7 +66,8 @@ Now full functionality also on Windows 10 and macOS based systems.
     - removed the "Python 2 only" restriction from the setup file
     - changed the imports in __init__.py to work with Python 3
     - launchpad_py now ready for installations on Python 2 and 3
-    - changed version to v0.8.0
+    - updated "launchpad_pro.py" example/test; LedCtrlChar() positioning
+    - changed version and tag to v0.8.0
     - uploaded v0.8.0 to PiPI \o\\o//o/
 
 ### CHANGES 2017/09/XX:
