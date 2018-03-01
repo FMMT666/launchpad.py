@@ -90,8 +90,10 @@ def main():
 			lp.LedCtrlXY( x, y, 0, 0, 0, mode = "pro" )
 	time.wait(100)
 
-	# ledCtrlChar() test
-	# -> LedCtrlChar( char, red, green, [blue], [offsx], [offsy] )
+	# LedCtrlChar() test
+	# -> LedCtrlRaw()
+	#    -> midi.RawWriteSysEx()
+	#       -> devOut.write_sys_ex()
 	print( " - Testing LedCtrlChar()" )
 	for i in range( -7, 7, 1):
 		lp.LedCtrlChar( 'A', 63, 0, 0, i, 0 )
@@ -104,6 +106,16 @@ def main():
 		else:
 			time.wait(250)
 
+	# LedCtrlRawByCode() test
+	# -> midi.RawWrite()
+	#    -> devOut.write_short()
+	print( " - Testing LedCtrlRawByCode()" )
+	for y in range( 10, 90, 10 ):
+		for x in range(8):
+			lp.LedCtrlRawByCode( y + x + 1, x+y )
+			time.wait(50)
+	time.wait(2000)
+	
 	# turn all LEDs off
 	print( " - Testing Reset()" )
 	lp.Reset()
