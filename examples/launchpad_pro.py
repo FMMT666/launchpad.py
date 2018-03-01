@@ -105,17 +105,37 @@ def main():
 			time.wait(2000)
 		else:
 			time.wait(250)
+	lp.LedAllOn( 0 )
 
 	# LedCtrlRawByCode() test
 	# -> midi.RawWrite()
 	#    -> devOut.write_short()
 	print( " - Testing LedCtrlRawByCode()" )
+	print( "   - matrix" )
 	for y in range( 10, 90, 10 ):
 		for x in range(8):
 			lp.LedCtrlRawByCode( y + x + 1, x+y )
 			time.wait(50)
-	time.wait(2000)
+	print( "   - bottom" )
+	for i in range( 1, 9, 1 ):
+		lp.LedCtrlRawByCode( i, 5 )
+		time.wait(200)
+	print( "   - right" )
+	for i in range( 19, 99, 10 ):
+		lp.LedCtrlRawByCode( i, 17 )
+		time.wait(200)
+	print( "   - top" )
+	for i in range( 98, 90, -1 ):
+		lp.LedCtrlRawByCode( i, 79 )
+		time.wait(200)
+	print( "   - left" )
+	for i in range( 80, 0, -10 ):
+		lp.LedCtrlRawByCode( i, 3 )
+		time.wait(200)
+		
 	
+	time.wait(2000)
+
 	# turn all LEDs off
 	print( " - Testing Reset()" )
 	lp.Reset()
