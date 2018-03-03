@@ -35,9 +35,6 @@ except ImportError:
 		sys.exit("error loading Launchpad charset")
 
 
-MIDI_BUFFER_OUT = 128  # intended for real-time behaviour, but does not have any effect
-MIDI_BUFFER_IN  = 16   # same here...; (2016/01 -> not in use by default anymore)
-
 
 ##########################################################################################
 ### CLASS Midi
@@ -46,7 +43,7 @@ MIDI_BUFFER_IN  = 16   # same here...; (2016/01 -> not in use by default anymore
 class Midi:
 
 	# instance created 
-	instanceMidi = None;
+	instanceMidi = None
 
 	#---------------------------------------------------------------------------------------
 	#-- init
@@ -79,7 +76,9 @@ class Midi:
 	def OpenOutput( self, midi_id ):
 		if self.devOut is None:
 			try:
-				self.devOut = midi.Output( midi_id, 0, MIDI_BUFFER_OUT )
+				# PyGame's default size of the buffer is 4096.
+				# Removed code to tune that...
+				self.devOut = midi.Output( midi_id, 0 )
 			except:
 				self.devOut = None
 				return False
@@ -102,14 +101,11 @@ class Midi:
 	def OpenInput( self, midi_id, bufferSize = None ):
 		if self.devIn is None:
 			try:
-				# TODO: Omitting the buffer size seems to fix some input problems,
-				#       but needs checks whether input events could get lost...
+				# PyGame's default size of the buffer is 4096.
 				if bufferSize is None:
 					self.devIn = midi.Input( midi_id )
 				else:
-					# arbitrary randomness...
-					if bufferSize < 0 or bufferSize > 1024:
-						bufferSize = MIDI_BUFFER_IN
+					# for experiments...
 					self.devIn = midi.Input( midi_id, bufferSize )
 			except:
 				self.devIn = None
@@ -261,7 +257,7 @@ class LaunchpadBase( object ):
 
 
 	def __delete__( self ):
-		self.Close();
+		self.Close()
 		
 
 	#-------------------------------------------------------------------------------------
@@ -580,14 +576,14 @@ class Launchpad( LaunchpadBase ):
 			for i in string:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green)
-					time.wait(waitms);
+					time.wait(waitms)
 
 					
 	#-------------------------------------------------------------------------------------
 	#-- Returns True if a button event was received.
 	#-------------------------------------------------------------------------------------
 	def ButtonChanged( self ):
-		return self.midi.ReadCheck();
+		return self.midi.ReadCheck()
 
 		
 	#-------------------------------------------------------------------------------------
@@ -992,7 +988,7 @@ class LaunchpadPro( LaunchpadBase ):
 			for i in string:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green, blue)
-					time.wait(waitms);
+					time.wait(waitms)
 
 
 	#-------------------------------------------------------------------------------------
@@ -1070,13 +1066,18 @@ class LaunchpadPro( LaunchpadBase ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 
+			# TODO:
+			# Pressing and not releasing a button will create hundreds of "pressure value" (208)
+			# events. Because we don't handle them here (yet), polling to slowly might create
+			# very long lags...
+
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 			
 				if mode.lower() != "pro":
 					x = (a[0][0][1] - 1) % 10
 				else:
 					x = a[0][0][1] % 10
-				y = ( 99 - a[0][0][1] ) // 10;
+				y = ( 99 - a[0][0][1] ) // 10
 			
 				return [ x, y, a[0][0][2] ]
 			else:
@@ -1158,7 +1159,7 @@ class LaunchpadMk2( LaunchpadPro ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
 	def Open( self, number = 0, name = "Mk2" ):
-		return super( LaunchpadMk2, self ).Open( number = number, name = name );
+		return super( LaunchpadMk2, self ).Open( number = number, name = name )
 
 
 	#-------------------------------------------------------------------------------------
@@ -1168,7 +1169,7 @@ class LaunchpadMk2( LaunchpadPro ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
 	def Check( self, number = 0, name = "Mk2" ):
-		return super( LaunchpadMk2, self ).Check( number = number, name = name );
+		return super( LaunchpadMk2, self ).Check( number = number, name = name )
 
 
 	#-------------------------------------------------------------------------------------
@@ -1215,7 +1216,7 @@ class LaunchpadMk2( LaunchpadPro ):
 					y = 0
 				else:
 					x = ( a[0][0][1] - 1) % 10
-					y = ( 99 - a[0][0][1] ) // 10;
+					y = ( 99 - a[0][0][1] ) // 10
 			
 				return [ x, y, a[0][0][2] ]
 			else:
@@ -1431,7 +1432,7 @@ class LaunchControlXL( LaunchpadBase ):
 		# By default, user template 0 is enabled
 		self.UserTemplate = template
 		
-		retval = super( LaunchControlXL, self ).Open( number = number, name = name );
+		retval = super( LaunchControlXL, self ).Open( number = number, name = name )
 		if retval == True:
 			self.TemplateSet( self.UserTemplate )
 
@@ -1576,7 +1577,7 @@ class LaunchControlXL( LaunchpadBase ):
 	#-- Returns True if an event occured.
 	#-------------------------------------------------------------------------------------
 	def InputChanged( self ):
-		return self.midi.ReadCheck();
+		return self.midi.ReadCheck()
 
 
 	#-------------------------------------------------------------------------------------
@@ -1657,7 +1658,7 @@ class LaunchKeyMini( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
 	def Open( self, number = 0, name = "LaunchKey" ):
-		retval = super( LaunchKeyMini, self ).Open( number = number, name = name );
+		retval = super( LaunchKeyMini, self ).Open( number = number, name = name )
 		return retval
 
 
@@ -1724,7 +1725,7 @@ class LaunchKeyMini( LaunchpadBase ):
 	#-- Returns True if an event occured.
 	#-------------------------------------------------------------------------------------
 	def InputChanged( self ):
-		return self.midi.ReadCheck();
+		return self.midi.ReadCheck()
 
 
 ########################################################################################
@@ -1765,7 +1766,7 @@ class Dicer( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
 	def Open( self, number = 0, name = "Dicer" ):
-		retval = super( Dicer, self ).Open( number = number, name = name );
+		retval = super( Dicer, self ).Open( number = number, name = name )
 		return retval
 
 
