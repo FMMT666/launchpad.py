@@ -3,4 +3,5 @@
 !.gitignore
 !hello.py
 !launchpad_pro.py
+!launchpad_pro-fire.py
 !launchpad_mk2.py

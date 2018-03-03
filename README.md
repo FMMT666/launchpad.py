@@ -69,6 +69,7 @@ Now full functionality also on Windows 10 and macOS based systems.
     - updated "launchpad_pro.py" example/test; LedCtrlChar() positioning
     - changed version and tag to v0.8.0
     - uploaded v0.8.0 to PiPI \o\\o//o/
+    - added "launchpad_pro-fire.py" example; just a simple fire animation
 
 ### CHANGES 2017/09/XX:
 
