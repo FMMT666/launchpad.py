@@ -3,7 +3,7 @@
 # Launchpad Pro Fire Demo
 # 
 #
-# FMMT666(ASkr) 7/2013..2/2018
+# FMMT666(ASkr) 7/2013..3/2018
 # www.askrprojects.net
 #
 
@@ -244,6 +244,19 @@ class Fire:
 	#-------------------------------------------------------------------------------------
 	#-- 
 	#-------------------------------------------------------------------------------------
+	""" Sets all seed values to one value
+
+	"""
+	def SeedSetRow( self, value ):
+		value = limit1( value )
+
+		for x in range( self.sizeX ):
+			self.matrix[0][x] = value
+
+
+	#-------------------------------------------------------------------------------------
+	#-- 
+	#-------------------------------------------------------------------------------------
 	""" Sets all seeds to random values
 
 	"""
@@ -336,6 +349,13 @@ class LpDisplay():
 		return self.lp.ButtonStateXY( mode = "pro" )
 
 
+	#-------------------------------------------------------------------------------------
+	#-- 
+	#-------------------------------------------------------------------------------------
+	def ButtonFlush( self ):
+		self.lp.ButtonFlush()
+
+
 ########################################################################################
 ###
 ########################################################################################
@@ -348,19 +368,37 @@ if __name__ == '__main__':
 
 	a.SeedRandom()
 
-	print("Push any Launchpad Pro button to exit.")
+	print("\nButtons:")
+	print("  - upper left ('Shift') -> EXIT")
+	print("  - lower left ('O')     -> TURBO")
 
 	while True:
+		# calculate the next matrix state
 		a.MatrixEvolveAll()
-		# a.MatrixPrintDebug()
 
+		# update the Launchpad's display
 		for row in range(8):
 			lpDis.UpdateRow( 8-row, a.MatrixGetRow( row ) )
 
+		# add some flickering to the seeds
 		a.SeedAddFlickering( 0.2 )
-		time.delay(20)
+		# time.delay(20)
 
-		if lpDis.ButtonGet() != []:
-			break
+		# buttons
+		buts = lpDis.ButtonGet()
+		if buts != []:
+			# print(buts)
+			# --- turbo fire pressed
+			if buts[0:2] == [ 0, 8 ] and buts[2]:
+				a.SeedSetRow( 0.8 )
+			# --- turbo fire released
+			if buts[0:2] == [ 0, 8 ] and not buts[2]:
+				a.SeedSetRow( 0.0 )
+			# --- matrix button
+			if 0 < buts[0] < 9 and  0 < buts[1] < 9 and not buts[2]:
+				print("Don't push the matrix buttons. Might create a lag (pressure events).")
+			# --- quit
+			elif buts[0:2] == [ 0, 1 ]:
+				break
 
 	lpDis.Clear()
