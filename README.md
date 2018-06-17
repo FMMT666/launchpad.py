@@ -57,6 +57,11 @@ Now full functionality also on Windows 10 and macOS based systems.
 ---
 ## NEWS
 
+### CHANGES 2018/06/XX:
+
+    - added notes on how to compile your own PyGame (trouble solving)
+
+
 ### CHANGES 2018/02/XX:
 
     - added experimental (aka "seems quite good") support for Python 3
@@ -410,7 +415,7 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 ## Requirements
 
   - [Python][2] 2, 3
-  - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3
+  - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3, v1.9.4-XX
 
 Some Pygame versions do not work on some OSes (e.g. v1.9.2 might cause trouble
 with Windows 7/10). I cannot tell you any more than just "try!".  
@@ -424,13 +429,14 @@ Tested, so far:
   - macOS Sierra, Python 3.6 (Macports), PyGame 1.9.3 (via pip), Pro Pad
   - Raspbian Jessy, RPi3, Python 3.4.2, PyGame 1.9.2a0 (via apt), Mini Pad
 
-Python 3 will not (yet and out-of-the-box) work for:  
+Python 3 might not (yet and out-of-the-box) work for:  
 
   - stock Ubuntu 16.04.3-LTS (requires building PyGame from sources)
   - stock Ubuntu 17.04       (same)
   - stock Ubuntu 17.10       (same)
+  - stock Ubuntu 18.04       (workaround available)
 
-I will probably add some notes about how to compile PyGame on your own...
+See below for instructions on how to compile PyGame on your own...
 
 
 Previously, launchpad.py was tested under
@@ -466,7 +472,73 @@ Supported completely different stuff:
 Notice that Novation now (1/2016) sells an RGB Launchpad under the same
 name it once shipped the first red/green LED with!
 
+---
+## Compiling your own PyGame
 
+ If you have problems with errors like "alsa.conf" or the ListAll() method
+ not recognizing any attached Launchpads on newer systems, especially Ubuntu 17/18,
+ you might consider compiling your own PyGame version.
+
+ This explanation is for Ubuntu 18.04-LTS and Python 3, but it should work [tm] for most other systems too.
+
+ Additional package requirements, install them with
+
+    sudo apt-get install <package name>
+
+ I recommend installing these one after another (for easy "debugging")
+
+    git
+    automake
+    cmake
+    libsdl1.2-dev
+    libportmidi-dev
+    python3-setuptools
+    python3-dev
+    ...
+
+ Download the PyGame source code.  
+ Notice that this will create a sub-folder named "pygame":
+
+    git clone https://github.com/pygame/pygame
+
+ Enter that directory and type
+
+     ./configure
+
+ which results in something like:
+
+    ...
+    No package 'freetype2' found
+    WARNING: "pkg-config freetype2" failed!
+    SDL     : found 1.2.15
+    FONT    : not found
+    IMAGE   : not found
+    MIXER   : not found
+    PNG     : found
+    JPEG    : not found
+    SCRAP   : found
+    PORTMIDI: found
+    PORTTIME: found
+    FREETYPE: not found
+
+ If you need a fully working PyGame, with all features, I leave it up to you,
+ to resolve the remaining "not found" issues, but they're not required by Launchpad.py
+
+ Next, type
+
+    make
+
+ to create the build files, followed by a
+
+    sudo python3 setup.py install
+
+ After a short time, you now should have PyGame in the default path
+
+    /usr/local/lib/python3.6/dist-packages/
+
+ ...
+
+ 
 ---
 ## Random Notes
 
