@@ -23,7 +23,7 @@ Did we mention [Python 3][18] yet?
 
 
 ---
-## STATUS 2018/02/xx:
+## STATUS 2018/06/xx:
 
 What's hot, what's not?  
 
@@ -52,6 +52,7 @@ Now with Python 3 support \o/
 ### OS
 
 Now full functionality also on Windows 10 and macOS based systems.  
+Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame though (which is actually very easy :-).
 
 
 ---
