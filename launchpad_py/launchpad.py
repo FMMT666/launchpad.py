@@ -866,6 +866,25 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- Same as LedCtrlPulseByCode, but with a dual color flashing LED.
+	#-- The first color is the one that is already enabled, the second one is the
+	#-- <colorcode> argument in this method.
+	#-- Flashing can be stoppped by another Note-On/Off or SysEx message.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlFlashByCode( self, number, colorcode = None ):
+
+		if number < 0 or number > 99:
+			return
+
+		# TODO: limit/check colorcode
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+
+		# for Mk2: [ 0, 32, 41, 2, *24*, *35*, *0*, number, colorcode ] (also an error in the docs)
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 16, 35, number, colorcode ] )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Controls a grid LED by its coordinates <x>, <y> and <reg>, <green> and <blue>
 	#-- intensity values. By default, the old and compatible "Classic" mode is used
 	#-- (8x8 matrix left has x=0). If <mode> is set to "pro", x=0 will light up the round
@@ -1318,6 +1337,26 @@ class LaunchpadMk2( LaunchpadPro ):
 		# Also notice the error in the Mk2 docs. "number" is actually the 2nd
 		# command, following an unused "0" (that's also missing in the Pro's command)
 		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 24, 40, 0, number, colorcode ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Same as LedCtrlPulseByCode, but with a dual color flashing LED.
+	#-- The first color is the one that is already enabled, the second one is the
+	#-- <colorcode> argument in this method.
+	#-- Flashing can be stoppped by another Note-On/Off or SysEx message.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def LedCtrlFlashByCode( self, number, colorcode = None ):
+
+		if number < 0 or number > 99:
+			return
+
+		# TODO: limit/check colorcode
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+
+		# for Pro: [ 0, 32, 41, 2, *16*, *35*, number, colorcode ] (also an error in the docs)
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 24, 35, 0, number, colorcode ] )
 
 
 	#-------------------------------------------------------------------------------------

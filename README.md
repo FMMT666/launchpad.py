@@ -62,6 +62,7 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 ### CHANGES 2018/10/XX:
 
     - added PRO/Mk2 LedCtrlPulseByCode(), pulse LEDs by colorcode (RGB not supported)
+    - added PRO/Mk2 LedCtrlFlashByCode(), LED dual color flash by colorcodes (RGB not supported)
 
 
 ### CHANGES 2018/06/XX:
@@ -211,8 +212,7 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 ---
 ## Upcoming attractions, notes and thoughts
 
-  - "Pro": Also Mk2; flash/pulse LEDs
-  - "Pro": Also Mk2; set flash/pulse frequency
+  - "Pro": Also Mk2; XY mode for flash/pulse
   - "All": RGB to colorcode approximation (for flash/pulse methods)
   - "DCR": query mode
   - "CXL": x/y support (if it makes sense...)
@@ -846,6 +846,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     LedCtrlRaw( number, red, gree, [blue] )
     LedCtrlRawByCode( number, [colorcode] )
     LedCtrlPulseByCode( number, [colorcode] )
+    LedCtrlFlashByCode( number, [colorcode] )
     LedCtrlXY( x, y, red, green, [blue] )
     LedCtrlXYByCode( x, y, colorcode )
     LedCtrlXYByRGB( x, y, colorlist )
@@ -1342,6 +1343,27 @@ Functions requiring a colorcode have a "...ByCode" naming style.
       PARAMS: <number>     number of the LED to control
               <colorcode>  OPTIONAL, a number from 0..127
       RETURN:
+
+
+### LedCtrlFlashByCode( number, [colorcode] )
+
+    Flashes an LED between to colors.
+    The first color can be set by any "LedCtrl...()" command, the second color and the
+    activation of the flashing is then done by this method.
+    Flashing can be turned off by simply sending another on/off command.
+
+    Notice that there is no RGB control variant of this method (not supported by Launchpad).
+
+      PARAMS: <number>     number of the LED to control
+              <colorcode>  OPTIONAL, a number from 0..127
+      RETURN:
+
+      EXAMPLES:
+              LP.LedCtrlRawByCode( 81, 16 )      # set top left LED (#81) to green ("16") (Mk2)
+              LP.LedCtrlFlashByCode( 81, 6 )     # now set 2nd color to red ("6") and flash LED #81
+
+              LP.LedCtrlXY( 0, 1, 63, 63, 63 )   # set top left LED to white (Mk2)
+              LP.LedCtrlFlashByCode( 81, 6 )     # now set 2nd color to red ("6") and flash LED #81
 
 
 ### LedCtrlXY( x, y, red, green, [blue], [mode] )
