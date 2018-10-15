@@ -23,7 +23,7 @@ Did we mention [Python 3][18] yet?
 
 
 ---
-## STATUS 2018/06/xx:
+## STATUS 2018/10/xx:
 
 What's hot, what's not?  
 
@@ -57,6 +57,12 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 
 ---
 ## NEWS
+
+
+### CHANGES 2018/10/XX:
+
+    - added PRO/Mk2 LedCtrlPulseByCode(), pulse LEDs by colorcode (RGB not supported)
+
 
 ### CHANGES 2018/06/XX:
 
@@ -205,14 +211,15 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 ---
 ## Upcoming attractions, notes and thoughts
 
+  - "Pro": Also Mk2; flash/pulse LEDs
+  - "Pro": Also Mk2; set flash/pulse frequency
+  - "All": RGB to colorcode approximation (for flash/pulse methods)
   - "DCR": query mode
   - "CXL": x/y support (if it makes sense...)
   - "Mk1": example/test code
   - "All": LedCtrlChar() make y-offset work
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
-  - "Pro": flash LEDs
-  - "Pro": pulse LEDs
   - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
   - "Pro": implement native text scrolling
   - "Pro": support full analog reads (button already pressed, but intensity changes)
@@ -838,6 +845,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     LedGetColorByName( name )
     LedCtrlRaw( number, red, gree, [blue] )
     LedCtrlRawByCode( number, [colorcode] )
+    LedCtrlPulseByCode( number, [colorcode] )
     LedCtrlXY( x, y, red, green, [blue] )
     LedCtrlXYByCode( x, y, colorcode )
     LedCtrlXYByRGB( x, y, colorlist )
@@ -858,6 +866,8 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 All RGB Launchpads have a 128 color palette built-in.  
 Controlling LEDs with colors from the palette is about three times faster than
 using the, indeed much more comfortable, RGB notation.
+
+Functions requiring a colorcode have a "...ByCode" naming style.
 
 ![RGB color palette](/images/lppro_colorcodes.png)
 
@@ -1314,6 +1324,20 @@ using the, indeed much more comfortable, RGB notation.
     Controls an LED via its number and colorcode.
     If <colorcode> is omitted, 'white' is used.
     This is about three times faster than the comfortable RGB method LedCtrlRaw().
+
+      PARAMS: <number>     number of the LED to control
+              <colorcode>  OPTIONAL, a number from 0..127
+      RETURN:
+
+
+### LedCtrlPulseByCode( number, [colorcode] )
+
+    Controls an LED via its number and colorcode, as "LedCtrlRawByCode()" does,
+    but pulsing the LED instead of just turning it on or off.
+    If <colorcode> is omitted, 'white' is used.
+    Pulsing can be turned off by simply sending another on/off command.
+
+    Notice that there is no RGB control variant of this method (not supported by Launchpad).
 
       PARAMS: <number>     number of the LED to control
               <colorcode>  OPTIONAL, a number from 0..127
