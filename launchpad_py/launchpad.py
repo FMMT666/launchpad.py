@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# FMMT666(ASkr) 01/2013..02/2018
+# FMMT666(ASkr) 01/2013..10/2018
 # www.askrprojects.net
 #
 #
@@ -785,6 +785,31 @@ class LaunchpadPro( LaunchpadBase ):
 	# TODO: ASkr, Undocumented!
 	def LedSetButtonLayoutSession( self ):
 		self.LedSetLayout( 0 )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets BPM for pulsing or flashing LEDs
+	#-- EXPERIMENTAL FAKE SHOW
+	#-- The Launchpad Pro (and Mk2) derive the LED's pulsing or flashing frequency from
+	#-- the repetive occurrence of MIDI beat clock messages (msg 248), 24 per beat.
+	#-- No timers/events here yet, so we fake it by sending the minimal amount of
+	#-- messages (25 for Pro, 26 for Mk2 (not kidding) => 28, probably safe value) once.
+	#-- The Pro and the Mk2 support 40..240 BPM, so the maximum time we block everything
+	#-- is, for 40 BPM:
+	#--   [ 1 / ( 40 BPM * 24 / 60s ) ] * 28 = 1.75s    ; (acrually one less, 28-1)
+	#-- Due to the 1ms restriction, the BPMs get quite coarse towards the faster end:
+	#--   250, 227, 208, 192, 178, 166, 156, 147, 138, 131...
+	#-------------------------------------------------------------------------------------
+	def LedCtrlBpm( self, bpm ):
+		bpm = min( int( bpm ), 240 )  # limit to upper 240
+		bpm = max( bpm, 40 )          # limit to lower 40
+
+		# basically int( 1000 / ( bpm * 24 / 60.0 ) ):
+		td = int( 2500 / bpm )
+
+		for i in range( 28 ):
+			self.midi.RawWrite( 248, 0, 0 )
+			time.wait( td )
 
 
 	#-------------------------------------------------------------------------------------

@@ -63,6 +63,7 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 
     - added PRO/Mk2 LedCtrlPulseByCode(), pulse LEDs by colorcode (RGB not supported)
     - added PRO/Mk2 LedCtrlFlashByCode(), LED dual color flash by colorcodes (RGB not supported)
+    - added PRO/Mk2 LedCtrlBpm(), set pulsing/flashing rate
 
 
 ### CHANGES 2018/06/XX:
@@ -843,10 +844,11 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
     LedSetMode( mode )
     LedGetColorByName( name )
-    LedCtrlRaw( number, red, gree, [blue] )
+    LedCtrlRaw( number, red, green, [blue] )
     LedCtrlRawByCode( number, [colorcode] )
     LedCtrlPulseByCode( number, [colorcode] )
     LedCtrlFlashByCode( number, [colorcode] )
+    LedCtrlBpm( bpm )
     LedCtrlXY( x, y, red, green, [blue] )
     LedCtrlXYByCode( x, y, colorcode )
     LedCtrlXYByRGB( x, y, colorlist )
@@ -1337,7 +1339,8 @@ Functions requiring a colorcode have a "...ByCode" naming style.
     but pulsing the LED instead of just turning it on or off.
     If <colorcode> is omitted, 'white' is used.
     Pulsing can be turned off by simply sending another on/off command.
-
+    The pulsing rate can be (roughly) set by LedCtrlBpm()
+    
     Notice that there is no RGB control variant of this method (not supported by Launchpad).
 
       PARAMS: <number>     number of the LED to control
@@ -1347,23 +1350,63 @@ Functions requiring a colorcode have a "...ByCode" naming style.
 
 ### LedCtrlFlashByCode( number, [colorcode] )
 
-    Flashes an LED between to colors.
+    Flashes an LED between two colors or on/off.
     The first color can be set by any "LedCtrl...()" command, the second color and the
     activation of the flashing is then done by this method.
-    Flashing can be turned off by simply sending another on/off command.
-
+    Flashing can be turned off by simply sending another on/off/color command.
+    The flashing rate can be (roughly) set by LedCtrlBpm()
+    
     Notice that there is no RGB control variant of this method (not supported by Launchpad).
 
       PARAMS: <number>     number of the LED to control
               <colorcode>  OPTIONAL, a number from 0..127
       RETURN:
-
       EXAMPLES:
               LP.LedCtrlRawByCode( 81, 16 )      # set top left LED (#81) to green ("16") (Mk2)
               LP.LedCtrlFlashByCode( 81, 6 )     # now set 2nd color to red ("6") and flash LED #81
 
               LP.LedCtrlXY( 0, 1, 63, 63, 63 )   # set top left LED to white (Mk2)
               LP.LedCtrlFlashByCode( 81, 6 )     # now set 2nd color to red ("6") and flash LED #81
+
+
+### LedCtrlBpm( bpm )
+
+    EXPERIMENTAL/PRELIMINARY
+
+    Sets the LED's pulsing or flashing frequency in beats per minute (bpm).
+    By default, the Launchpads are set to 120 bpm.
+    
+    Notice that this comes with several restrictions (yet):
+
+     - This function blocks for 67.5 / bpm seconds, e.g.:
+          40 bpm - 1688 ms
+         100 bpm -  675 ms
+         240 bpm -  281 ms
+        so it should only be called if absolutely necessary, preferably right in the beginning.
+
+      - Due to the shortest time step of 1ms and the way the Launchpads handle the timing settings,
+        the bpm values are restricted to:
+        
+          10 ms - 250 bpm     23 ms - 108 bpm     36 ms -  69 bpm     49 ms -  51 bpm
+          11 ms - 227 bpm     24 ms - 104 bpm     37 ms -  67 bpm     50 ms -  50 bpm
+          12 ms - 208 bpm     25 ms - 100 bpm     38 ms -  65 bpm     51 ms -  49 bpm
+          13 ms - 192 bpm     26 ms -  96 bpm     39 ms -  64 bpm     52 ms -  48 bpm
+          14 ms - 178 bpm     27 ms -  92 bpm     40 ms -  62 bpm     53 ms -  47 bpm
+          15 ms - 166 bpm     28 ms -  89 bpm     41 ms -  60 bpm     54 ms -  46 bpm
+          16 ms - 156 bpm     29 ms -  86 bpm     42 ms -  59 bpm     55 ms -  45 bpm
+          17 ms - 147 bpm     30 ms -  83 bpm     43 ms -  58 bpm     56 ms -  44 bpm
+          18 ms - 138 bpm     31 ms -  80 bpm     44 ms -  56 bpm     57 ms -  43 bpm
+          19 ms - 131 bpm     32 ms -  78 bpm     45 ms -  55 bpm     58 ms -  43 bpm
+          20 ms - 125 bpm     33 ms -  75 bpm     46 ms -  54 bpm     59 ms -  42 bpm
+          21 ms - 119 bpm     34 ms -  73 bpm     47 ms -  53 bpm     60 ms -  41 bpm
+          22 ms - 113 bpm     35 ms -  71 bpm     48 ms -  52 bpm     61 ms -  40 bpm
+
+      PARAMS: <bpm>     beats per minute, 40..240
+      RETURN:
+      
+      EXAMPLES:
+              LP.LedCtrlBpm( 100 )      # set LED flashing/pulsing to ~100 beats per minute
+
 
 
 ### LedCtrlXY( x, y, red, green, [blue], [mode] )
