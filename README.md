@@ -65,11 +65,9 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
     - added PRO/Mk2 LedCtrlFlashByCode(), LED dual color flash by colorcodes (RGB not supported)
     - added PRO/Mk2 LedCtrlBpm(), set pulsing/flashing rate
 
-
 ### CHANGES 2018/06/XX:
 
     - added notes on how to compile your own PyGame (trouble solving)
-
 
 ### CHANGES 2018/02/XX:
 
@@ -101,13 +99,11 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
     - added DCR "one page mode" support for buttons and LEDs
     - added DCR support in hello.py demo
 
-
 ### CHANGES 2017/07/29:
 
     - added a class for the Dicer
     - added DCR InputStateRaw() with coolest button mapping ever <3
     - added DCR LedSetLightShow()
-
 
 ### CHANGES 2017/06/XX:
 
@@ -504,6 +500,59 @@ name it once shipped the first red/green LED with!
     python3-setuptools
     python3-dev
     ...
+
+### Compile via "setup.py"
+
+ Find the complete compilation instructions [here][19].
+
+ Download the PyGame source code.  
+ Notice that this will create a sub-folder named "pygame":
+
+    git clone https://github.com/pygame/pygame
+
+ Enter that directory and type
+
+     python3 setup.py build
+
+ which results in something like:
+
+    ...
+    No package 'freetype2' found
+    WARNING: "pkg-config freetype2" failed!
+    SDL     : found 1.2.15
+    FONT    : not found
+    IMAGE   : not found
+    MIXER   : not found
+    PNG     : found
+    JPEG    : not found
+    SCRAP   : found
+    PORTMIDI: found
+    PORTTIME: found
+    FREETYPE: not found
+    
+    Warning, some of the pygame dependencies were not found. Pygame can still
+    compile and install, but games that depend on those missing dependencies
+    will not run. Would you like to continue the configuration? [Y/n]
+
+ If you need a fully working PyGame, with all features, I leave it up to you,
+ to resolve the remaining "not found" issues, but they're not required by Launchpad.py
+
+ Make sure PORTMIDI and PORTTIME are marked with "found", then continue the build process.
+ After a hopfully error-free build, execute (Ubuntu example for superuser access)
+
+    sudo python3 setup.py install
+
+  After a short time, you now should have PyGame in the default path
+
+    /usr/local/lib/python3.6/dist-packages/
+
+ ...
+
+
+### Compile via "configure" (old)
+
+ Newer Python variants come with a fully functional setup.py (see above).  
+ I just leave the old compiling instructions here...
 
  Download the PyGame source code.  
  Notice that this will create a sub-folder named "pygame":
@@ -2279,3 +2328,4 @@ FMMT666(ASkr)
 [16]: https://twitter.com/FMMT666/status/891077439023087618
 [17]: https://github.com/FMMT666/launchpad.py/issues/24
 [18]: https://twitter.com/FMMT666/status/967551405644025857
+[19]: https://www.pygame.org/wiki/Compilation
