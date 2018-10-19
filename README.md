@@ -61,9 +61,11 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 
 ### CHANGES 2018/10/XX:
 
-    - added PRO/Mk2 LedCtrlPulseByCode(), pulse LEDs by colorcode (RGB not supported)
-    - added PRO/Mk2 LedCtrlFlashByCode(), LED dual color flash by colorcodes (RGB not supported)
+    - added PRO/Mk2 LedCtrlPulseByCode(), pulse LEDs by color code (RGB not supported)
+    - added PRO/Mk2 LedCtrlFlashByCode(), LED dual color flash by color codes (RGB not supported)
     - added PRO/Mk2 LedCtrlBpm(), set pulsing/flashing rate
+    - updated PyGame compilation instructions
+    - added PRO/MK2 LedCtrlPulseXYByCode(), pulse LEDs by color code and X/Y position
 
 ### CHANGES 2018/06/XX:
 
@@ -210,7 +212,8 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 ## Upcoming attractions, notes and thoughts
 
   - "Pro": Also Mk2; XY mode for flash/pulse
-  - "All": RGB to colorcode approximation (for flash/pulse methods)
+  - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
+  - "All": RGB to color code approximation (for flash/pulse methods)
   - "DCR": query mode
   - "CXL": x/y support (if it makes sense...)
   - "Mk1": example/test code
@@ -896,6 +899,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     LedCtrlRaw( number, red, green, [blue] )
     LedCtrlRawByCode( number, [colorcode] )
     LedCtrlPulseByCode( number, [colorcode] )
+    LedCtrlPulseXYByCode( x, y, colorcode )
     LedCtrlFlashByCode( number, [colorcode] )
     LedCtrlBpm( bpm )
     LedCtrlXY( x, y, red, green, [blue] )
@@ -919,7 +923,7 @@ All RGB Launchpads have a 128 color palette built-in.
 Controlling LEDs with colors from the palette is about three times faster than
 using the, indeed much more comfortable, RGB notation.
 
-Functions requiring a colorcode have a "...ByCode" naming style.
+Functions requiring a color code have a "...ByCode" naming style.
 
 ![RGB color palette](/images/lppro_colorcodes.png)
 
@@ -1373,18 +1377,18 @@ Functions requiring a colorcode have a "...ByCode" naming style.
 
 ### LedCtrlRawByCode( number, [colorcode] )
 
-    Controls an LED via its number and colorcode.
+    Controls an LED via its number and color code.
     If <colorcode> is omitted, 'white' is used.
     This is about three times faster than the comfortable RGB method LedCtrlRaw().
 
       PARAMS: <number>     number of the LED to control
-              <colorcode>  OPTIONAL, a number from 0..127
+              <colorcode>  a number from 0..127 (see image; white if omitted)
       RETURN:
 
 
-### LedCtrlPulseByCode( number, [colorcode] )
+### LedCtrlPulseByCode( number, colorcode )
 
-    Controls an LED via its number and colorcode, as "LedCtrlRawByCode()" does,
+    Controls an LED via its number and color code, as "LedCtrlRawByCode()" does,
     but pulsing the LED instead of just turning it on or off.
     If <colorcode> is omitted, 'white' is used.
     Pulsing can be turned off by simply sending another on/off command.
@@ -1393,7 +1397,27 @@ Functions requiring a colorcode have a "...ByCode" naming style.
     Notice that there is no RGB control variant of this method (not supported by Launchpad).
 
       PARAMS: <number>     number of the LED to control
-              <colorcode>  OPTIONAL, a number from 0..127
+              <colorcode>  a number from 0..127 (see image)
+      RETURN:
+
+
+### LedCtrlPulseXYByCode( x, y, colorcode, [mode] )
+
+    Pulses an LED via its x/y coordinates and color codes.
+    An additional <mode> parameter determines the origin of the x-axis.
+    
+    For "Pro" only:
+      By default, if <mode> is omitted, the origin of the x axis is the left side
+      of the 8x8 matrix, like in the "Mk1" mode (those devices had no round buttons
+      on the left).
+      If <mode> is set to "pro" (string), x=0 will light up the round buttons on the
+      left side. Please also see the table for X/Y modes somewhere at the end of this
+      document.
+
+      PARAMS: <x>          x coordinate of the LED to control
+              <y>          y coordinate of the LED to control
+              <colorcode>  red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <mode>       OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
       RETURN:
 
 
