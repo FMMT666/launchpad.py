@@ -976,6 +976,27 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- Flashes a grid LED by its coordinates <x>, <y> and its <colorcode>.
+	#-- By default, the old and compatible "Classic" mode is used (8x8 matrix left has x=0).
+	#-- If <mode> is set to "pro", x=0 will light up the round buttons on the left of the
+	#-- Launchpad Pro (not available on other models).
+	#-------------------------------------------------------------------------------------
+	def LedCtrlFlashXYByCode( self, x, y, colorcode, mode = "classic" ):
+
+		if x < 0 or x > 9 or y < 0 or y > 9:
+			return
+		
+		# rotate matrix to the right, column 9 overflows from right to left, same row
+		if mode != "pro":
+			x = ( x + 1 ) % 10
+			
+		# swap y
+		led = 90-(10*y) + x
+		
+		self.LedCtrlFlashByCode( led, colorcode )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- New approach to color arguments.
 	#-- Controls a grid LED by its coordinates <x>, <y> and a list of colors <lstColor>.
 	#-- <lstColor> is a list of length 3, with RGB color information, [<r>,<g>,<b>]
@@ -1490,6 +1511,24 @@ class LaunchpadMk2( LaunchpadPro ):
 		
 		self.LedCtrlPulseByCode( led, colorcode )
 
+
+	#-------------------------------------------------------------------------------------
+	#-- Flashes a grid LED by its coordinates <x>, <y> and its <colorcode>.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def LedCtrlFlashXYByCode( self, x, y, colorcode ):
+
+		if x < 0 or x > 8 or y < 0 or y > 8:
+			return
+
+		# top row (round buttons)
+		if y == 0:
+			led = 104 + x
+		else:
+			# swap y
+			led = 91-(10*y) + x
+		
+		self.LedCtrlFlashByCode( led, colorcode )
 
 
 ########################################################################################

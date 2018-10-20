@@ -52,7 +52,7 @@ Now with Python 3 support \o/
 ### OS
 
 Now full functionality also on Windows 10 and macOS based systems.  
-Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame though (which is actually very easy :-).
+Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame though (which is actually very easy; see below...).
 
 
 ---
@@ -66,6 +66,7 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
     - added PRO/Mk2 LedCtrlBpm(), set pulsing/flashing rate
     - updated PyGame compilation instructions
     - added PRO/MK2 LedCtrlPulseXYByCode(), pulse LEDs by color code and X/Y position
+    - added PRO/MK2 LedCtrlFlashXYByCode(), flash LEDs by color code and X/Y position
 
 ### CHANGES 2018/06/XX:
 
@@ -211,21 +212,17 @@ Successfully tested with Ubuntu 18.04-LTS. Requires compiling your own PyGame th
 ---
 ## Upcoming attractions, notes and thoughts
 
-  - "Pro": Also Mk2; XY mode for flash/pulse
   - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
-  - "All": RGB to color code approximation (for flash/pulse methods)
+  - "All": RGB to color code approximation (for flash/pulse and color code methods)
   - "DCR": query mode
   - "CXL": x/y support (if it makes sense...)
-  - "Mk1": example/test code
   - "All": LedCtrlChar() make y-offset work
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
   - "Pro": remove the "Mk1" compatibility from the "Pro" functions (blue LEDs and intensity values)
   - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
   - "Pro": implement native text scrolling
   - "Pro": support full analog reads (button already pressed, but intensity changes)
-  - "All": build in the new (*censored yet*) MIDI lib
   - "Doc": split installation and usage (and condense that a little)
-  - "Doc": add git clone instructions
   - "All": fix manual text scrolling
   - "All": replace MIDI cmd numbers with sth human readable (144->Note On; 176->Control Change, etc...)
   - "All": custom bitmaps and graphics
@@ -898,9 +895,10 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     LedGetColorByName( name )
     LedCtrlRaw( number, red, green, [blue] )
     LedCtrlRawByCode( number, [colorcode] )
-    LedCtrlPulseByCode( number, [colorcode] )
+    LedCtrlPulseByCode( number, colorcode )
     LedCtrlPulseXYByCode( x, y, colorcode )
-    LedCtrlFlashByCode( number, [colorcode] )
+    LedCtrlFlashByCode( number, colorcode )
+    LedCtrlFlashXYByCode( x, y, colorcode )
     LedCtrlBpm( bpm )
     LedCtrlXY( x, y, red, green, [blue] )
     LedCtrlXYByCode( x, y, colorcode )
@@ -1416,12 +1414,12 @@ Functions requiring a color code have a "...ByCode" naming style.
 
       PARAMS: <x>          x coordinate of the LED to control
               <y>          y coordinate of the LED to control
-              <colorcode>  red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
+              <colorcode>  a number from 0..127 (see image)
               <mode>       OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
       RETURN:
 
 
-### LedCtrlFlashByCode( number, [colorcode] )
+### LedCtrlFlashByCode( number, colorcode )
 
     Flashes an LED between two colors or on/off.
     The first color can be set by any "LedCtrl...()" command, the second color and the
@@ -1432,14 +1430,35 @@ Functions requiring a color code have a "...ByCode" naming style.
     Notice that there is no RGB control variant of this method (not supported by Launchpad).
 
       PARAMS: <number>     number of the LED to control
-              <colorcode>  OPTIONAL, a number from 0..127
+              <colorcode>  a number from 0..127 (see image)
       RETURN:
+
       EXAMPLES:
               LP.LedCtrlRawByCode( 81, 16 )      # set top left LED (#81) to green ("16") (Mk2)
               LP.LedCtrlFlashByCode( 81, 6 )     # now set 2nd color to red ("6") and flash LED #81
 
               LP.LedCtrlXY( 0, 1, 63, 63, 63 )   # set top left LED to white (Mk2)
               LP.LedCtrlFlashByCode( 81, 6 )     # now set 2nd color to red ("6") and flash LED #81
+
+
+### LedCtrlFlashXYByCode( x, y, colorcode, [mode] )
+
+    Flashes an LED via its x/y coordinates and color codes.
+    An additional <mode> parameter determines the origin of the x-axis.
+    
+    For "Pro" only:
+      By default, if <mode> is omitted, the origin of the x axis is the left side
+      of the 8x8 matrix, like in the "Mk1" mode (those devices had no round buttons
+      on the left).
+      If <mode> is set to "pro" (string), x=0 will light up the round buttons on the
+      left side. Please also see the table for X/Y modes somewhere at the end of this
+      document.
+
+      PARAMS: <x>          x coordinate of the LED to control
+              <y>          y coordinate of the LED to control
+              <colorcode>  a number from 0..127 (see image)
+              <mode>       OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
+      RETURN:
 
 
 ### LedCtrlBpm( bpm )
