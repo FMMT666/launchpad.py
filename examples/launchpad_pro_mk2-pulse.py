@@ -11,7 +11,7 @@
 import sys
 
 try:
-	import launchpad as launchpad
+	import launchpad_py as launchpad
 except ImportError:
 	try:
 		import launchpad
