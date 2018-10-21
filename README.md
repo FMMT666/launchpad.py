@@ -67,6 +67,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - updated PyGame compilation instructions
     - added PRO/MK2 LedCtrlPulseXYByCode(), pulse LEDs by color code and X/Y position
     - added PRO/MK2 LedCtrlFlashXYByCode(), flash LEDs by color code and X/Y position
+    - added PRO/MK2 flashing/pulsing example file
+    - changed version and tag to v0.8.1
+    - uploaded v0.8.1 to PyPI \o\\o//o/
 
 ### CHANGES 2018/06/XX:
 
@@ -83,7 +86,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - launchpad_py now ready for installations on Python 2 and 3
     - updated "launchpad_pro.py" example/test; LedCtrlChar() positioning
     - changed version and tag to v0.8.0
-    - uploaded v0.8.0 to PiPI \o\\o//o/
+    - uploaded v0.8.0 to PyPI \o\\o//o/
     - added "launchpad_pro-fire.py" example; just a simple fire animation
 
 ### CHANGES 2017/09/XX:
