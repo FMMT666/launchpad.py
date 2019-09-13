@@ -23,7 +23,7 @@ Did we mention [Python 3][18] yet?
 
 
 ---
-## STATUS 2018/10/xx:
+## STATUS 2019/09/xx:
 
 What's hot, what's not?  
 
@@ -58,6 +58,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ---
 ## NEWS
 
+### CHANGES 2019/09/XX:
+
+    - added Mk1 LedCtrlRawRapidHome(), return to home position for LedCtrlRawRapid()
+    - updated build instructions
 
 ### CHANGES 2018/10/XX:
 
@@ -878,6 +882,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     LedCtrlRaw( number, red, green )
     LedCtrlXY( x, y, red, green )
     LedCtrlRawRapid( allLeds )
+    LedCtrlRawRapidHome()
     LedCtrlAutomap( number, red, green )
     LedAllOn()
     LedCtrlChar( char, red, green, offsx = 0, offsy = 0 )
@@ -1215,8 +1220,29 @@ Functions requiring a color code have a "...ByCode" naming style.
     If an odd number of values is sent, the next, following LED is
     turned off!
 
+    To return to the start position (LED1), issue an
+    LedCtrlRawRapidHome() command. Thanks to "afandian" (issue #38).
+
       PARAMS: <allLeds> A list of up to 80 Launchpad color codes.
       RETURN:
+
+
+### LedCtrlRawRapidHome()
+
+    Resets the current LedCtrlRawRapid() position to LED1, aka. "homing".
+
+      PARAMS:
+      RETURN:
+
+      EXAMPLE:
+                LEDs = [ 0x03, 0x30, 0x33 ]  # LEDs 1..3: RGY
+                lp.LedCtrlRawRapid( LEDs )
+                time.wait(1000)
+
+                lp.LedCtrlRawRapidHome()     # home position
+                
+                rgy = [ 0x30, 0x03, 0x33 ]   # LEDs 1..3; GRY
+                lp.LedCtrlRawRapid( rgy )
 
 
 ### LedCtrlAutomap( number, red, green )
@@ -2377,3 +2403,4 @@ FMMT666(ASkr)
 [17]: https://github.com/FMMT666/launchpad.py/issues/24
 [18]: https://twitter.com/FMMT666/status/967551405644025857
 [19]: https://www.pygame.org/wiki/Compilation
+[20]: https://github.com/FMMT666/launchpad.py/issues/38#issuecomment-519698406

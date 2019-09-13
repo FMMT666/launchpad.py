@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# FMMT666(ASkr) 01/2013..10/2018
+# FMMT666(ASkr) 01/2013..09/2019
 # www.askrprojects.net
 #
 #
@@ -488,6 +488,13 @@ class Launchpad( LaunchpadBase ):
 #			tmsg.append( self.midi.GetTime() + i*10 )
 #
 #		self.midi.RawWriteMulti( [ tmsg ] )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- "Homes" the next LedCtrlRawRapid() call, so it will start with the first LED again.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRawRapidHome( self ):
+		self.midi.RawWrite( 176, 1, 0 )
 
 
 	#-------------------------------------------------------------------------------------
