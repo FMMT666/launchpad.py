@@ -498,10 +498,12 @@ name it once shipped the first red/green LED with!
     git
     automake
     cmake
-    libsdl1.2-dev
+    libsdl1.2-dev        <--- for older PyGame versions
+    libsdl2-dev          <--- for newer PyGame versions (ca. mid 2019+)
+    libfreetype6-dev
     libportmidi-dev
-    python3-setuptools
-    python3-dev
+    python3-setuptools   <--- for Python 3
+    python3-dev          <--- same
     ...
 
 ### Compile via "setup.py"
