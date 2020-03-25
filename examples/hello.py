@@ -27,13 +27,21 @@ def main():
 	mode = None
 
 	# create an instance
-	lp = launchpad.Launchpad();
+	lp = launchpad.Launchpad()
 
 	# check what we have here and override lp if necessary
 	if lp.Check( 0, "pro" ):
 		lp = launchpad.LaunchpadPro()
 		if lp.Open(0,"pro"):
 			print("Launchpad Pro")
+			mode = "Pro"
+
+	# experimental MK3 implementation
+	# The MK3 has two MIDI instances per device; we need the 2nd one.
+	elif lp.Check( 1, "mk3" ):
+		lp = launchpad.LaunchpadMk3()
+		if lp.Open( 1, "mk3" ):
+			print("Launchpad Mk3")
 			mode = "Pro"
 			
 	elif lp.Check( 0, "mk2" ):
