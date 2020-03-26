@@ -21,6 +21,8 @@ Older Launchpads might be documented [here][10].
 
 Did we mention [Python 3][18] yet?
 
+First [Mk3][21] and [X][22] Launchpad code snippets running now (3/2020).
+
 
 ---
 ## STATUS 2020/03/xx:
@@ -38,7 +40,9 @@ What's hot, what's not?
     Launchpad Pro     - class "LaunchpadPro()"    LEDs and buttons (digitally only (yet))
 
     Launchpad Mk3     - class "LaunchpadMk3()"    EXPERIMENTAL
-    
+
+    Launchpad X       - class "LaunchpadLPX()"    EXPERIMENTAL
+
     Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
     
     LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs), no LEDs
@@ -64,6 +68,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ### CHANGES 2020/03/XX:
 
     - added Mk3 Launchpad; just a few lines of code, so far; ** EXPERIMENTAL **
+    - added LPX Launchpad; just a few lines of code, so far; ** EXPERIMENTAL **
 
 ### CHANGES 2019/09/XX:
 
@@ -227,7 +232,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ## Upcoming attractions, notes and thoughts
 
   - "Mk3": implementation for Mk3 (Mini)
-  - " X ": implementation for Launchpad X
+  - "LPX": implementation for Launchpad X
   - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
   - "All": RGB to color code approximation (for flash/pulse and color code methods)
   - "DCR": query mode
@@ -2413,3 +2418,6 @@ FMMT666(ASkr)
 [18]: https://twitter.com/FMMT666/status/967551405644025857
 [19]: https://www.pygame.org/wiki/Compilation
 [20]: https://github.com/FMMT666/launchpad.py/issues/38#issuecomment-519698406
+[21]: https://twitter.com/FMMT666/status/1242950069923520519
+[22]: https://twitter.com/FMMT666/status/1242978460454326272
+

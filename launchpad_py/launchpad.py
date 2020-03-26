@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# FMMT666(ASkr) 01/2013..09/2019
+# FMMT666(ASkr) 01/2013..09/2019..03/2020
 # www.askrprojects.net
 #
 #
@@ -630,7 +630,6 @@ class Launchpad( LaunchpadBase ):
 ###
 ### For 3-color "Pro" Launchpads with 8x8 matrix and 4x8 left/right/top/bottom rows
 ########################################################################################
-
 class LaunchpadPro( LaunchpadBase ):
 
 	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
@@ -1202,7 +1201,6 @@ class LaunchpadPro( LaunchpadBase ):
 ###
 ### For 3-color "Mk2" Launchpads with 8x8 matrix and 2x8 right/top rows
 ########################################################################################
-
 class LaunchpadMk2( LaunchpadPro ):
 
 	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
@@ -2117,9 +2115,8 @@ class Dicer( LaunchpadBase ):
 ########################################################################################
 ### CLASS LaunchpadMk3
 ###
-### For 3-color "Mk3" Launchpads with 8x8 matrix and 4x8 left/right/top/bottom rows
+### For 3-color "Mk3" Launchpads; Mini and Pro
 ########################################################################################
-
 class LaunchpadMk3( LaunchpadPro ):
 	
 #	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
@@ -2218,5 +2215,107 @@ class LaunchpadMk3( LaunchpadPro ):
 		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 13, 3, 3, number, red, green, blue ] )
 
 
+
+########################################################################################
+### CLASS LaunchpadLPX
+###
+### For 3-color "X" Launchpads
+########################################################################################
+class LaunchpadLPX( LaunchpadPro ):
+	
+#	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-- Uses search string "Mk3", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	# TODO: Find a fix for the two MK3 MIDI devices
+	def Open( self, number = 0, name = "LPX" ):
+		retval = super( LaunchpadLPX, self ).Open( number = number, name = name )
+		if retval == True:
+			self.LedSetMode( 0 )
+			self.LedSetLayout( 127 )
+
+		return retval
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "Pro", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "LPX" ):
+		return super( LaunchpadLPX, self ).Check( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the button layout (and codes) to the set, specified by <mode>.
+	#-- Valid options:
+	#--  00 - Session, 01 - Drum Rack, 02 - Chromatic Note, 03 - User (Drum)
+	#--  04 - Audio, 05 -Fader, 06 - Record Arm, 07 - Track Select, 08 - Mute
+	#--  09 - Solo, 0A - Volume 
+	#-- Until now, we'll need the "Session" (0x00) settings.
+	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
+	# TODO: return value
+	def LedSetLayout( self, mode ):
+
+		# TODO!
+#		if mode < 0 or mode > 0x0d:
+#			return
+		
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 12, 0, mode ] )
+		time.wait(10)
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Selects the LPX's mode.
+	#-- <mode> -> 0 -> "Ableton Live mode"  (what we need)
+	#--           1 -> "Programmer mode"    (power up default)
+	#-------------------------------------------------------------------------------------
+	def LedSetMode( self, mode ):
+		if mode < 0 or mode > 1:
+			return
+			
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 12, 14, mode ] )
+		time.wait(10)
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the button layout to "Session" mode.
+	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
+	def LedSetButtonLayoutSession( self ):
+		self.LedSetLayout( 0 )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its position <number> and a color, specified by
+	#-- <red>, <green> and <blue> intensities, with can each be an integer between 0..63.
+	#-- If <blue> is omitted, this methos runs in "Classic" compatibility mode and the
+	#-- intensities, which were within 0..3 in that mode, are multiplied by 21 (0..63)
+	#-- to emulate the old brightness feeling :)
+	#-- Notice that each message requires 10 bytes to be sent. For a faster, but
+	#-- unfortunately "not-RGB" method, see "LedCtrlRawByCode()"
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRaw( self, number, red, green, blue = None ):
+
+		if number < 0 or number > 99:
+			return
+
+		if blue is None:
+			blue   = 0
+			red   *= 21
+			green *= 21
+
+		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
+		
+		red   = limit( red,   0, 63 )
+		green = limit( green, 0, 63 )
+		blue  = limit( blue,  0, 63 )
+		
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 12, 3, 3, number, red, green, blue ] )
 
 

@@ -43,6 +43,14 @@ def main():
 		if lp.Open( 1, "mk3" ):
 			print("Launchpad Mk3")
 			mode = "Pro"
+
+	# experimental LPX implementation
+	# Like the Mk3, the LPX also has two MIDI instances per device; we need the 2nd one.
+	elif lp.Check( 0, "lpx" ):
+		lp = launchpad.LaunchpadLPX()
+		if lp.Open( 0, "lpx" ):
+			print("Launchpad X")
+			mode = "Pro"
 			
 	elif lp.Check( 0, "mk2" ):
 		lp = launchpad.LaunchpadMk2()
