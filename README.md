@@ -69,6 +69,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
     - added Mk3 Launchpad; just a few lines of code, so far; ** EXPERIMENTAL **
     - added LPX Launchpad; just a few lines of code, so far; ** EXPERIMENTAL **
+    - updated "hello.py" demo with basic Mk3/LPX code
 
 ### CHANGES 2019/09/XX:
 
@@ -488,6 +489,8 @@ Supported and tested full RGB Launchpad devices:
   
   - Launchpad Pro
   - Launchpad Mk2
+  - Launchpad Mk3 (soon)
+  - Launchpad LPX (soon)
 
 Supported completely different stuff:
 
@@ -658,6 +661,18 @@ name it once shipped the first red/green LED with!
       USE CLASS "LaunchpadMk2":
       
         lp = launchpad.LaunchpadMk2()
+
+### For Launchpad Mk3 users
+
+      USE CLASS "LaunchpadMk3":
+      
+        lp = launchpad.LaunchpadMk3()
+
+### For Launchpad X users
+
+      USE CLASS "LaunchpadLPX":
+      
+        lp = launchpad.LaunchpadLPX()
 
 ### For Launch Control XL users
 
@@ -911,7 +926,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
 
 ---
-## Launchpad "Mk2" and "Pro" class methods overview (valid for RGB LED devices)
+## Launchpad "Mk2/3" and "Pro" class methods overview (valid for RGB LED devices)
 
 ### LED functions
 
@@ -1361,7 +1376,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 
 ---
-## Detailed description of Launchpad "Pro" or "Mk2" only methods
+## Detailed description of Launchpad "Pro" or "Mk2/3" only methods
 
 ### LedSetMode( mode ) *>>> PRO ONLY <<<*
 
