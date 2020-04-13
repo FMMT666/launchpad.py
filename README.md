@@ -447,7 +447,12 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 Some Pygame versions do not work on some OSes (e.g. v1.9.2 might cause trouble
 with Windows 7/10). I cannot tell you any more than just "try!".  
 The latest fixes (4/2017) were tested with v1.9.3 (via pip from Python 2.7.13)
-and Windows 10 (x64). That seems to work fine again...
+and Windows 10 (x64). That seems to work fine again...  
+
+Note (04.2020): Latest release of pygame (1.9.6) gives segmentation fault on 
+Windows 10 (x64) while initializing midi device. Version 2.0.0.dev6 seems to 
+work fine. To install pygame2.0.0.dev6:  
+pip install pygame==2.0.0.dev6  
   
 As of 2/2018, launchpad.py comes with Python 3 support.  
 Tested, so far:  
