@@ -452,7 +452,7 @@ and Windows 10 (x64). That seems to work fine again...
 Note (04.2020): Latest release of pygame (1.9.6) gives segmentation fault on 
 Windows 10 (x64) while initializing midi device. Version 2.0.0.dev6 seems to 
 work fine. To install pygame2.0.0.dev6:  
-  pip install pygame==2.0.0.dev6  
+    pip install pygame==2.0.0.dev6  
   
 As of 2/2018, launchpad.py comes with Python 3 support.  
 Tested, so far:  
