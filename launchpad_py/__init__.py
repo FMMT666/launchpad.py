@@ -5,4 +5,5 @@ from launchpad_py.launchpad import LaunchpadPro
 from launchpad_py.launchpad import LaunchControlXL
 from launchpad_py.launchpad import LaunchKeyMini
 from launchpad_py.launchpad import Dicer
+from launchpad_py.launchpad import LaunchpadMk3
 from launchpad_py import charset
