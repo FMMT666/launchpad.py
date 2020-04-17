@@ -21,11 +21,11 @@ Older Launchpads might be documented [here][10].
 
 Did we mention [Python 3][18] yet?
 
-First [Mk3][21] and [X][22] Launchpad code snippets running now (3/2020).
+First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
 
 ---
-## STATUS 2020/03/xx:
+## STATUS 2020/04/xx:
 
 What's hot, what's not?  
 
@@ -39,7 +39,7 @@ What's hot, what's not?
 
     Launchpad Pro     - class "LaunchpadPro()"    LEDs and buttons (digitally only (yet))
 
-    Launchpad Mk3     - class "LaunchpadMk3()"    EXPERIMENTAL
+    Launchpad Mk3     - class "LaunchpadMk3()"    LEDs and buttons; EXPERIMENTAL
 
     Launchpad X       - class "LaunchpadLPX()"    EXPERIMENTAL
 
@@ -49,6 +49,9 @@ What's hot, what's not?
     
     Dicer             - class "Dicer()"           LEDs and buttons
 
+
+Please notice the changes in methods "Open()" and "Check()" for the Mk3 and X.  
+Also, see demo files "hello.py" or "launchpad_rgb.py" as a reference on how to use them.
 
 
 ### Python
@@ -64,6 +67,11 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## NEWS
+
+### CHANGES 2020/04/XX:
+
+    - added Mk3 Launchpad pull request #48; most of the Mk3 functionality available
+    - updated example launchpad_rgb.py (was "...mk2.py") for Mk2, Mk3 and Pro
 
 ### CHANGES 2020/03/XX:
 
@@ -308,6 +316,10 @@ Load and use the module with
       lp = launchpad_py.Launchpad()
       # Mk2 Launchpad:
       lp = launchpad_py.LaunchpadMk2()
+      # Mk3 Launchpad:
+      lp = launchpad_py.LaunchpadMk2()
+      #  X  Launchpad:
+      lp = launchpad_py.LaunchpadLPX()
       # Pro Launchpad:
       lp = launchpad_py.LaunchpadPro()
       # Control XL:
@@ -324,6 +336,8 @@ or if you dislike typing that much, use
       ...
       lp = lppy.Launchpad()
       lp = lppy.LaunchpadMk2()
+      lp = lppy.LaunchpadMk3()
+      lp = lppy.LaunchpadLPX()
       lp = lppy.LaunchpadPro()
       lp = lppy.LaunchControlXL()
       lp = lppy.LaunchKeyMini()
@@ -442,7 +456,7 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 ## Requirements
 
   - [Python][2] 2, 3
-  - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3, v1.9.4-XX
+  - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3, v1.9.4-XX, ...
 
 Some Pygame versions do not work on some OSes (e.g. v1.9.2 might cause trouble
 with Windows 7/10). I cannot tell you any more than just "try!".  
@@ -489,7 +503,7 @@ Supported and tested full RGB Launchpad devices:
   
   - Launchpad Pro
   - Launchpad Mk2
-  - Launchpad Mk3 (soon)
+  - Launchpad Mk3
   - Launchpad LPX (soon)
 
 Supported completely different stuff:
@@ -926,7 +940,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
 
 ---
-## Launchpad "Mk2/3" and "Pro" class methods overview (valid for RGB LED devices)
+## Launchpad "Mk2/3", "Pro" and "X" class methods overview (valid for RGB LED devices)
 
 ### LED functions
 
@@ -1032,7 +1046,10 @@ Functions requiring a color code have a "...ByCode" naming style.
 ### Open( [number], [name], [template (1)] )
 
     Opens the a Launchpad and initializes it.  
-    Please notice that some devices have up to six MIDI entries!.
+    Please notice that some devices have multiple and even up to six MIDI entries!
+
+    To open the first Mk3 or LPX device, "number" needs to be set to "1", not "0",
+    as valid for (most) of the other Launchpads.
     
     (1) Notice that <template> is only valid for the Launch Control XL pad.
     A number of 1..8 selects and activates a user template (1 by default)
@@ -1066,6 +1083,8 @@ Functions requiring a color code have a "...ByCode" naming style.
                          the string <name>. The default names for the classes are:
                            Launchpad()       -> "Launchpad"
                            LaunchpadMk2()    -> "Mk2"
+                           LaunchpadMk3()    -> "Mk3"
+                           LaunchpadLPX()    -> "X"
                            LaunchpadPro()    -> "Pro"
                            LaunchControlXL() -> "Control XL"
                            LaunchKeyMini()   -> "Launchkey" (should work for all variants)
@@ -1106,7 +1125,23 @@ Functions requiring a color code have a "...ByCode" naming style.
               # open the 1st "Mk2"
               lp = launchpad.LaunchpadMk2()    # notice the "Mk2" class!
               lp.Open()                        # equals Open( 0, "Mk2" )
-              
+
+              # open the 1st "Mk3"
+              #   NOTICE: Mk3 has two MIDI instances and we need the 2nd one.
+              #   So, to open the first attached devices, use "Open(1)" and not "Open(0)". 
+              lp = launchpad.LaunchpadMk3()    # notice the "Mk3" class!
+              lp.Open()                        # THIS WILL NOT WORK!
+              lp.Open(1)                       # this will open the first device
+              lp.Open(3)                       # this would open the 2nd attached Launchpad
+
+              # open the 1st "X"
+              #   NOTICE: The X has two MIDI instances and we need the 2nd one.
+              #   So, to open the first attached devices, use "Open(1)" and not "Open(0)". 
+              lp = launchpad.LaunchpadLPX()    # notice the "LPX" class!
+              lp.Open()                        # THIS WILL NOT WORK!
+              lp.Open(1)                       # this will open the first device
+              lp.Open(3)                       # this would open the 2nd attached Launchpad
+
               # open the 1st "Pro"
               lp = launchpad.LaunchpadPro()    # notice the "Pro" class!
               lp.Open()                        # equals Open( 0, "Pro" )
@@ -1130,9 +1165,13 @@ Functions requiring a color code have a "...ByCode" naming style.
     Like Open(), this method uses different default names for the different classes:
       Launchpad()        -> "Launchpad"
       LaunchpadMk2()     -> "Mk2"
+      LaunchpadMk3()     -> "Mk3"
+      LaunchpadLPX()     -> "X"
       LaunchpadPro()     -> "Pro"
       LaunchControlXL()  -> "Control XL"
       LaunchKeyMini()    -> "Launchkey"
+
+    Notice that the first Mk3 and the first X Launchpads need to be checked with "1", not "0".
       
     Notice that it's absolutely safe to query for an "Pro" or "Mk2" from all classes, e.g.:
     
@@ -1376,9 +1415,11 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 
 ---
-## Detailed description of Launchpad "Pro" or "Mk2/3" only methods
+## Detailed description of RGB Launchpad only methods
 
-### LedSetMode( mode ) *>>> PRO ONLY <<<*
+ Applies to "Pro", "Mk2", "Mk3" and "LPX" unless otherwise noted.
+
+### LedSetMode( mode ) *>>> PRO, MK3, LPX ONLY <<<*
 
     Sets the Launchpad's mode.
     For proper operation with launchpad.py, the "Pro" must be set to "Ableton Live" mode.
@@ -1425,6 +1466,11 @@ Functions requiring a color code have a "...ByCode" naming style.
     
     Notice that the "Pro" and "Mk2" have different LED number layouts.
     Please see tables, somewhere below.
+
+    Notice that even though the Mk3 and the X support 0..127 intensities,
+    only 0..63 can be used here. The values will be scaled up, resulting in the
+    same intensity.
+    Technically speaking, 0..63 is shifted left to match 0..127 with the LSB being omitted.
 
       PARAMS: <number>    number of the LED to control
               <red>       a number from 0..63
@@ -1587,7 +1633,12 @@ Functions requiring a color code have a "...ByCode" naming style.
     This method uses system-exclusive MIDI messages, which require 10 bytes to
     be sent for each message. For a faster version, hence less comfortable version,
     see LedCtrlXYByCode() below.
-    
+
+    Notice that even though the Mk3 and the X support 0..127 intensities,
+    only 0..63 can be used here. The values will be scaled up, resulting in the
+    same intensity.
+    Technically speaking, 0..63 is shifted left to match 0..127 with the LSB being omitted.
+
       PARAMS: <x>      x coordinate of the LED to control
               <y>      y coordinate of the LED to control
               <red>    red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
@@ -1648,6 +1699,11 @@ Functions requiring a color code have a "...ByCode" naming style.
     adapt the old 0..3 range to the new 0..63 one of the "Pro" mode.
     That way, it is compatible to old, existing "Mk1" code.
 
+    Notice that even though the Mk3 and the X support 0..127 intensities,
+    only 0..63 can be used here. The values will be scaled up, resulting in the
+    same intensity.
+    Technically speaking, 0..63 is shifted left to match 0..127 with the LSB being omitted.
+
       PARAMS: <char>   one field string to display; e.g.: 'A'
               <red>    red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
               <green>  green LED intensity 0..63 (or 0..3 in "Mk1" mode)
@@ -1688,6 +1744,10 @@ Functions requiring a color code have a "...ByCode" naming style.
     
       lp.LedCtrlString( "Hello", 3,1, direction = -1, waitms = 100 )
 
+    Notice that even though the Mk3 and the X support 0..127 intensities,
+    only 0..63 can be used here. The values will be scaled up, resulting in the
+    same intensity.
+    Technically speaking, 0..63 is shifted left to match 0..127 with the LSB being omitted.
 
       PARAMS: <string>     a string to display; e.g.: 'Hello'
               <red>        red   LED intensity 0..63 (or 0..3 in "Mk1" mode)
@@ -2131,6 +2191,60 @@ Functions requiring a color code have a "...ByCode" naming style.
     +---+---+---+---+---+---+---+---+ 
     |0/0|   |2/0|   |   |   |   |   |         0
     +---+---+---+---+---+---+---+---+ 
+     
+    +---+---+---+---+---+---+---+---+  +---+
+    |0/1|   |   |   |   |   |   |   |  |   |  1
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  2
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |5/3|   |   |  |   |  3
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  4
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  5
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |4/6|   |   |   |  |   |  6
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |   |  7
+    +---+---+---+---+---+---+---+---+  +---+
+    |   |   |   |   |   |   |   |   |  |8/8|  8
+    +---+---+---+---+---+---+---+---+  +---+
+    
+
+---
+## Button and LED codes, Launchpad "Mk3" and "X" (RGB LEDs)
+
+### RAW mode
+
+    +---+---+---+---+---+---+---+---+  +---+
+    |104|   |106|   |   |   |   |111|  |112|
+    +---+---+---+---+---+---+---+---+  +---+
+    
+    +---+---+---+---+---+---+---+---+  +---+
+    | 81|   |   |   |   |   |   |   |  | 89|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 71|   |   |   |   |   |   |   |  | 79|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 61|   |   |   |   |   | 67|   |  | 69|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 51|   |   |   |   |   |   |   |  | 59|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 41|   |   |   |   |   |   |   |  | 49|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 31|   |   |   |   |   |   |   |  | 39|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 21|   | 23|   |   |   |   |   |  | 29|
+    +---+---+---+---+---+---+---+---+  +---+
+    | 11|   |   |   |   |   |   |   |  | 19|
+    +---+---+---+---+---+---+---+---+  +---+
+    
+
+### X/Y mode
+
+      0   1   2   3   4   5   6   7      8   
+    +---+---+---+---+---+---+---+---+  +---+
+    |0/0|   |2/0|   |   |   |   |   |  |2/8|  0
+    +---+---+---+---+---+---+---+---+  +---+
      
     +---+---+---+---+---+---+---+---+  +---+
     |0/1|   |   |   |   |   |   |   |  |   |  1
