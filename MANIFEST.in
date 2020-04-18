@@ -2,6 +2,7 @@ include examples/hello.py
 include examples/information.py
 include examples/launchpad_pro.py
 include examples/launchpad_rgb-fire.py
+include examples/launchpad_rgb-pulse.py
 include examples/launchpad_rgb.py
 include README.md
 include LICENSE.txt

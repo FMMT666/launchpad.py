@@ -72,6 +72,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
     - added Mk3 Launchpad pull request #48; most of the Mk3 functionality available
     - updated example launchpad_rgb.py (was "...mk2.py") for Mk2, Mk3 and Pro
+    - added "information.py" example to output some system and devices infos
+    - updated the "fire demo" to work with Mk2 and Mk3 too
+    - updated the "pulse demo" to work with Mk2 and Mk3 too
 
 ### CHANGES 2020/03/XX:
 

@@ -10,6 +10,7 @@
 import sys
 import os
 import platform
+import struct
 
 try:
 	import pygame
@@ -39,6 +40,8 @@ def main():
 	print( " - OS      : " + str( os.name ) )
 	print( " - Platform: " + str( platform.system() ) )
 	print( " - Release : " + str( platform.release() ) )
+	print( " - Arch    : " + str( platform.architecture()[0] ) )
+	print( " - struct  : " + str( struct.calcsize("P")*8 ) )
 	print( " - Python  : " + str( sys.version.split()[0] ) )
 	print( " - PyGame  : " + str( pygame.ver ) )
 

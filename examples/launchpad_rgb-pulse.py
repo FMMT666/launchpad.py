@@ -1,10 +1,10 @@
 #!/usr/bin/python
 #
 # Stupid flashing/pulsing demo.
-# Works with Mk2 and Pro
+# Works with Mk2, Mk3, Pro (and soon X)
 # 
 #
-# FMMT666(ASkr) 10/2018
+# FMMT666(ASkr) 10/2018..4/2020
 # www.askrprojects.net
 #
 
@@ -41,6 +41,12 @@ def main():
 		if lp.Open( 0, "mk2" ):
 			print("Launchpad Mk2")
 			mode = "Mk2"
+
+	elif lp.Check( 1, "mk3" ):
+		lp = launchpad.LaunchpadMk3()
+		if lp.Open( 1, "mk3" ):
+			print("Launchpad Mk3")
+			mode = "Mk3"
 
 	if mode is None:
 		print("Did not find any compatible Launchpads, meh...")
