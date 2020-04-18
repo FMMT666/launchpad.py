@@ -1631,7 +1631,7 @@ class LaunchControlXL( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
 	def Check( self, number = 0, name = "Control XL" ):
-		return super( LaunchpadPro, self ).Check( number = number, name = name )
+		return super( LaunchControlXL, self ).Check( number = number, name = name )
 
 
 	#-------------------------------------------------------------------------------------
@@ -1639,7 +1639,7 @@ class LaunchControlXL( LaunchpadBase ):
 	#-- 1..8 selects the user and 9..16 the factory setups.
 	#-------------------------------------------------------------------------------------
 	def TemplateSet( self, templateNum ):
-		if templateNum < 1 or templateNum > 16:
+		if templateNum < 0 or templateNum > 15:
 			return
 		else:
 			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 119, templateNum-1 ] )
@@ -1795,6 +1795,94 @@ class LaunchControlXL( LaunchpadBase ):
 				return []
 		else:
 			return []
+
+
+
+########################################################################################
+### CLASS LaunchControl
+###
+### For 2-color Launch Control
+########################################################################################
+class LaunchControl( LaunchControlXL ):
+
+	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
+	#         
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#     |   |   |   |   |   |   |   |   |  |NOP||NOP| 
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#     |   |   |   |   |   |   |   |   |  |   ||   | 
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#     |   |   |   |   |   |   |   |   |  |   ||   | 
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#     
+	#
+	#
+	# LED NUMBERS IN X/Y MODE (DEC)
+	#
+	#       0   1   2   3   4   5   6   7      8    9
+	#      
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#  0  |   |   |   |   |   |   |   |   |  |NOP||NOP| 
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#  1  |   |   |   |   |   |   |   |   |  |   ||   | 
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+	#  2  |   |   |   |   |   |   |   |   |  |   ||   | 
+	#     +---+---+---+---+---+---+---+---+  +---++---+
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Control MIDI devices.
+	#-- Uses search string "Control MIDI", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchControlXL" method
+	def Open( self, number = 0, name = "Control MIDI", template = 0 ):
+
+		# The user template number adds to the MIDI commands.
+		# Make sure that the Control is set to the corresponding mode by
+		# holding down one of the template buttons and selecting the template
+		# with the lowest button row 1..8 (variable here stores that as 0..7 for
+		# user or 8..15 for the factory templates).
+		# By default, user template 0 is enabled
+		self.UserTemplate = template
+		
+		retval = super( LaunchControl, self ).Open( number = number, name = name )
+		if retval == True:
+			self.TemplateSet( self.UserTemplate )
+
+		return retval
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "Control MIDI", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "Control MIDI" ):
+		return super( LaunchControl, self ).Check( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the layout template.
+	#-- 1..8 selects the user and 9..16 the factory setups.
+	#-------------------------------------------------------------------------------------
+	def TemplateSet( self, templateNum ):
+		if templateNum < 0 or templateNum > 15:
+			return
+		else:
+			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 10, 119, templateNum-1 ] )
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its coordinates <x> and <y>  with <green/red> brightness 0..3
+	#-- Actually, this doesn't make a lot of sense as the Control only has one row
+	#-- of LEDs, but anyway ...
+	#-------------------------------------------------------------------------------------
+	def LedCtrlXY( self, x, y, red, green ):
+		pass
+
+#		TODO: LED numbers required
+#		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 10, 120, 0, index, color ] )
 
 
 
