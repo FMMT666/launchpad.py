@@ -2,6 +2,7 @@
 
 !.gitignore
 !hello.py
+!information.py
 !launchpad_pro.py
 !launchpad_pro-fire.py
 !launchpad_rgb.py
