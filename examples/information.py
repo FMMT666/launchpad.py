@@ -24,7 +24,7 @@ except ImportError:
 	try:
 		import launchpad
 	except ImportError:
-		print("no system-wide installation of Launchpad.py found")
+		print("no local copy of launchpad.py found")
 		sys.exit("error loading launchpad.py")
 
 

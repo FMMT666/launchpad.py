@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #
-# Launchpad Pro Fire Demo
+# Launchpad Fire Demo for Mk2, Mk3, Pro (and soon X)
 # 
 #
-# FMMT666(ASkr) 7/2013..3/2018
+# FMMT666(ASkr) 7/2013..3/2020
 # www.askrprojects.net
 #
 
@@ -291,12 +291,51 @@ class LpDisplay():
 	#-------------------------------------------------------------------------------------
 	#-- 
 	#-------------------------------------------------------------------------------------
-	def __init__( self, name ):
+	def __init__( self ):
 
-		self.lp = launchpad.LaunchpadPro();
+		# remember the Launchpad type to adjust the mapping of the buttons
+		self.mode = None
 
-		if not self.lp.Open( 0, name ):
-			raise Exception("No Launchpad Pro was found")
+		# create an instance
+		lp = launchpad.Launchpad()
+
+		# try the first Mk2
+		if lp.Check( 0, "mk2" ):
+			lp = launchpad.LaunchpadMk2()
+			if lp.Open( 0, "mk2" ):
+				print( " - Launchpad Mk2: OK" )
+				self.mode = "mk2"
+			else:
+				print( " - Launchpad Mk2: ERROR")
+				return
+			
+		# try the first Mk3
+		elif lp.Check( 1, "mk3" ):
+			lp = launchpad.LaunchpadMk3()
+			if lp.Open( 1, "mk3" ):
+				print( " - Launchpad Mk3: OK" )
+				self.mode = "mk3"
+			else:
+				print( " - Launchpad Mk3: ERROR")
+				return
+
+		# try the first Pro
+		elif lp.Check( 0, "pro" ):
+			lp = launchpad.LaunchpadPro()
+			if lp.Open( 0, "pro" ):
+				print( " - Launchpad Pro: OK" )
+				self.mode = "pro"
+			else:
+				print( " - Launchpad Pro: ERROR")
+				return
+			
+		# nope
+		else:
+			raise Exception("No compatible Launchpad found. Only for Mk2, Mk3, Pro")
+
+		self.lp = lp
+
+
 
 	#-------------------------------------------------------------------------------------
 	#-- 
@@ -346,7 +385,14 @@ class LpDisplay():
 	#-- 
 	#-------------------------------------------------------------------------------------
 	def ButtonGet( self ):
-		return self.lp.ButtonStateXY( mode = "pro" )
+		if self.mode == "pro":
+			return self.lp.ButtonStateXY( mode = "pro" )
+		elif self.mode == "mk3" or self.mode == "lpx":
+			return self.lp.ButtonStateXY( mode = "classic" )
+		elif self.mode == "mk2":
+			return self.lp.ButtonStateXY()
+
+		return []
 
 
 	#-------------------------------------------------------------------------------------
@@ -363,14 +409,15 @@ if __name__ == '__main__':
 
 	a = Fire()
 
-	lpDis = LpDisplay( "pro" )
+	lpDis = LpDisplay()
 	lpDis.Clear()
 
 	a.SeedRandom()
 
-	print("\nButtons:")
-	print("  - upper left ('Shift') -> EXIT")
-	print("  - lower left ('O')     -> TURBO")
+	print("\nButtons (right column beside the 8x8 matrix):")
+
+	print("  - upper right button -> EXIT")
+	print("  - lower right button -> TURBO")
 
 	while True:
 		# calculate the next matrix state
@@ -389,16 +436,19 @@ if __name__ == '__main__':
 		if buts != []:
 			# print(buts)
 			# --- turbo fire pressed
-			if buts[0:2] == [ 0, 8 ] and buts[2]:
+#			if buts[0:2] == [ 0, 8 ] and buts[2]:
+			if buts[0:2] == [ 8, 8 ] and buts[2]:
 				a.SeedSetRow( 0.8 )
 			# --- turbo fire released
-			if buts[0:2] == [ 0, 8 ] and not buts[2]:
+#			if buts[0:2] == [ 0, 8 ] and not buts[2]:
+			if buts[0:2] == [ 8, 8 ] and not buts[2]:
 				a.SeedSetRow( 0.0 )
 			# --- matrix button
 			if 0 < buts[0] < 9 and  0 < buts[1] < 9 and not buts[2]:
 				print("Don't push the matrix buttons. Might create a lag (pressure events).")
 			# --- quit
-			elif buts[0:2] == [ 0, 1 ]:
+#			elif buts[0:2] == [ 0, 1 ]:
+			elif buts[0:2] == [ 8, 1 ]:
 				break
 
 	lpDis.Clear()
