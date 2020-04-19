@@ -39,9 +39,11 @@ What's hot, what's not?
 
     Launchpad Pro     - class "LaunchpadPro()"    LEDs and buttons (digitally only (yet))
 
-    Launchpad Mk3     - class "LaunchpadMk3()"    LEDs and buttons; EXPERIMENTAL
+    Launchpad Mk3     - class "LaunchpadMk3()"    LEDs and buttons
 
     Launchpad X       - class "LaunchpadLPX()"    EXPERIMENTAL
+
+    Launch Control    - class "LaunchControl()"   EXPERIMENTAL
 
     Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
     
@@ -75,6 +77,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - added "information.py" example to output some system and devices infos
     - updated the "fire demo" to work with Mk2 and Mk3 too
     - updated the "pulse demo" to work with Mk2 and Mk3 too
+    - added a class for the original Launch Control
+    - added Launchpad X pull request #51; most of the X functionality available
 
 ### CHANGES 2020/03/XX:
 
@@ -243,11 +247,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ---
 ## Upcoming attractions, notes and thoughts
 
-  - "Mk3": implementation for Mk3 (Mini)
-  - "LPX": implementation for Launchpad X
   - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
   - "All": RGB to color code approximation (for flash/pulse and color code methods)
   - "DCR": query mode
+  - "All": native scrolling for RGB pads
   - "CXL": x/y support (if it makes sense...)
   - "All": LedCtrlChar() make y-offset work
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini
@@ -325,6 +328,8 @@ Load and use the module with
       lp = launchpad_py.LaunchpadLPX()
       # Pro Launchpad:
       lp = launchpad_py.LaunchpadPro()
+      # Control:
+      lp = launchpad_py.LaunchControl()
       # Control XL:
       lp = launchpad_py.LaunchControlXL()
       # LaunchKey Mini:
@@ -342,6 +347,7 @@ or if you dislike typing that much, use
       lp = lppy.LaunchpadMk3()
       lp = lppy.LaunchpadLPX()
       lp = lppy.LaunchpadPro()
+      lp = lppy.LaunchControl()
       lp = lppy.LaunchControlXL()
       lp = lppy.LaunchKeyMini()
       lp = lppy.Dicer()
@@ -507,10 +513,11 @@ Supported and tested full RGB Launchpad devices:
   - Launchpad Pro
   - Launchpad Mk2
   - Launchpad Mk3
-  - Launchpad LPX (soon)
+  - Launchpad LPX
 
 Supported completely different stuff:
 
+  - Launch Control
   - Launch Control XL
   - LaunchKey (Mini)
   - Dicer
@@ -690,6 +697,12 @@ name it once shipped the first red/green LED with!
       USE CLASS "LaunchpadLPX":
       
         lp = launchpad.LaunchpadLPX()
+
+### For Launch Control users
+
+      USE CLASS "LaunchControl":
+      
+        lp = launchpad.LaunchControl()
 
 ### For Launch Control XL users
 
@@ -910,7 +923,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
     Reset()
     ButtonFlush()
     
-    (*1*) Control XL only
+    (*1*) Control (XL) only
     
 
 ### Utility functions
@@ -984,7 +997,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 
 ---
-## Launch Control XL class methods overview
+## Launch Control or Control XL class methods overview
 
 *WORK IN PROGESS*
 
@@ -1089,15 +1102,19 @@ Functions requiring a color code have a "...ByCode" naming style.
                            LaunchpadMk3()    -> "Mk3"
                            LaunchpadLPX()    -> "X"
                            LaunchpadPro()    -> "Pro"
+                           LaunchControl()   -> "Control"
                            LaunchControlXL() -> "Control XL"
                            LaunchKeyMini()   -> "Launchkey" (should work for all variants)
                          It is sufficient to search for a part of the string, e.g.
                          "chpad S" will find a device named "Launchpad S" or even
                          "Novation Launchpad S"
-              <template> OPTIONAL, ONLY CONTROL XL
+              <template> OPTIONAL, ONLY FOR LAUNCH CONTROL (XL)
                          The Launch Control XL supports eight user and eight factory settings,
                          selectable via the two "Template" burrons on the top right.
                          By default, Launchpad.py uses the template "User 1".
+                         Simply don't touch this and you're safe.
+                         Notice that these values are internally remapped to 0..15, as they
+                         appear in the Novation documentation.
                          1.. 8 -> select user template    1..8
                          9..16 -> select factory template 1..8
 
@@ -1806,7 +1823,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 
 ---
-## Detailed description of Launch Control XL specific methods
+## Detailed description of Launch Control and Control XL specific methods
 
 *WORK IN PROGRESS*
 
@@ -1814,6 +1831,8 @@ Functions requiring a color code have a "...ByCode" naming style.
 ### TemplateSet( template )
 
     Activates one of the user or factory templates, as specified by <template>.
+    Don't touch this, unless you know what you are doing. Settings other values
+    than "1", the default, might have an impact on other functionality like LedAllOn().
     
       PARAMS: 1.. 8    activate user template    1..8
               9..16    activate factory template 1..8
@@ -1824,7 +1843,6 @@ Functions requiring a color code have a "...ByCode" naming style.
 ### Reset()
 
     Resets the Launchpad and (quickly) turns off all LEDs.
-    Notice that only the Mk1 performs a 
 
       PARAMS:
       RETURN:
@@ -2357,6 +2375,42 @@ Functions requiring a color code have a "...ByCode" naming style.
            |   |2/9|   |   |   |   |   |   |         9
            +---+---+---+---+---+---+---+---+ 
 
+
+---
+## Buttons, LED and potentiometer codes, Launch Control XL
+
+Notice that the two "template" buttons on the top right cannot be controlled (NOP).
+
+
+### RAW mode
+
+          0   1   2   3   4   5   6   7      8    9
+         
+        +---+---+---+---+---+---+---+---+  +---++---+
+     0  |21 |22 |23 |24 |25 |26 |27 |28 |  |NOP||NOP| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+     1  |41 |42 |43 |44 |45 |46 |47 |48 |  |114||115| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+        +---+---+---+---+---+---+---+---+  +---++---+
+     2  |9  |10 |11 |12 |25 |26 |27 |28 |  |116||117| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+
+
+
+### X/Y mode
+
+*PRELIMINARY*
+
+          0   1   2   3   4   5   6   7      8    9
+         
+        +---+---+---+---+---+---+---+---+  +---++---+
+        | - | - | - | - | - | - | - | - |  |NOP||NOP| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+     1  | - | - | - | - | - | - | - | - |  |8/1||9/1| 
+        +---+---+---+---+---+---+---+---+  +---++---+
+        +---+---+---+---+---+---+---+---+  +---++---+
+     0  |0/0|   |   |   |   |   |   |7/0|  |8/0||9/0| 
+        +---+---+---+---+---+---+---+---+  +---++---+
 
 
 ---

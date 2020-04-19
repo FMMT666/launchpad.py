@@ -580,6 +580,7 @@ class Launchpad( LaunchpadBase ):
 					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
+			# TODO: ah, uh, oh, wat?
 			for i in string:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green)
@@ -1094,6 +1095,7 @@ class LaunchpadPro( LaunchpadBase ):
 					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
+			# TODO: not a good idea :)
 			for i in string:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green, blue)
@@ -1685,7 +1687,7 @@ class LaunchControlXL( LaunchpadBase ):
 		
 		return led
 
-		
+
 	#-------------------------------------------------------------------------------------
 	#-- Controls a grid LED by its raw <number>; with <green/red> brightness: 0..3
 	#-- For LED numbers, see grid description on top of class.
@@ -1805,17 +1807,18 @@ class LaunchControlXL( LaunchpadBase ):
 ########################################################################################
 class LaunchControl( LaunchControlXL ):
 
-	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
+	# LED, BUTTON AND POTENTIOMETER NUMBERS IN RAW MODE (DEC)
 	#         
+	#       0   1   2   3   4   5   6   7      8    9
+	#      
 	#     +---+---+---+---+---+---+---+---+  +---++---+
-	#     |   |   |   |   |   |   |   |   |  |NOP||NOP| 
+	#  0  | 21| 22| 23| 24| 25| 26| 27| 28|  |NOP||NOP| 
 	#     +---+---+---+---+---+---+---+---+  +---++---+
-	#     |   |   |   |   |   |   |   |   |  |   ||   | 
+	#  1  | 41| 42| 43| 44| 45| 46| 47| 48|  |114||115| 
 	#     +---+---+---+---+---+---+---+---+  +---++---+
 	#     +---+---+---+---+---+---+---+---+  +---++---+
-	#     |   |   |   |   |   |   |   |   |  |   ||   | 
+	#  2  |  9| 10| 11| 12| 25| 26| 27| 28|  |116||117| 
 	#     +---+---+---+---+---+---+---+---+  +---++---+
-	#     
 	#
 	#
 	# LED NUMBERS IN X/Y MODE (DEC)
@@ -1823,12 +1826,12 @@ class LaunchControl( LaunchControlXL ):
 	#       0   1   2   3   4   5   6   7      8    9
 	#      
 	#     +---+---+---+---+---+---+---+---+  +---++---+
-	#  0  |   |   |   |   |   |   |   |   |  |NOP||NOP| 
+	#     | - | - | - | - | - | - | - | - |  |NOP||NOP| 
 	#     +---+---+---+---+---+---+---+---+  +---++---+
-	#  1  |   |   |   |   |   |   |   |   |  |   ||   | 
+	#  1  | - | - | - | - | - | - | - | - |  |8/1||9/1| 
 	#     +---+---+---+---+---+---+---+---+  +---++---+
 	#     +---+---+---+---+---+---+---+---+  +---++---+
-	#  2  |   |   |   |   |   |   |   |   |  |   ||   | 
+	#  0  |0/0|   |   |   |   |   |   |7/0|  |8/0||9/0| 
 	#     +---+---+---+---+---+---+---+---+  +---++---+
 
 	#-------------------------------------------------------------------------------------
@@ -1873,16 +1876,35 @@ class LaunchControl( LaunchControlXL ):
 		else:
 			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 10, 119, templateNum-1 ] )
 
+
 	#-------------------------------------------------------------------------------------
 	#-- Controls a grid LED by its coordinates <x> and <y>  with <green/red> brightness 0..3
 	#-- Actually, this doesn't make a lot of sense as the Control only has one row
 	#-- of LEDs, but anyway ...
 	#-------------------------------------------------------------------------------------
 	def LedCtrlXY( self, x, y, red, green ):
-		pass
 
-#		TODO: LED numbers required
-#		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 10, 120, 0, index, color ] )
+		# TODO: Note about the y coords
+		if x < 0 or x > 9 or y < 0 or y > 1:
+			return
+
+		if x < 8:
+			color = self.LedGetColor( red, green )
+		else:
+			# the "special buttons" only have one color
+			color = self.LedGetColor( 3, 3 )
+
+		if y == 0:
+			index = [ 9, 10, 11, 12, 25, 26, 27, 28, 116, 117 ][x]
+		else:
+			if x == 8:
+				index = 114
+			elif x == 9:
+				index = 115
+			else:
+				return
+
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 10, 120, 0, index, color ] )
 
 
 
@@ -2385,11 +2407,9 @@ class LaunchpadMk3( LaunchpadPro ):
 
 		if colorcode is None:
 			colorcode = LaunchpadPro.COLORS['white']
-		secondcolorcode = LaunchpadPro.COLORS['black']
 
 		colorcode = min(127, max(0, colorcode))
 
-		# TODO: Make second color code user accessible. Constant black for now
 		self.midi.RawWrite( 145, number, colorcode )
 
 
@@ -2403,6 +2423,11 @@ class LaunchpadMk3( LaunchpadPro ):
 		
 		colorcode = min(127, max(0, colorcode))
 
+		# TODO: Maybe the SysEx was indeed a better idea :)
+		#       Did some tests:
+		#         MacOS:   doesn't matter;
+		#         Windoze: SysEx much better;
+		#         Linux:   completely freaks out
 		for x in range(9):
 			for y in range(9):
 				self.midi.RawWrite(144, (x + 1) + ((y + 1) * 10), colorcode)
@@ -2421,8 +2446,10 @@ class LaunchpadMk3( LaunchpadPro ):
 	#-- Otherwise Launchpad will stuck in programmer mode
 	#-------------------------------------------------------------------------------------
 	def Close( self ):
-		# removed for now (LEDs would light up again)
+		# removed for now (LEDs would light up again; should be in the user's code)
 #		self.LedSetLayout( 0x05 )
+
+		# TODO: redundant (but needs fix for Py2 embedded anyway)
 		self.midi.CloseInput()
 		self.midi.CloseOutput()
 
@@ -2557,7 +2584,6 @@ class LaunchpadLPX( LaunchpadPro ):
 
 		if colorcode is None:
 			colorcode = LaunchpadPro.COLORS['white']
-		secondcolorcode = LaunchpadPro.COLORS['black']
 
 		colorcode = min(127, max(0, colorcode))
 
@@ -2574,6 +2600,11 @@ class LaunchpadLPX( LaunchpadPro ):
 		
 		colorcode = min(127, max(0, colorcode))
 
+		# TODO: Maybe the SysEx was indeed a better idea :)
+		#       Did some tests:
+		#         MacOS:   doesn't matter;
+		#         Windoze: SysEx much better;
+		#         Linux:   completely freaks out
 		for x in range(9):
 			for y in range(9):
 				self.midi.RawWrite(144, (x + 1) + ((y + 1) * 10), colorcode)
@@ -2592,5 +2623,6 @@ class LaunchpadLPX( LaunchpadPro ):
 	#-- Otherwise Launchpad will stuck in programmer mode
 	#-------------------------------------------------------------------------------------
 	def Close( self ):
+		# TODO: redundant (but needs fix for Py2 embedded anyway)
 		self.midi.CloseInput()
 		self.midi.CloseOutput()
