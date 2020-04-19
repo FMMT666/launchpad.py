@@ -1607,7 +1607,7 @@ class LaunchControlXL( LaunchpadBase ):
 	#-- Uses search string "Control XL", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
-	def Open( self, number = 0, name = "Control XL", template = 0 ):
+	def Open( self, number = 0, name = "Control XL", template = 1 ):
 
 		# The user template number adds to the MIDI commands.
 		# Make sure that the Control XL is set to the corresponding mode by
@@ -1639,7 +1639,7 @@ class LaunchControlXL( LaunchpadBase ):
 	#-- 1..8 selects the user and 9..16 the factory setups.
 	#-------------------------------------------------------------------------------------
 	def TemplateSet( self, templateNum ):
-		if templateNum < 0 or templateNum > 15:
+		if templateNum < 1 or templateNum > 16:
 			return
 		else:
 			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 119, templateNum-1 ] )
@@ -1836,7 +1836,7 @@ class LaunchControl( LaunchControlXL ):
 	#-- Uses search string "Control MIDI", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchControlXL" method
-	def Open( self, number = 0, name = "Control MIDI", template = 0 ):
+	def Open( self, number = 0, name = "Control MIDI", template = 1 ):
 
 		# The user template number adds to the MIDI commands.
 		# Make sure that the Control is set to the corresponding mode by
@@ -1868,7 +1868,7 @@ class LaunchControl( LaunchControlXL ):
 	#-- 1..8 selects the user and 9..16 the factory setups.
 	#-------------------------------------------------------------------------------------
 	def TemplateSet( self, templateNum ):
-		if templateNum < 0 or templateNum > 15:
+		if templateNum < 1 or templateNum > 16:
 			return
 		else:
 			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 10, 119, templateNum-1 ] )
