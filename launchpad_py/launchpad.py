@@ -1895,12 +1895,13 @@ class LaunchControl( LaunchControlXL ):
 			color = self.LedGetColor( 3, 3 )
 
 		if y == 0:
-			index = [ 9, 10, 11, 12, 25, 26, 27, 28, 116, 117 ][x]
+#			index = [ 9, 10, 11, 12, 25, 26, 27, 28, 116, 117 ][x]
+			index = [ 0, 1, 2, 3, 4, 5, 6, 7, 10, 11 ][x]
 		else:
 			if x == 8:
-				index = 114
+				index = 8
 			elif x == 9:
-				index = 115
+				index = 9
 			else:
 				return
 

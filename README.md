@@ -1102,7 +1102,7 @@ Functions requiring a color code have a "...ByCode" naming style.
                            LaunchpadMk3()    -> "Mk3"
                            LaunchpadLPX()    -> "X"
                            LaunchpadPro()    -> "Pro"
-                           LaunchControl()   -> "Control"
+                           LaunchControl()   -> "Control MIDI"
                            LaunchControlXL() -> "Control XL"
                            LaunchKeyMini()   -> "Launchkey" (should work for all variants)
                          It is sufficient to search for a part of the string, e.g.
@@ -1114,7 +1114,8 @@ Functions requiring a color code have a "...ByCode" naming style.
                          By default, Launchpad.py uses the template "User 1".
                          Simply don't touch this and you're safe.
                          Notice that these values are internally remapped to 0..15, as they
-                         appear in the Novation documentation.
+                         appear in the Novation documentation. The buttons on the HW are labeled "1..8",
+                         that is why Launchpad.py uses 1..16 rather than 0..15.
                          1.. 8 -> select user template    1..8
                          9..16 -> select factory template 1..8
 
@@ -1188,6 +1189,7 @@ Functions requiring a color code have a "...ByCode" naming style.
       LaunchpadMk3()     -> "Mk3"
       LaunchpadLPX()     -> "X"
       LaunchpadPro()     -> "Pro"
+      LaunchControl()    -> "Control MIDI"
       LaunchControlXL()  -> "Control XL"
       LaunchKeyMini()    -> "Launchkey"
 
