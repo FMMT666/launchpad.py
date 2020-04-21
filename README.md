@@ -1845,6 +1845,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 ### Reset()
 
     Resets the Launchpad and (quickly) turns off all LEDs.
+    Only resets the currently active template.
 
       PARAMS:
       RETURN:
@@ -2379,9 +2380,9 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 
 ---
-## Buttons, LED and potentiometer codes, Launch Control XL
+## Buttons, LED and potentiometer codes, Launch Control
 
-Notice that the two "template" buttons on the top right cannot be controlled (NOP).
+Notice that the two "Templates" buttons on the top right cannot be controlled (NOP).
 
 
 ### RAW mode
@@ -2389,12 +2390,12 @@ Notice that the two "template" buttons on the top right cannot be controlled (NO
           0   1   2   3   4   5   6   7      8    9
          
         +---+---+---+---+---+---+---+---+  +---++---+
-     0  |21 |22 |23 |24 |25 |26 |27 |28 |  |NOP||NOP| 
+     0  | 21| 22| 23| 24| 25| 26| 27| 28|  |NOP||NOP| 
         +---+---+---+---+---+---+---+---+  +---++---+
-     1  |41 |42 |43 |44 |45 |46 |47 |48 |  |114||115| 
+     1  | 41| 42| 43| 44| 45| 46| 47| 48|  |114||115| 
         +---+---+---+---+---+---+---+---+  +---++---+
         +---+---+---+---+---+---+---+---+  +---++---+
-     2  |9  |10 |11 |12 |25 |26 |27 |28 |  |116||117| 
+     2  |  9| 10| 11| 12| 25| 26| 27| 28|  |116||117| 
         +---+---+---+---+---+---+---+---+  +---++---+
 
 
@@ -2418,7 +2419,7 @@ Notice that the two "template" buttons on the top right cannot be controlled (NO
 ---
 ## Buttons, LED and potentiometer codes, Launch Control XL
 
-Notice that the two "template" buttons on the top right cannot be controlled (NOP).
+Notice that the two "Templates" buttons on the top right cannot be controlled (NOP).
 
 
 ### RAW mode

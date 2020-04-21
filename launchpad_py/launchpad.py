@@ -1614,9 +1614,14 @@ class LaunchControlXL( LaunchpadBase ):
 		# The user template number adds to the MIDI commands.
 		# Make sure that the Control XL is set to the corresponding mode by
 		# holding down one of the template buttons and selecting the template
-		# with the lowest button row 1..8 (variable here stores that as 0..7 for
-		# user or 8..15 for the factory templates).
-		# By default, user template 0 is enabled
+		# with the lowest button row 1..8
+		# By default, user template 1 is enabled. Notice that the Launch Control
+		# actually uses 0..15, but as the pad buttons are labeled 1..8 it probably
+		# make sense to use these human readable ones instead.
+
+		template = min( int(template), 16 ) # make int and limit to <=8
+		template = max( template, 1 )       # no negative numbers
+
 		self.UserTemplate = template
 		
 		retval = super( LaunchControlXL, self ).Open( number = number, name = name )
@@ -1644,15 +1649,16 @@ class LaunchControlXL( LaunchpadBase ):
 		if templateNum < 1 or templateNum > 16:
 			return
 		else:
+			self.UserTemplate = template
 			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 119, templateNum-1 ] )
 
 
 	#-------------------------------------------------------------------------------------
-	#-- reset the Launchpad
+	#-- reset the Launchpad; only reset the current template
 	#-- Turns off all LEDs
 	#-------------------------------------------------------------------------------------
 	def Reset( self ):
-		self.midi.RawWrite( 176, 0, 0 )
+		self.midi.RawWrite( 176 + self.UserTemplate-1, 0, 0 )
 
 
 	#-------------------------------------------------------------------------------------
