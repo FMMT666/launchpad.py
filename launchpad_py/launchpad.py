@@ -2298,7 +2298,7 @@ class LaunchpadMk3( LaunchpadPro ):
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
 	# TODO: Find a fix for the two MK3 MIDI devices
-	def Open( self, number = 0, name = "MK3" ):
+	def Open( self, number = 1, name = "MK3" ):
 		retval = super( LaunchpadMk3, self ).Open( number = number, name = name )
 		if retval == True:
 			self.LedSetMode( 1 )
@@ -2475,8 +2475,8 @@ class LaunchpadLPX( LaunchpadPro ):
 	#-- Uses search string "LPX", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
-	# TODO: Find a fix for the two MK3 MIDI devices
-	def Open( self, number = 0, name = "LPX" ):
+	# TODO: Find a fix for the two LPX MIDI devices
+	def Open( self, number = 1, name = "LPX" ):
 		retval = super( LaunchpadLPX, self ).Open( number = number, name = name )
 		if retval == True:
 			self.LedSetMode( 1 )
@@ -2559,6 +2559,210 @@ class LaunchpadLPX( LaunchpadPro ):
 		blue  = limit( blue,  0, 63 ) << 1
 		
 		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 12, 3, 3, number, red, green, blue ] )
+	
+
+	#-------------------------------------------------------------------------------------
+	#-- Same as LedCtrlRawByCode, but with a pulsing LED.
+	#-- Pulsing can be stoppped by another Note-On/Off or SysEx message.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlPulseByCode( self, number, colorcode = None ):
+
+		if number < 0 or number > 99:
+			return
+
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+
+		colorcode = min(127, max(0, colorcode))
+
+		self.midi.RawWrite( 146, number, colorcode )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Same as LedCtrlPulseByCode, but with a dual color flashing LED.
+	#-- The first color is the one that is already enabled, the second one is the
+	#-- <colorcode> argument in this method.
+	#-- Flashing can be stoppped by another Note-On/Off or SysEx message.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlFlashByCode( self, number, colorcode = None ):
+
+		if number < 0 or number > 99:
+			return
+
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+
+		colorcode = min(127, max(0, colorcode))
+
+		self.midi.RawWrite( 145, number, colorcode )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Quickly sets all all LEDs to the same color, given by <colorcode>.
+	#-- If <colorcode> is omitted, "white" is used.
+	#-------------------------------------------------------------------------------------
+	def LedAllOn( self, colorcode = None ):
+		if colorcode is None:
+			colorcode = LaunchpadPro.COLORS['white']
+		
+		colorcode = min(127, max(0, colorcode))
+
+		# TODO: Maybe the SysEx was indeed a better idea :)
+		#       Did some tests:
+		#         MacOS:   doesn't matter;
+		#         Windoze: SysEx much better;
+		#         Linux:   completely freaks out
+		for x in range(9):
+			for y in range(9):
+				self.midi.RawWrite(144, (x + 1) + ((y + 1) * 10), colorcode)
+
+
+	#-------------------------------------------------------------------------------------
+	#-- (fake to) reset the Launchpad
+	#-- Turns off all LEDs
+	#-------------------------------------------------------------------------------------
+	def Reset( self ):
+		self.LedAllOn( 0 )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Go back to custom modes before closing connection
+	#-- Otherwise Launchpad will stuck in programmer mode
+	#-------------------------------------------------------------------------------------
+	def Close( self ):
+		# TODO: redundant (but needs fix for Py2 embedded anyway)
+		self.midi.CloseInput()
+		self.midi.CloseOutput()
+
+########################################################################################
+### CLASS LaunchpadPROMk3
+###
+### For 3-color "X" Launchpads
+########################################################################################
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 90|  | 91|   |   |   |   |   |   | 98|  | 99|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	#         
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 80|  | 81|   |   |   |   |   |   |   |  | 89|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 70|  |   |   |   |   |   |   |   |   |  | 79|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 60|  |   |   |   |   |   |   | 67|   |  | 69|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 50|  |   |   |   |   |   |   |   |   |  | 59|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 40|  |   |   |   |   |   |   |   |   |  | 49|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 30|  |   |   |   |   |   |   |   |   |  | 39|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 20|  |   |   | 23|   |   |   |   |   |  | 29|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# | 10|  |   |   |   |   |   |   |   |   |  | 19|
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	#       
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |101|102|   |   |   |   |   |108|
+	#        +---+---+---+---+---+---+---+---+ 
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |  1|  2|   |   |   |   |   |  8|
+	#        +---+---+---+---+---+---+---+---+ 
+class LaunchpadProMk3( LaunchpadPro ):
+	
+#	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-- Uses search string "ProMK3", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	# TODO: Find a fix for the two ProMk3 MIDI devices
+	def Open( self, number = 0, name = "ProMk3" ):
+		retval = super( LaunchpadProMk3, self ).Open( number = number, name = name )
+		if retval == True:
+			self.LedSetMode( 1 )
+
+		return retval
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "ProMk3", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "ProMk3" ):
+		return super( LaunchpadProMk3, self ).Check( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the button layout (and codes) to the set, specified by <mode>.
+	#-- Valid options:
+	#--  00 - Session, 01 - Fader, 02 - Chord, 03 - Custom Mode, 
+	#--  04 - Note / Drum, 05 - Scale Settings, 06 - Sequencer Settings, 07 - Sequencer Steps, 
+	#--  08 - Sequencer Velocity, 09 - Sequencer Pattern Settings, 0A - Sequencer Probability, 0B - Sequencer Mutation, 
+	#--  0C - Sequencer Micro Step, 0D - Sequencer Projects, 0E - Sequencer Patterns, 0F - Sequencer Tempo, 
+	#--  10 - Sequencer Swing, 11 - Programmer Mode, 12 - Settings Menu, 13 - Custom mode Settings, 
+	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
+	# TODO: return value
+	def LedSetLayout( self, mode ):
+		ValidModes = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13]
+		if mode not in ValidModes:
+			return
+		
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 14, 0, mode ] )
+		time.wait(10)
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Selects the ProMk3's mode.
+	#-- <mode> -> 0 -> "Ableton Live mode"  
+	#--           1 -> "Programmer mode"	(what we need)
+	#-------------------------------------------------------------------------------------
+	def LedSetMode( self, mode ):
+		if mode < 0 or mode > 1:
+			return
+			
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 14, 14, mode ] )
+		time.wait(10)
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets the button layout to "Session" mode.
+	#-------------------------------------------------------------------------------------
+	# TODO: ASkr, Undocumented!
+	def LedSetButtonLayoutSession( self ):
+		self.LedSetLayout( 0 )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its position <number> and a color, specified by
+	#-- <red>, <green> and <blue> intensities, with can each be an integer between 0..63.
+	#-- If <blue> is omitted, this methos runs in "Classic" compatibility mode and the
+	#-- intensities, which were within 0..3 in that mode, are multiplied by 21 (0..63)
+	#-- to emulate the old brightness feeling :)
+	#-- Notice that each message requires 10 bytes to be sent. For a faster, but
+	#-- unfortunately "not-RGB" method, see "LedCtrlRawByCode()"
+	#-- ProMk3 color data extended to 7-bit but for compatibility we still using 6-bit values
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRaw( self, number, red, green, blue = None ):
+
+		if number < 0 or number > 99:
+			return
+
+		if blue is None:
+			blue   = 0
+			red   *= 21
+			green *= 21
+		
+		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
+		
+		red   = limit( red,   0, 63 ) << 1
+		green = limit( green, 0, 63 ) << 1
+		blue  = limit( blue,  0, 63 ) << 1
+		
+		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 14, 3, 3, number, red, green, blue ] )
 	
 
 	#-------------------------------------------------------------------------------------

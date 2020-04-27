@@ -53,6 +53,15 @@ def main():
 		if lp.Open( 1, "lpx" ):
 			print("Launchpad X")
 			mode = "Pro"
+	
+	# experimental ProMk3 implementation
+	# ProMk3 has three MIDI instances per device; we need the 1st one.
+	# If you have two ProMk3s attached, its "0" for the first and "3" for the 2nd device
+	elif lp.Check( 0, "promk3" ):
+		lp = launchpad.LaunchpadProMk3()
+		if lp.Open( 1, "promk3" ):
+			print("Launchpad ProMk3")
+			mode = "Pro"
 			
 	elif lp.Check( 0, "mk2" ):
 		lp = launchpad.LaunchpadMk2()
