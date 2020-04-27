@@ -59,7 +59,7 @@ def main():
 	# If you have two ProMk3s attached, its "0" for the first and "3" for the 2nd device
 	elif lp.Check( 0, "promk3" ):
 		lp = launchpad.LaunchpadProMk3()
-		if lp.Open( 1, "promk3" ):
+		if lp.Open( 0, "promk3" ):
 			print("Launchpad ProMk3")
 			mode = "Pro"
 			
