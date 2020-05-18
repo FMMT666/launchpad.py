@@ -25,7 +25,7 @@ First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
 
 ---
-## STATUS 2020/04/xx:
+## STATUS 2020/05/xx:
 
 What's hot, what's not?  
 
@@ -69,6 +69,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## NEWS
+
+### CHANGES 2020/05/XX:
+
+    - changed default search string for the original Pro from "Pro" to "Launchpad Pro", for compatibility with Pro-Mk3
 
 ### CHANGES 2020/04/XX:
 
@@ -1101,7 +1105,7 @@ Functions requiring a color code have a "...ByCode" naming style.
                            LaunchpadMk2()    -> "Mk2"
                            LaunchpadMk3()    -> "Mk3"
                            LaunchpadLPX()    -> "X"
-                           LaunchpadPro()    -> "Pro"
+                           LaunchpadPro()    -> "Launchpad Pro"
                            LaunchControl()   -> "Control MIDI"
                            LaunchControlXL() -> "Control XL"
                            LaunchKeyMini()   -> "Launchkey" (should work for all variants)
@@ -1165,7 +1169,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 
               # open the 1st "Pro"
               lp = launchpad.LaunchpadPro()    # notice the "Pro" class!
-              lp.Open()                        # equals Open( 0, "Pro" )
+              lp.Open()                        # equals Open( 0, "Launchpad Pro" )
               
               # open the 1st "XL" with user template 3
               lp = launchpad.LaunchControlXL( template = 3 )
@@ -1188,7 +1192,7 @@ Functions requiring a color code have a "...ByCode" naming style.
       LaunchpadMk2()     -> "Mk2"
       LaunchpadMk3()     -> "Mk3"
       LaunchpadLPX()     -> "X"
-      LaunchpadPro()     -> "Pro"
+      LaunchpadPro()     -> "Launchpad Pro"
       LaunchControl()    -> "Control MIDI"
       LaunchControlXL()  -> "Control XL"
       LaunchKeyMini()    -> "Launchkey"
@@ -1200,7 +1204,7 @@ Functions requiring a color code have a "...ByCode" naming style.
       lp = lauchpad.Launchpad()        # Launchpad "Mk1" or "Classic" class
       if lp.Check( 0, "Pro" ):         # check for "Pro"
         lp = launchpad.LaunchpadPro()  # "reload" the new class for the "Pro"
-        lp.Open()                      # equals lp.Open( 0, "Pro" )
+        lp.Open()                      # equals lp.Open( 0, "Launchpad Pro" )
     
     Search patterns are case insensitive.  
     

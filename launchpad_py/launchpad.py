@@ -748,10 +748,10 @@ class LaunchpadPro( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	#-- Checks if a device exists, but does not open it.
 	#-- Does not check whether a device is in use or other, strange things...
-	#-- Uses search string "Pro", by default.
+	#-- Uses search string "Launchpad Pro", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
-	def Check( self, number = 0, name = "Pro" ):
+	def Check( self, number = 0, name = "Launchpad Pro" ):
 		return super( LaunchpadPro, self ).Check( number = number, name = name )
 
 
