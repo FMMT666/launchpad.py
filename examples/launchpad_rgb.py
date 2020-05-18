@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #
-# Launchpad tests for RGB-style variants Mk2, Mk3, Pro ...
+# Launchpad tests for RGB-style variants Mk2, Mini Mk3, Pro ...
 # 
 #
-# FMMT666(ASkr) 7/2013..2/2020
+# FMMT666(ASkr) 7/2013..5/2020
 # www.askrprojects.net
 #
 
@@ -48,19 +48,19 @@ def main():
 			print( " - Launchpad Mk2: ERROR")
 			return
 		
-	# try the first Mk3
-	elif lp.Check( 1, "mk3" ):
-		lp = launchpad.LaunchpadMk3()
-		if lp.Open( 1, "mk3" ):
-			print( " - Launchpad Mk3: OK" )
+	# try the first Mini Mk3
+	elif lp.Check( 1, "minimk3" ):
+		lp = launchpad.LaunchpadMiniMk3()
+		if lp.Open( 1, "minimk3" ):
+			print( " - Launchpad Mini Mk3: OK" )
 		else:
-			print( " - Launchpad Mk3: ERROR")
+			print( " - Launchpad Mini Mk3: ERROR")
 			return
 
 	# try the first Pro
-	elif lp.Check( 0, "pro" ):
+	elif lp.Check( 0, "pad pro" ):
 		lp = launchpad.LaunchpadPro()
-		if lp.Open( 0, "pro" ):
+		if lp.Open( 0, "pad pro" ):
 			print( " - Launchpad Pro: OK" )
 		else:
 			print( " - Launchpad Pro: ERROR")

@@ -6,6 +6,6 @@ from launchpad_py.launchpad import LaunchControlXL
 from launchpad_py.launchpad import LaunchControl
 from launchpad_py.launchpad import LaunchKeyMini
 from launchpad_py.launchpad import Dicer
-from launchpad_py.launchpad import LaunchpadMk3
+from launchpad_py.launchpad import LaunchpadMiniMk3
 from launchpad_py.launchpad import LaunchpadLPX
 from launchpad_py import charset

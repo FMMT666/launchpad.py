@@ -40,7 +40,7 @@ def main():
 	lp = launchpad.LaunchpadPro();
 
 	# open the first Launchpad Pro
-	if lp.Open( 0, "pro" ):
+	if lp.Open( 0, "pad pro" ):
 		print( " - Launchpad Pro: OK" )
 	else:
 		print( " - Launchpad Pro: ERROR" )

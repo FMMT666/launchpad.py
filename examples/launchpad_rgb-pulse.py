@@ -1,10 +1,10 @@
 #!/usr/bin/python
 #
 # Stupid flashing/pulsing demo.
-# Works with Mk2, Mk3, Pro (and soon X)
+# Works with Mk2, Mini Mk3, Pro (and soon X)
 # 
 #
-# FMMT666(ASkr) 10/2018..4/2020
+# FMMT666(ASkr) 10/2018..5/2020
 # www.askrprojects.net
 #
 
@@ -30,9 +30,9 @@ def main():
 	lp = launchpad.Launchpad()
 
 	# check what we have here and override lp if necessary
-	if lp.Check( 0, "pro" ):
+	if lp.Check( 0, "pad pro" ):
 		lp = launchpad.LaunchpadPro()
-		if lp.Open(0,"pro"):
+		if lp.Open(0,"pad pro"):
 			print("Launchpad Pro")
 			mode = "Pro"
 			
@@ -42,9 +42,9 @@ def main():
 			print("Launchpad Mk2")
 			mode = "Mk2"
 
-	elif lp.Check( 1, "mk3" ):
-		lp = launchpad.LaunchpadMk3()
-		if lp.Open( 1, "mk3" ):
+	elif lp.Check( 1, "minimk3" ):
+		lp = launchpad.LaunchpadMiniMk3()
+		if lp.Open( 1, "minimk3" ):
 			print("Launchpad Mk3")
 			mode = "Mk3"
 

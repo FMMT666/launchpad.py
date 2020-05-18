@@ -2230,11 +2230,11 @@ class Dicer( LaunchpadBase ):
 
 
 ########################################################################################
-### CLASS LaunchpadMk3
+### CLASS LaunchpadMiniMk3
 ###
 ### For 3-color "Mk3" Launchpads; Mini and Pro
 ########################################################################################
-class LaunchpadMk3( LaunchpadPro ):
+class LaunchpadMiniMk3( LaunchpadPro ):
 
 	# LED AND BUTTON NUMBERS IN RAW MODE (DEC)
 	#
@@ -2294,12 +2294,12 @@ class LaunchpadMk3( LaunchpadPro ):
 
 	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Launchpad MIDI devices.
-	#-- Uses search string "Mk3", by default.
+	#-- Uses search string "MiniMk3", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
 	# TODO: Find a fix for the two MK3 MIDI devices
-	def Open( self, number = 0, name = "MK3" ):
-		retval = super( LaunchpadMk3, self ).Open( number = number, name = name )
+	def Open( self, number = 0, name = "MiniMK3" ):
+		retval = super( LaunchpadMiniMk3, self ).Open( number = number, name = name )
 		if retval == True:
 			self.LedSetMode( 1 )
 
@@ -2309,11 +2309,11 @@ class LaunchpadMk3( LaunchpadPro ):
 	#-------------------------------------------------------------------------------------
 	#-- Checks if a device exists, but does not open it.
 	#-- Does not check whether a device is in use or other, strange things...
-	#-- Uses search string "Mk3", by default.
+	#-- Uses search string "MiniMk3", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
-	def Check( self, number = 0, name = "MK3" ):
-		return super( LaunchpadMk3, self ).Check( number = number, name = name )
+	def Check( self, number = 0, name = "MiniMK3" ):
+		return super( LaunchpadMiniMk3, self ).Check( number = number, name = name )
 
 
 	#-------------------------------------------------------------------------------------

@@ -31,28 +31,31 @@ What's hot, what's not?
 
 ### Devices
 
-    Launchpad Mk1     - class "Launchpad()"       LEDs and buttons
-    Launchpad/S       - class "Launchpad()"       LEDs and buttons
-    Launchpad Mini    - class "Launchpad()"       LEDs and buttons
+    Launchpad Mk1      - class "Launchpad()"        LEDs and buttons
+    Launchpad/S        - class "Launchpad()"        LEDs and buttons
+    Launchpad Mini     - class "Launchpad()"        LEDs and buttons
 
-    Launchpad Mk2     - class "LaunchpadMk2()"    LEDs and buttons
+    Launchpad Mk2      - class "LaunchpadMk2()"     LEDs and buttons
 
-    Launchpad Pro     - class "LaunchpadPro()"    LEDs and buttons (digitally only (yet))
+    Launchpad Pro      - class "LaunchpadPro()"     LEDs and buttons (digitally only (yet))
 
-    Launchpad Mk3     - class "LaunchpadMk3()"    LEDs and buttons
+    Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
-    Launchpad X       - class "LaunchpadLPX()"    EXPERIMENTAL
+    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL
 
-    Launch Control    - class "LaunchControl()"   EXPERIMENTAL
+    Launch Control     - class "LaunchControl()"    EXPERIMENTAL
 
-    Launch Control XL - class "LaunchControlXL()" LEDs, buttons and potentiometers
+    Launch Control XL  - class "LaunchControlXL()"  LEDs, buttons and potentiometers
     
-    LaunchKey (Mini)  - class "LaunchKeyMini()"   Buttons, keys and potentiometers (sliders for big KBs), no LEDs
+    LaunchKey (Mini)   - class "LaunchKeyMini()"    Buttons, keys and potentiometers (sliders for big KBs), no LEDs
     
-    Dicer             - class "Dicer()"           LEDs and buttons
+    Dicer              - class "Dicer()"            LEDs and buttons
 
 
-Please notice the changes in methods "Open()" and "Check()" for the Mk3 and X.  
+Please notice that the class "LaunchpadMk3()" was renamed to "LaunchpadMiniMk3()" in 5/2020.  
+This was necessary to avoid confusion with the device search string and the new "Pro-Mk3" Launchpad.  
+
+Please notice the changes in methods "Open()" and "Check()" for the Mini Mk3 and X.  
 Also, see demo files "hello.py" or "launchpad_rgb.py" as a reference on how to use them.
 
 
@@ -72,7 +75,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2020/05/XX:
 
+    - changed class name for the MK3 from LaunchpadMk3() to LaunchpadMiniMk3(), for compatibility with Pro-Mk3
+    - changed default search string for the Mini-Mk3 "MK3" to "MiniMK3", for compatibility with Pro-Mk3
     - changed default search string for the original Pro from "Pro" to "Launchpad Pro", for compatibility with Pro-Mk3
+    - updated all included example files to match the class name and search term changes
 
 ### CHANGES 2020/04/XX:
 
@@ -348,7 +354,7 @@ or if you dislike typing that much, use
       ...
       lp = lppy.Launchpad()
       lp = lppy.LaunchpadMk2()
-      lp = lppy.LaunchpadMk3()
+      lp = lppy.LaunchpadMiniMk3()
       lp = lppy.LaunchpadLPX()
       lp = lppy.LaunchpadPro()
       lp = lppy.LaunchControl()
@@ -690,11 +696,11 @@ name it once shipped the first red/green LED with!
       
         lp = launchpad.LaunchpadMk2()
 
-### For Launchpad Mk3 users
+### For Launchpad Mini Mk3 users
 
-      USE CLASS "LaunchpadMk3":
+      USE CLASS "LaunchpadMiniMk3":
       
-        lp = launchpad.LaunchpadMk3()
+        lp = launchpad.LaunchpadMiniMk3()
 
 ### For Launchpad X users
 
@@ -1101,14 +1107,14 @@ Functions requiring a color code have a "...ByCode" naming style.
                          Defaults to 0, the 1st device, if not given.
               <name>     OPTIONAL, only consider devices whose names contain
                          the string <name>. The default names for the classes are:
-                           Launchpad()       -> "Launchpad"
-                           LaunchpadMk2()    -> "Mk2"
-                           LaunchpadMk3()    -> "Mk3"
-                           LaunchpadLPX()    -> "X"
-                           LaunchpadPro()    -> "Launchpad Pro"
-                           LaunchControl()   -> "Control MIDI"
-                           LaunchControlXL() -> "Control XL"
-                           LaunchKeyMini()   -> "Launchkey" (should work for all variants)
+                           Launchpad()        -> "Launchpad"
+                           LaunchpadMk2()     -> "Mk2"
+                           LaunchpadMiniMk3() -> "MiniMk3"
+                           LaunchpadLPX()     -> "X"
+                           LaunchpadPro()     -> "Launchpad Pro"
+                           LaunchControl()    -> "Control MIDI"
+                           LaunchControlXL()  -> "Control XL"
+                           LaunchKeyMini()    -> "Launchkey" (should work for all variants)
                          It is sufficient to search for a part of the string, e.g.
                          "chpad S" will find a device named "Launchpad S" or even
                          "Novation Launchpad S"
@@ -1148,28 +1154,28 @@ Functions requiring a color code have a "...ByCode" naming style.
               lp.Open( name = "Launchpad Mini", number = 0)
               
               # open the 1st "Mk2"
-              lp = launchpad.LaunchpadMk2()    # notice the "Mk2" class!
-              lp.Open()                        # equals Open( 0, "Mk2" )
+              lp = launchpad.LaunchpadMk2()     # notice the "Mk2" class!
+              lp.Open()                         # equals Open( 0, "Mk2" )
 
               # open the 1st "Mk3"
               #   NOTICE: Mk3 has two MIDI instances and we need the 2nd one.
               #   So, to open the first attached devices, use "Open(1)" and not "Open(0)". 
-              lp = launchpad.LaunchpadMk3()    # notice the "Mk3" class!
-              lp.Open()                        # THIS WILL NOT WORK!
-              lp.Open(1)                       # this will open the first device
-              lp.Open(3)                       # this would open the 2nd attached Launchpad
+              lp = launchpad.LaunchpadMiniMk3() # notice the "MiniMk3" class!
+              lp.Open()                         # THIS WILL NOT WORK!
+              lp.Open(1)                        # this will open the first device
+              lp.Open(3)                        # this would open the 2nd attached Launchpad
 
               # open the 1st "X"
               #   NOTICE: The X has two MIDI instances and we need the 2nd one.
               #   So, to open the first attached devices, use "Open(1)" and not "Open(0)". 
-              lp = launchpad.LaunchpadLPX()    # notice the "LPX" class!
-              lp.Open()                        # THIS WILL NOT WORK!
-              lp.Open(1)                       # this will open the first device
-              lp.Open(3)                       # this would open the 2nd attached Launchpad
+              lp = launchpad.LaunchpadLPX()     # notice the "LPX" class!
+              lp.Open()                         # THIS WILL NOT WORK!
+              lp.Open(1)                        # this will open the first device
+              lp.Open(3)                        # this would open the 2nd attached Launchpad
 
               # open the 1st "Pro"
-              lp = launchpad.LaunchpadPro()    # notice the "Pro" class!
-              lp.Open()                        # equals Open( 0, "Launchpad Pro" )
+              lp = launchpad.LaunchpadPro()     # notice the "Pro" class!
+              lp.Open()                         # equals Open( 0, "Launchpad Pro" )
               
               # open the 1st "XL" with user template 3
               lp = launchpad.LaunchControlXL( template = 3 )
@@ -1190,7 +1196,7 @@ Functions requiring a color code have a "...ByCode" naming style.
     Like Open(), this method uses different default names for the different classes:
       Launchpad()        -> "Launchpad"
       LaunchpadMk2()     -> "Mk2"
-      LaunchpadMk3()     -> "Mk3"
+      LaunchpadMiniMk3() -> "MiniMk3"
       LaunchpadLPX()     -> "X"
       LaunchpadPro()     -> "Launchpad Pro"
       LaunchControl()    -> "Control MIDI"
