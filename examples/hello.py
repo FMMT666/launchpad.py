@@ -48,9 +48,9 @@ def main():
 	# experimental LPX implementation
 	# Like the Mk3, the LPX also has two MIDI instances per device; we need the 2nd one.
 	# If you have two LPXs attached, its "1" for the first and "3" for the 2nd device
-	elif lp.Check( 1, "lpx" ):
+	elif lp.Check( 1, "x" ):
 		lp = launchpad.LaunchpadLPX()
-		if lp.Open( 1, "lpx" ):
+		if lp.Open( 1, "x" ):
 			print("Launchpad X")
 			mode = "Pro"
 			

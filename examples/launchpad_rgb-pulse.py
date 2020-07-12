@@ -48,6 +48,12 @@ def main():
 			print("Launchpad Mk3")
 			mode = "Mk3"
 
+	elif lp.Check( 1, "x" ):
+		lp = launchpad.LaunchpadLPX()
+		if lp.Open( 1, "x" ):
+			print("Launchpad X")
+			mode = "X"
+
 	if mode is None:
 		print("Did not find any compatible Launchpads, meh...")
 		return

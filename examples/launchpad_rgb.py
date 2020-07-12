@@ -57,6 +57,15 @@ def main():
 			print( " - Launchpad Mini Mk3: ERROR")
 			return
 
+	# try the first X
+	elif lp.Check( 1, "x" ):
+		lp = launchpad.LaunchpadLPX()
+		if lp.Open( 1, "x" ):
+			print( " - Launchpad X: OK" )
+		else:
+			print( " - Launchpad X: ERROR")
+			return
+
 	# try the first Pro
 	elif lp.Check( 0, "pad pro" ):
 		lp = launchpad.LaunchpadPro()
