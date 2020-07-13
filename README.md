@@ -75,9 +75,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2020/05/XX:
 
-    - changed class name for the MK3 from LaunchpadMk3() to LaunchpadMiniMk3(), for compatibility with Pro-Mk3
-    - changed default search string for the Mini-Mk3 "MK3" to "MiniMK3", for compatibility with Pro-Mk3
-    - changed default search string for the original Pro from "Pro" to "Launchpad Pro", for compatibility with Pro-Mk3
+    - changed class name for the Mini MK3 to LaunchpadMiniMk3(); for compatibility w/ Pro-Mk3
+    - changed default search string for the Mini-Mk3 to "MiniMK3", for compatibility with Pro-Mk3
+    - changed default search string for the original Pro to "Launchpad Pro"; for compatibility w/ Pro-Mk3
     - updated all included example files to match the class name and search term changes
 
 ### CHANGES 2020/04/XX:
