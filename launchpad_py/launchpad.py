@@ -1134,7 +1134,7 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
 	#-------------------------------------------------------------------------------------
-	def ButtonStateRaw( self ):
+	def ButtonStateRaw( self, returnPressure = False ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 
@@ -1154,11 +1154,32 @@ class LaunchpadPro( LaunchpadBase ):
 			#  Additionally, it's interrupted by a read failure.
 			#  The 2nd one is simply cut. Notice that that these are commands usually send TO the
 			#  Launchpad...
+			#
+			# Reminder for the "pressure event issue":
+			# The pressure events do not send any button codes, it's really just the pressure,
+			# everytime a value changes:
+			#   [[[144, 55, 5, 0], 654185]]    button hit ("NoteOn with vel > 0")
+			#   [[[208, 24, 0, 0], 654275]]    button hold
+			#   [[[208, 127, 0, 0], 654390]]    ...
+			#   [[[208, 122, 0, 0], 654506]     ...
+			#   [[[208, 65, 0, 0], 654562]]     ...
+			#   [[[208, 40, 0, 0], 654567]]     ...
+			#   [[[208, 0, 0, 0], 654573]]      ...
+			#   [[[144, 55, 0, 0], 654614]]    button released ("NoteOn with vel == 0")
+			# When multiple buttons are pressed (hold), the biggest number will be returned.
+			#
+
 			
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 				return [ a[0][0][1], a[0][0][2] ]
 			else:
-				return []
+				if returnPressure:
+					if a[0][0][0] == 208:
+						return [ 255, a[0][0][1] ]
+					else:
+						return []
+				else:
+					return []
 		else:
 			return []
 
