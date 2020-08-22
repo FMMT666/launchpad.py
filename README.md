@@ -25,7 +25,7 @@ First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
 
 ---
-## STATUS 2020/05/xx:
+## STATUS 2020/08/xx:
 
 What's hot, what's not?  
 
@@ -72,6 +72,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## NEWS
+
+### CHANGES 2020/08/XX:
+    - added support for pressure events via ButtonStateRaw() for the Pro
+    - added demo file "launchpad_pressure.py" for pressure sensitivity
 
 ### CHANGES 2020/05/XX:
 
@@ -1801,12 +1805,17 @@ Functions requiring a color code have a "...ByCode" naming style.
       RETURN:
 
 
-### ButtonStateRaw()
+### ButtonStateRaw( [returnPressure] )
 
-    Returns the state of the buttons in RAW mode.
+    Returns the state of the buttons and pressure events in RAW mode.
     
     Notice that this is not directly compatible with the "Mk1" ButtonStateRaw()
     method, which returns [ <button>, <True/False> ].
+
+    Only the Pro, X and (future) Mk3-Pro support pressure events.
+    They can be enables by passing "returnPressure=True" to the method call.
+    The pressure events are returned with a fake <button> number of "255" and are
+    returned as [ 255, <value>].
 
       PARAMS:
       RETURN: [ ]                    An empty list if no event occured, otherwise...
@@ -1814,6 +1823,9 @@ Functions requiring a color code have a "...ByCode" naming style.
               <button> is the button number, the second field, <value> determines
               the intensity (0..127) with which the button was pressed.
               0 means that the button was released.
+              [ 255, <value> ]        ... a list of pressure events with two fields:
+              "255" as an indicator for a pressure event, andld, <value> determines
+              the intensity (0..127) of the pressure.
 
 
 ### ButtonStateXY( [mode] )
