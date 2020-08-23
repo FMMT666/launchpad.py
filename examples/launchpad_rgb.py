@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #
-# Launchpad tests for RGB-style variants Mk2, Mini Mk3, Pro ...
+# Launchpad tests for RGB-style variants Mk2, Mini Mk3, Pro, X ...
 # 
 #
-# FMMT666(ASkr) 7/2013..5/2020
+# FMMT666(ASkr) 7/2013..8/2020
 # www.askrprojects.net
 #
 
@@ -37,7 +37,7 @@ def main():
 	print( " - PyGame " + str( pygame.ver ) )
 
 	# create an instance
-	lp = launchpad.Launchpad();
+	lp = launchpad.Launchpad()
 
 	# try the first Mk2
 	if lp.Check( 0, "mk2" ):
@@ -65,7 +65,19 @@ def main():
 		else:
 			print( " - Launchpad Pro: ERROR")
 			return
-		
+
+	# try the first X
+	# Notice that this is already built-in in the LPX class' methods Check() and Open,
+	# but we're using the one from above!
+	elif lp.Check( 1, "Launchpad X") or lp.Check( 1, "LPX" ):
+		lp = launchpad.LaunchpadLPX()
+		# Open() includes looking for "LPX" and "Launchpad X"
+		if lp.Open( 1 ):
+			print( " - Launchpad X: OK" )
+		else:
+			print( " - Launchpad X: ERROR")
+			return
+
 	# nope
 	else:
 		print( " - No Launchpad available" )

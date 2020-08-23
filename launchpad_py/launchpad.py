@@ -255,8 +255,9 @@ class LaunchpadBase( object ):
 		self.SCROLL_LEFT  = -1
 		self.SCROLL_RIGHT =  1
 
-
-	def __delete__( self ):
+	# LOL; That fixes a years old bug. Officially an idiot now :)
+#	def __delete__( self ):
+	def __del__( self ):
 		self.Close()
 		
 
@@ -316,7 +317,7 @@ class LaunchpadBase( object ):
 		while doReads < 3:
 			if self.midi.ReadCheck():
 				doReads = 0
-				a = self.midi.ReadRaw()
+				self.midi.ReadRaw()
 			else:
 				doReads += 1
 				time.wait( 5 )
@@ -1670,7 +1671,7 @@ class LaunchControlXL( LaunchpadBase ):
 		if templateNum < 1 or templateNum > 16:
 			return
 		else:
-			self.UserTemplate = template
+			self.UserTemplate = templateNum
 			self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 17, 119, templateNum-1 ] )
 
 
@@ -2493,26 +2494,63 @@ class LaunchpadLPX( LaunchpadPro ):
 
 	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Launchpad MIDI devices.
-	#-- Uses search string "LPX", by default.
+	#-- This is one of the few devices that has different names in different OSs:
+	#--
+	#--   Windoze
+	#--     (b'MMSystem', b'LPX MIDI', 1, 0, 0)
+	#--     (b'MMSystem', b'MIDIIN2 (LPX MIDI)', 1, 0, 0)
+	#--     (b'MMSystem', b'LPX MIDI', 0, 1, 0)
+	#--     (b'MMSystem', b'MIDIOUT2 (LPX MIDI)', 0, 1, 0)
+	#--   
+	#--   macOS
+	#--     (b'CoreMIDI', b'Launchpad X LPX DAW Out', 1, 0, 0)
+	#--     (b'CoreMIDI', b'Launchpad X LPX MIDI Out', 1, 0, 0)
+	#--     (b'CoreMIDI', b'Launchpad X LPX DAW In', 0, 1, 0)
+	#--     (b'CoreMIDI', b'Launchpad X LPX MIDI In', 0, 1, 0)
+	#--   
+	#--   Linux [tm]
+	#--     ('ALSA', 'Launchpad X MIDI 1', 0, 1, 0)
+	#--     ('ALSA', 'Launchpad X MIDI 1', 1, 0, 0)
+	#--     ('ALSA', 'Launchpad X MIDI 2', 0, 1, 0)
+	#--     ('ALSA', 'Launchpad X MIDI 2', 1, 0, 0)
+	#--
+	#-- So the old strategy of simply looking for "LPX" will not work.
+	#-- Workaround: If the user doesn't request a specific name, we'll just
+	#-- search for "Launchpad X" and "LPX"...
+	
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
-	# TODO: Find a fix for the two MK3 MIDI devices
-	def Open( self, number = 0, name = "LPX" ):
-		retval = super( LaunchpadLPX, self ).Open( number = number, name = name )
-		if retval == True:
-			self.LedSetMode( 1 )
-
-		return retval
+	def Open( self, number = 0, name = "AUTO" ):
+		nameList = [ "Launchpad X", "LPX" ]
+		if name != "AUTO":
+			# mhh, better not this way
+			# nameList.insert( 0, name )
+			nameList = [ name ]
+		for name in nameList:
+			rval = super( LaunchpadLPX, self ).Open( number = number, name = name )
+			if rval:
+				self.LedSetMode( 1 )
+				return rval
+		return False
 
 
 	#-------------------------------------------------------------------------------------
 	#-- Checks if a device exists, but does not open it.
 	#-- Does not check whether a device is in use or other, strange things...
-	#-- Uses search string "LPX", by default.
+	#-- See notes in "Open()" above.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadBase" method
-	def Check( self, number = 0, name = "LPX" ):
-		return super( LaunchpadLPX, self ).Check( number = number, name = name )
+	def Check( self, number = 0, name = "AUTO" ):
+		nameList = [ "Launchpad X", "LPX" ]
+		if name != "AUTO":
+			# mhh, better not this way
+			# nameList.insert( 0, name )
+			nameList = [ name ]
+		for name in nameList:
+			rval = super( LaunchpadLPX, self ).Check( number = number, name = name )
+			if rval:
+				return rval
+		return False
 
 
 	#-------------------------------------------------------------------------------------

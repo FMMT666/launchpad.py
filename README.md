@@ -41,7 +41,7 @@ What's hot, what's not?
 
     Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
-    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL
+    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL++ as in "should work"
 
     Launch Control     - class "LaunchControl()"    EXPERIMENTAL
 
@@ -76,6 +76,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ### CHANGES 2020/08/XX:
     - added support for pressure events via ButtonStateRaw() for the Pro
     - added demo file "launchpad_pressure.py" for pressure sensitivity
+    - added multiple search names for the X
+    - updated all rgb-demos to work with the X
 
 ### CHANGES 2020/05/XX:
 
@@ -1114,7 +1116,7 @@ Functions requiring a color code have a "...ByCode" naming style.
                            Launchpad()        -> "Launchpad"
                            LaunchpadMk2()     -> "Mk2"
                            LaunchpadMiniMk3() -> "MiniMk3"
-                           LaunchpadLPX()     -> "X"
+                           LaunchpadLPX()     -> "LPX" and "Launchpad X"
                            LaunchpadPro()     -> "Launchpad Pro"
                            LaunchControl()    -> "Control MIDI"
                            LaunchControlXL()  -> "Control XL"
@@ -1201,7 +1203,7 @@ Functions requiring a color code have a "...ByCode" naming style.
       Launchpad()        -> "Launchpad"
       LaunchpadMk2()     -> "Mk2"
       LaunchpadMiniMk3() -> "MiniMk3"
-      LaunchpadLPX()     -> "X"
+      LaunchpadLPX()     -> "LPX" and "Launchpad X"
       LaunchpadPro()     -> "Launchpad Pro"
       LaunchControl()    -> "Control MIDI"
       LaunchControlXL()  -> "Control XL"
