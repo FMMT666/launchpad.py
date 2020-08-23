@@ -203,10 +203,10 @@ class Midi:
 			
 			for n in range( midi.get_count() ):
 				md = midi.get_device_info( n )
-				if quiet == False:
-					print(md)
-					sys.stdout.flush()
 				if str( md[1].lower() ).find( name.lower() ) >= 0:
+					if quiet == False:
+						print('%2d' % ( i ), md)
+						sys.stdout.flush()
 					if output == True and md[3] > 0:
 						ret.append( i )
 					if input == True and md[2] > 0:
@@ -302,8 +302,8 @@ class LaunchpadBase( object ):
 	#-------------------------------------------------------------------------------------
 	#-- prints a list of all devices to the console (for debug)
 	#-------------------------------------------------------------------------------------
-	def ListAll( self ):
-		self.midi.SearchDevices( "*", True, True, False )
+	def ListAll( self, searchString = '' ):
+		self.midi.SearchDevices( searchString, True, True, False )
 
 
 	#-------------------------------------------------------------------------------------

@@ -1,9 +1,11 @@
 include examples/hello.py
 include examples/information.py
+include examples/launchpad_pressure.py
 include examples/launchpad_pro.py
+include examples/launchpad_rgb.py
 include examples/launchpad_rgb-fire.py
 include examples/launchpad_rgb-pulse.py
-include examples/launchpad_rgb.py
+include examples/midi_events.py
 include README.md
 include LICENSE.txt
 include images/lppro_colorcodes.png

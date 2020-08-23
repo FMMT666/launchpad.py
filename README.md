@@ -78,6 +78,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - added demo file "launchpad_pressure.py" for pressure sensitivity
     - added multiple search names for the X
     - updated all rgb-demos to work with the X
+    - changed ListAll() method to optionally accept a string to query specific devices only
+    - added a general midi_events.py demo file for better debugging
 
 ### CHANGES 2020/05/XX:
 
@@ -944,7 +946,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
 ### Utility functions
 
-    ListAll()
+    ListAll( [searchString] )
     EventRaw()
     
     
@@ -1245,13 +1247,15 @@ Functions requiring a color code have a "...ByCode" naming style.
       RETURN:
 
 
-### ListAll()
+### ListAll( searchString = '' )
 
     Debug function.
-    Can be called any time and does not even require Open().
     Prints a list of all detected MIDI devices and addresses.
+    Can be called any time and does not even require an opened device.
+    The optional <searchString> parameter can be used to return a filtered set of
+    device names only. By default, it is set to an empty string, which simply prints everything.
 
-      PARAMS:
+      PARAMS: <searchString>     [OPTIONAL] only devices containing this string will be considered
       RETURN:
 
 
