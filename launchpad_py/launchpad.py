@@ -1130,10 +1130,12 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- [ <button>, <value> ], in which <button> is the raw number of the button and
 	#-- <value> an intensity value from 0..127.
 	#-- >0 = button pressed; 0 = button released
-	#-- A constant force ("push longer") is suppressed here... ("208" Pressure Value)
 	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
+	#-- Pressure events are returned if enabled via "returnPressure".
+	#-- To distinguish pressure events from buttons, a fake button code of "255" is used,
+	#-- so the list looks like [ 255, <value> ].
 	#-------------------------------------------------------------------------------------
 	def ButtonStateRaw( self, returnPressure = False ):
 		if self.midi.ReadCheck():
@@ -2692,3 +2694,40 @@ class LaunchpadLPX( LaunchpadPro ):
 		# TODO: redundant (but needs fix for Py2 embedded anyway)
 		self.midi.CloseInput()
 		self.midi.CloseOutput()
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <button>, <value> ], in which <button> is the raw number of the button and
+	#-- <value> an intensity value from 0..127.
+	#-- >0 = button pressed; 0 = button released
+	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
+	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
+	#-- Compatibility would require checking via "== True" and not "is True".
+	#-- Pressure events are returned if enabled via "returnPressure". 
+	#-- Unlike the Launchpad Pro, the X does indeed return the button number AND the
+	#-- pressure value. To provide visibility whether or not a button was pressed or is
+	#-- hold, a value of 255 is added to the button number.
+	#-- [ <button> + 255, <value> ].
+	#-- In contrast to the Pro, which only has one pressure value for all, the X does
+	#-- this per button. Nice.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def ButtonStateRaw( self, returnPressure = False ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+			
+			if a[0][0][0] == 144 or a[0][0][0] == 176:
+				return [ a[0][0][1], a[0][0][2] ]
+			else:
+				if returnPressure:
+					if a[0][0][0] == 160:
+						# the X returns button number AND pressure value
+						# adding 255 to make it possible to distinguish "pressed" from "pressure"
+						return [ 255 + a[0][0][1], a[0][0][2] ]
+					else:
+						return []
+				else:
+					return []
+		else:
+			return []

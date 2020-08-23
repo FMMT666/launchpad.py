@@ -41,7 +41,7 @@ What's hot, what's not?
 
     Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
-    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL++ as in "should work"
+    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL++ as in "should work quite well"
 
     Launch Control     - class "LaunchControl()"    EXPERIMENTAL
 
@@ -75,7 +75,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2020/08/XX:
     - added support for pressure events via ButtonStateRaw() for the Pro
+    - added support for pressure events via ButtonStateRaw() for the X
     - added demo file "launchpad_pressure.py" for pressure sensitivity
+    - updated pressure demo to work with the X too
     - added multiple search names for the X
     - updated all rgb-demos to work with the X
     - changed ListAll() method to optionally accept a string to query specific devices only
@@ -997,7 +999,7 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
 ### Button functions
 
-    ButtonStateRaw()
+    ButtonStateRaw( [returnPressure] )
     ButtonStateXY()
     ButtonFlush()
 
@@ -1820,18 +1822,31 @@ Functions requiring a color code have a "...ByCode" naming style.
 
     Only the Pro, X and (future) Mk3-Pro support pressure events.
     They can be enables by passing "returnPressure=True" to the method call.
-    The pressure events are returned with a fake <button> number of "255" and are
-    returned as [ 255, <value>].
+    Notice that the Pro and X behave differently:
+
+    Pro:
+      There is only one pressure value for all buttons together. If multiple buttons
+      are pressed, the biggest value is returned. There is no possibility to determine
+      which button caused it. To distinguish the pressure events from button events,
+      a fake <button> number of "255" is returned in the list: [ 255, <value>].
+
+    X:
+      The X supports multiple pressure values. For a distinction between button events
+      and pressure events, "255" is added to the button number:
+       [ 255 + <button>, <True/False> ]
 
       PARAMS:
       RETURN: [ ]                    An empty list if no event occured, otherwise...
-              [ <button>, <value> ]  ... a list with two fields:
-              <button> is the button number, the second field, <value> determines
-              the intensity (0..127) with which the button was pressed.
-              0 means that the button was released.
-              [ 255, <value> ]        ... a list of pressure events with two fields:
-              "255" as an indicator for a pressure event, andld, <value> determines
-              the intensity (0..127) of the pressure.
+              [ <button>, <value> ]            ... a list with two fields:
+                <button> is the button number (0..127), the second field, <value> determines
+                the intensity (0..127) with which the button was pressed.
+                0 means that the button was released.
+              [ 255, <value> ]                 ... PRO: a list of pressure events with two fields:
+                "255" as an indicator for a pressure event and <value> for the the intensity
+                of the pressure (0..127).
+              [ 255 + <button>, <value> ]      ... LPX: a list of pressure events with two fields:
+                "255" + the button numbericator for a pressure event and <value> for the intensity
+                of the pressure (0..127).
 
 
 ### ButtonStateXY( [mode] )
