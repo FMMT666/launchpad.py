@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# FMMT666(ASkr) 01/2013..09/2019..03/2020
+# FMMT666(ASkr) 01/2013..09/2019..08/2020
 # www.askrprojects.net
 #
 #
@@ -2731,3 +2731,149 @@ class LaunchpadLPX( LaunchpadPro ):
 					return []
 		else:
 			return []
+
+
+
+########################################################################################
+### CLASS MidiFighter64
+###
+### For Midi Fighter 64 Gedöns
+########################################################################################
+class MidiFighter64( LaunchpadBase ):
+
+	#         
+	# BUTTON NUMBERS IN RAW MODE
+	#         
+	#        +---+---+---+---+---+---+---+---+
+	#        | 64|   |   | 67| 96|   |   | 99|
+	#        +---+---+---+---+---+---+---+---+
+	#        | 60|   |   | 63| 92|   |   | 95|
+	#        +---+---+---+---+---+---+---+---+
+	#        | 56|   |   | 59| 88|   |   | 91|
+	#        +---+---+---+---+---+---+---+---+
+	#        | 52|   |   | 55| 84|   |   | 87|
+	#        +---+---+---+---+---+---+---+---+
+	#        | 48|   |   | 51| 80|   |   | 83|
+	#        +---+---+---+---+---+---+---+---+
+	#        | 44|   |   | 47| 76|   |   | 79|
+	#        +---+---+---+---+---+---+---+---+
+	#        | 40|   |   | 43| 72|   |   | 75|
+	#        +---+---+---+---+---+---+---+---+
+	#        | 36|   |   | 39| 68|   |   | 71|
+	#        +---+---+---+---+---+---+---+---+
+	#
+	#
+	# LED AND BUTTON NUMBERS IN XY MODE (X/Y)
+	#
+	#          0   1   2   3   4   5   6   7
+	#        +---+---+---+---+---+---+---+---+
+	#        |0/0|   |   |   |   |   |   |   | 0
+	#        +---+---+---+---+---+---+---+---+
+	#        |   |   |   |   |   |   |   |   | 1
+	#        +---+---+---+---+---+---+---+---+
+	#        |   |   |   |   |   |5/2|   |   | 2
+	#        +---+---+---+---+---+---+---+---+
+	#        |   |   |   |   |   |   |   |   | 3
+	#        +---+---+---+---+---+---+---+---+
+	#        |   |   |   |   |   |   |   |   | 4
+	#        +---+---+---+---+---+---+---+---+
+	#        |   |   |   |   |4/5|   |   |   | 5
+	#        +---+---+---+---+---+---+---+---+
+	#        |   |   |   |   |   |   |   |   | 6
+	#        +---+---+---+---+---+---+---+---+
+	#        |   |   |   |   |   |   |   |   | 7
+	#        +---+---+---+---+---+---+---+---+
+	#
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-- Uses search string "Fighter 64", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Open( self, number = 0, name = "Fighter 64" ):
+		return super( MidiFighter64, self ).Open( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "Fighter 64", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "Fighter 64" ):
+		return super( MidiFighter64, self ).Check( number = number, name = name )
+
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <button>, <velocity> ], in which <button> is the raw number of the button and
+	#-- <velocity> the button state.
+	#--   >0 = button pressed; 0 = button released
+	#-------------------------------------------------------------------------------------
+	def ButtonStateRaw( self ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+
+			# The Midi Fighter 64 does not support velocities. For 500 bucks. Lol :'-)
+			# What we see here are either channel 3 or 2 NoteOn/NoteOff commands,
+			# the factory settings, depending on the "bank selection".
+			#   Channel 3 -> hold upper left  button for longer than 2s
+			#   Channel 2 -> hold upper right button for longer than 2s
+			#
+			#    [[[146, 81, 127, 0], 47365]]
+			#    [[[130, 81, 127, 0], 47443]]
+			#    [[[146, 82, 127, 0], 47610]]
+			#
+			#    [[[ <NoteOn/Off>, <button>, 127, 0], 47610]]
+			#
+			#    146/145 -> NoteOn
+			#    130/129 -> NoteOff
+			#    127     -> fixed velocity (as set by the Midi Fighter utility )
+
+			# Mhh, I guess it's about time to think about adding MIDI channels, isn't it?
+			# But for now, we just check ch 2 and 3:
+			if a[0][0][0] == 145 or a[0][0][0] == 146:
+				return [ a[0][0][1], a[0][0][2] ]
+			else:
+				if a[0][0][0] == 130 or a[0][0][0] == 129:
+					return [ a[0][0][1], 0 ]
+				else:
+					return []
+		else:
+			return []
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <x>, <y>, <velocity> ], in which <x>/<y> are the coordinates of the grid and
+	#-- <velocity> the state of the button.
+	#--   >0 = button pressed; 0 = button released
+	#-------------------------------------------------------------------------------------
+	# TODO
+	# def ButtonStateXY( self ):
+	# 	if self.midi.ReadCheck():
+	# 		a = self.midi.ReadRaw()
+
+	# 		# Mhh, I guess it's about time to think about adding MIDI channels, isn't it?
+	# 		# But for now, we just check ch 2 and 3:
+	# 		if a[0][0][0] == 145 or a[0][0][0] == 146:
+	# 			return [ a[0][0][1], a[0][0][2] ]
+	# 		else:
+	# 			if a[0][0][0] == 130 or a[0][0][0] == 129:
+	# 				return [ a[0][0][1], 0 ]
+	# 			else:
+	# 				return []
+	# 	else:
+	# 		return []
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Reset the Midi Fighter
+	#-- Turn off all LEDs
+	#-------------------------------------------------------------------------------------
+	# TODO
+	def Reset( self ):
+		pass
+

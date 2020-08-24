@@ -23,6 +23,8 @@ Did we mention [Python 3][18] yet?
 
 First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
+Now with a bit of Midi Fighter 64 support (8/2020).
+
 
 ---
 ## STATUS 2020/08/xx:
@@ -50,6 +52,8 @@ What's hot, what's not?
     LaunchKey (Mini)   - class "LaunchKeyMini()"    Buttons, keys and potentiometers (sliders for big KBs), no LEDs
     
     Dicer              - class "Dicer()"            LEDs and buttons
+
+    Midi Fighter 64    - class "MidiFighter64"      EXPERIMENTAL; only raw buttons
 
 
 Please notice that the class "LaunchpadMk3()" was renamed to "LaunchpadMiniMk3()" in 5/2020.  
@@ -82,6 +86,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - updated all rgb-demos to work with the X
     - changed ListAll() method to optionally accept a string to query specific devices only
     - added a general midi_events.py demo file for better debugging
+    - added a class for the Midi Fighter 64, only (raw) buttons so far
 
 ### CHANGES 2020/05/XX:
 
@@ -756,6 +761,19 @@ So, if the "cue" page is active and you try to activate an LED in the "loop" pag
 will not be visible until you activate that page.
 
 
+### For Midi Fighter 64 users
+
+      USE CLASS "MidiFighter64":
+      
+        lp = launchpad.MidiFighter64()
+
+The Midi Fighter needs to be set to MIDI channel 3 (factory default).
+It does not matter which bank is selected, both are supported.
+
+Switching the banks does currently make no difference in button numbers or events.
+Drop me a note if it would make sense to change that ...
+
+
 ### alsa.conf issues
 
 Several users reported errors because of a missing alsa.conf file, e.g.:
@@ -1068,6 +1086,21 @@ Functions requiring a color code have a "...ByCode" naming style.
     LedSetLightshow()
     LedCtrlRaw()
     LedAllOff()
+
+
+### Button functions
+
+    ButtonStateRaw()
+
+
+---
+## Midi Fighter 64 class methods overview
+
+*WORK IN PROGESS*
+
+### LED functions
+
+    TODO
 
 
 ### Button functions
@@ -2171,6 +2204,23 @@ Functions requiring a color code have a "...ByCode" naming style.
       RETURN:
 
 
+
+---
+## Detailed description of Midi Fighter specific methods
+
+### ButtonStateRaw()
+
+    Returns the state of the buttons in RAW mode.
+
+      PARAMS:
+      RETURN: [ ]                        An empty list if no event occured, otherwise...
+              [ <button>, <value> ]      ... a list with two fields:
+                                         <button> is the RAW button number (see tables at end of doc)
+                                         <value>  >0 = pressed; 0 = released
+
+
+
+
 ---
 ## Button and LED codes, Launchpad Mk1 "Classic" (red/green LEDs)
 
@@ -2621,6 +2671,50 @@ The mode keys return:
      |#   #|                                            |     |
      +-----+                                            +-----+
 
+
+---
+## (TODO) Button codes, Midi Fighter 64
+
+### RAW Mode
+
+    +---+---+---+---+---+---+---+---+
+    | 64|   |   | 67| 96|   |   | 99|
+    +---+---+---+---+---+---+---+---+
+    | 60|   |   | 63| 92|   |   | 95|
+    +---+---+---+---+---+---+---+---+
+    | 56|   |   | 59| 88|   |   | 91|
+    +---+---+---+---+---+---+---+---+
+    | 52|   |   | 55| 84|   |   | 87|
+    +---+---+---+---+---+---+---+---+
+    | 48|   |   | 51| 80|   |   | 83|
+    +---+---+---+---+---+---+---+---+
+    | 44|   |   | 47| 76|   |   | 79|
+    +---+---+---+---+---+---+---+---+
+    | 40|   |   | 43| 72|   |   | 75|
+    +---+---+---+---+---+---+---+---+
+    | 36|   |   | 39| 68|   |   | 71|
+    +---+---+---+---+---+---+---+---+
+
+### X/Y Mode
+
+      0   1   2   3   4   5   6   7
+    +---+---+---+---+---+---+---+---+
+    |0/0|   |   |   |   |   |   |   | 0
+    +---+---+---+---+---+---+---+---+
+    |   |   |   |   |   |   |   |   | 1
+    +---+---+---+---+---+---+---+---+
+    |   |   |   |   |   |5/2|   |   | 2
+    +---+---+---+---+---+---+---+---+
+    |   |   |   |   |   |   |   |   | 3
+    +---+---+---+---+---+---+---+---+
+    |   |   |   |   |   |   |   |   | 4
+    +---+---+---+---+---+---+---+---+
+    |   |   |   |   |4/5|   |   |   | 5
+    +---+---+---+---+---+---+---+---+
+    |   |   |   |   |   |   |   |   | 6
+    +---+---+---+---+---+---+---+---+
+    |   |   |   |   |   |   |   |   | 7
+    +---+---+---+---+---+---+---+---+
 
 
 

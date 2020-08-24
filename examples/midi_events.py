@@ -5,8 +5,7 @@
 # Some restrictions apply:
 #  - This will only work if a device has an in- AND output, because the Launchpad
 #    classes always open both directions.
-#  - If multiple devices are attached or the search string returns more than one device,
-#    only the first one will be openend. Remove devices as necessary.
+#  - This will not work for devices which require an initialization, e.g. ProMk3, etc ...
 #  - Picking the wrong device might result in no output.
 #  - Quit with CTRL-C :)
 #

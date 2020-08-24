@@ -8,4 +8,5 @@ from launchpad_py.launchpad import LaunchKeyMini
 from launchpad_py.launchpad import Dicer
 from launchpad_py.launchpad import LaunchpadMiniMk3
 from launchpad_py.launchpad import LaunchpadLPX
+from launchpad_py.launchpad import MidiFighter64
 from launchpad_py import charset
