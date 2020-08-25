@@ -2742,7 +2742,7 @@ class LaunchpadLPX( LaunchpadPro ):
 class MidiFighter64( LaunchpadBase ):
 
 	#         
-	# BUTTON NUMBERS IN RAW MODE
+	# LED AND BUTTON NUMBERS IN RAW MODE
 	#         
 	#        +---+---+---+---+---+---+---+---+
 	#        | 64|   |   | 67| 96|   |   | 99|
@@ -2805,6 +2805,29 @@ class MidiFighter64( LaunchpadBase ):
 		return super( MidiFighter64, self ).Check( number = number, name = name )
 
 
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its <number> and a <color>.
+	#--  <number> 36..99
+	#--  <color>   0..127 from color table
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRaw( self, number, color ):
+
+		if number < 36 or number > 99:
+			return
+		if color  < 0  or color  > 127:
+			return
+
+		self.midi.RawWrite( 146, number, color )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Sets all LEDs to the same color, specified by <color>.
+	#-- If color is omitted, the LEDs are set to white (code 3)
+	#-------------------------------------------------------------------------------------
+	def LedAllOn( self, color = 3 ):
+		for i in range(64):
+			self.LedCtrlRaw( i+36, color )
+
 
 	#-------------------------------------------------------------------------------------
 	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
@@ -2851,29 +2874,39 @@ class MidiFighter64( LaunchpadBase ):
 	#-- <velocity> the state of the button.
 	#--   >0 = button pressed; 0 = button released
 	#-------------------------------------------------------------------------------------
-	# TODO
-	# def ButtonStateXY( self ):
-	# 	if self.midi.ReadCheck():
-	# 		a = self.midi.ReadRaw()
+	def ButtonStateXY( self ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
 
-	# 		# Mhh, I guess it's about time to think about adding MIDI channels, isn't it?
-	# 		# But for now, we just check ch 2 and 3:
-	# 		if a[0][0][0] == 145 or a[0][0][0] == 146:
-	# 			return [ a[0][0][1], a[0][0][2] ]
-	# 		else:
-	# 			if a[0][0][0] == 130 or a[0][0][0] == 129:
-	# 				return [ a[0][0][1], 0 ]
-	# 			else:
-	# 				return []
-	# 	else:
-	# 		return []
+			# whatever that is, does not belong here...
+			if a[0][0][1] < 36 or a[0][0][1] > 99:
+				return []
+
+			x = (a[0][0][1] - 36) % 4
+			if a[0][0][1] >= 68:
+				x += 4
+			y = 7 - ( (a[0][0][1] - 36) % 32 ) // 4
+
+			if a[0][0][0] == 145 or a[0][0][0] == 146:
+				return [ x, y, a[0][0][2] ]
+			else:
+				if a[0][0][0] == 130 or a[0][0][0] == 129:
+					return [ x, y, 0 ]
+				else:
+					return []
+		else:
+			return []
 
 
 	#-------------------------------------------------------------------------------------
 	#-- Reset the Midi Fighter
-	#-- Turn off all LEDs
+	#-- Well, at least turn off all its LEDs
 	#-------------------------------------------------------------------------------------
-	# TODO
 	def Reset( self ):
+		# TODO
+		# Nope, there's not color code for "off".
+		# Brightness can be set via channel 4, though it's not clear
+		# if that helps us here, as the manual files this under "animation settings".
+		# Also, setting the brightness to 0/off might cause additional trouble.
+		# self.LedAllOn( 0 ) 
 		pass
-

@@ -23,7 +23,7 @@ Did we mention [Python 3][18] yet?
 
 First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
-Now with a bit of Midi Fighter 64 support (8/2020).
+Now with a bit of [Midi Fighter 64][23] support (8/2020).
 
 
 ---
@@ -53,7 +53,7 @@ What's hot, what's not?
     
     Dicer              - class "Dicer()"            LEDs and buttons
 
-    Midi Fighter 64    - class "MidiFighter64"      EXPERIMENTAL; only raw buttons
+    Midi Fighter 64    - class "MidiFighter64"      EXPERIMENTAL; LEDs and buttons; growing
 
 
 Please notice that the class "LaunchpadMk3()" was renamed to "LaunchpadMiniMk3()" in 5/2020.  
@@ -87,6 +87,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - changed ListAll() method to optionally accept a string to query specific devices only
     - added a general midi_events.py demo file for better debugging
     - added a class for the Midi Fighter 64, only (raw) buttons so far
+    - added MF64 LedCtrlRaw(), ButtonStateXY(), LedAllOn()
 
 ### CHANGES 2020/05/XX:
 
@@ -1100,12 +1101,22 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 ### LED functions
 
-    TODO
+    LedCtrlRaw()
+    LedAllOn()
 
 
 ### Button functions
 
     ButtonStateRaw()
+    ButtonStateXY()
+
+
+### Color codes
+
+The Midi Fighter 64 only supports a color table.  
+There is no possibility to control the RGB LEDs individually.yle.
+
+![RGB color palette](/images/mf64_colorcodes.png)
 
 
 
@@ -2211,13 +2222,47 @@ Functions requiring a color code have a "...ByCode" naming style.
 ### ButtonStateRaw()
 
     Returns the state of the buttons in RAW mode.
+    See table with button and LED numbers at the end of this document.
 
       PARAMS:
       RETURN: [ ]                        An empty list if no event occured, otherwise...
               [ <button>, <value> ]      ... a list with two fields:
-                                         <button> is the RAW button number (see tables at end of doc)
+                                         <button> is the RAW button number
                                          <value>  >0 = pressed; 0 = released
 
+
+### ButtonStateXY()
+
+    Returns the state of the buttons in X/Y mode.
+    See table with coordinates at the end of this document.
+
+      PARAMS:
+      RETURN: [ ]                        An empty list if no event occured, otherwise...
+              [ <x> , <y>, <value> ]     ... a list with three fields:
+                                         <x>      0..7; x coordinate of button
+                                         <y>      0..7; y coordinate of button
+                                         <value>  >0 = pressed; 0 = released
+
+
+### LedCtrlRaw( <button>, <colorcode> )
+
+    Controls an LED via its number <button> and <colorcode>.
+    See table with button number at the end of this document.
+    Color codes are somewhere above (see image).
+
+      PARAMS: <button>      36..99; number of the LED to control
+              <colorcode>   0..127; color code
+      RETURN:
+
+
+### LedAllOn( <colorcode> )
+
+    Quickly sets all LEDs to white or a given <colorcode>.
+    Notice that it is not (yet) possible to turn the LEDs off.
+    The Midi Fighter's color table does not include "black" or off.
+
+      PARAMS: <colorcode>   0..127; color code
+      RETURN:
 
 
 
@@ -2673,7 +2718,7 @@ The mode keys return:
 
 
 ---
-## (TODO) Button codes, Midi Fighter 64
+## (TODO) Led and Button codes, Midi Fighter 64
 
 ### RAW Mode
 
@@ -2746,4 +2791,4 @@ FMMT666(ASkr)
 [20]: https://github.com/FMMT666/launchpad.py/issues/38#issuecomment-519698406
 [21]: https://twitter.com/FMMT666/status/1242950069923520519
 [22]: https://twitter.com/FMMT666/status/1242978460454326272
-
+[23]: https://twitter.com/FMMT666/status/1298372859383906305
