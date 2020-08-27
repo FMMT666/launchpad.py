@@ -23,7 +23,7 @@ Did we mention [Python 3][18] yet?
 
 First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
-Now with a bit of [Midi Fighter 64][23] support (8/2020).
+Now with [Midi Fighter 64][23] support (8/2020).
 
 
 ---
@@ -53,7 +53,7 @@ What's hot, what's not?
     
     Dicer              - class "Dicer()"            LEDs and buttons
 
-    Midi Fighter 64    - class "MidiFighter64"      EXPERIMENTAL; LEDs and buttons; growing
+    Midi Fighter 64    - class "MidiFighter64"      EXPERIMENTAL; LEDs and buttons
 
 
 Please notice that the class "LaunchpadMk3()" was renamed to "LaunchpadMiniMk3()" in 5/2020.  
@@ -88,6 +88,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - added a general midi_events.py demo file for better debugging
     - added a class for the Midi Fighter 64, only (raw) buttons so far
     - added MF64 LedCtrlRaw(), ButtonStateXY(), LedAllOn()
+    - added MF64 LedCtrlXY()
 
 ### CHANGES 2020/05/XX:
 
@@ -1102,6 +1103,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 ### LED functions
 
     LedCtrlRaw()
+    LedCtrlXY()
     LedAllOn()
 
 
@@ -2244,13 +2246,25 @@ There is no possibility to control the RGB LEDs individually.yle.
                                          <value>  >0 = pressed; 0 = released
 
 
-### LedCtrlRaw( <button>, <colorcode> )
+### LedCtrlRaw( <led>, <colorcode> )
 
     Controls an LED via its number <button> and <colorcode>.
     See table with button number at the end of this document.
     Color codes are somewhere above (see image).
 
-      PARAMS: <button>      36..99; number of the LED to control
+      PARAMS: <led>         36..99; number of the LED to control
+              <colorcode>   0..127; color code
+      RETURN:
+
+
+### LedCtrlXY( <x>, <y>, <colorcode> )
+
+    Controls an LED via its coordinates <x>/<y> and a <colorcode>.
+    See table with coordinates at the end of this document.
+    Color codes are somewhere above (see image).
+
+      PARAMS: <x>           0..7; x coordinate
+              <y>           0..7; y coordinate
               <colorcode>   0..127; color code
       RETURN:
 

@@ -2821,6 +2821,30 @@ class MidiFighter64( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its <x>/<y> coordinates and a <color>.
+	#--  <x>/<y>  0..7
+	#--  <color>  0..127 from color table
+	#-------------------------------------------------------------------------------------
+	def LedCtrlXY( self, x, y, color ):
+
+		if x < 0 or x > 7:
+			return
+		if y < 0 or y > 7:
+			return
+		if color  < 0  or color  > 127:
+			return
+
+		if x < 4:
+			number = 36 + x % 4
+		else:
+			number = 68 + x % 4
+		
+		number += (7-y) * 4
+
+		self.midi.RawWrite( 146, number, color )
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Sets all LEDs to the same color, specified by <color>.
 	#-- If color is omitted, the LEDs are set to white (code 3)
 	#-------------------------------------------------------------------------------------
