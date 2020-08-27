@@ -23,7 +23,7 @@ Did we mention [Python 3][18] yet?
 
 First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
-Now with [Midi Fighter 64][23] support (8/2020).
+Now with (some) [Midi Fighter 64][23] support (8/2020).
 
 
 ---
@@ -274,8 +274,12 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ---
 ## Upcoming attractions, notes and thoughts
 
-  - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
+  - "All": New, officially recommended device selection code in all demo files
+  - "M64": RGB to color code mapping
+  - "M64": Add character and string methods for the Midi Fighter (requires RGB)
   - "All": RGB to color code approximation (for flash/pulse and color code methods)
+  - "Pro": Finally add the Mk3Pro (has problems!)
+  - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
   - "DCR": query mode
   - "All": native scrolling for RGB pads
   - "CXL": x/y support (if it makes sense...)

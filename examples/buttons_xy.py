@@ -83,7 +83,7 @@ def main():
 		print("Did not find any Launchpads, meh...")
 		return
 
-    print("QUIT: That's on the TODO list. For now, just hit CTRL-C ...")
+	print("QUIT: That's on the TODO list. For now, just hit CTRL-C ...")
 
 	while True:
 		buts = lp.ButtonStateXY()
