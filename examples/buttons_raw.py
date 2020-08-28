@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Quick button test.
-# Works with these Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro
+# Works with these Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro, Pro Mk3
 # And these:                   Midi Figther 64
 # 
 #
@@ -31,6 +31,12 @@ def main():
 		if lp.Open( 0 ):
 			print("Launchpad Pro")
 			mode = "Pro"
+
+	elif launchpad.LaunchpadProMk3().Check( 0 ):
+		lp = launchpad.LaunchpadProMk3()
+		if lp.Open( 0 ):
+			print("Launchpad Pro Mk3")
+			mode = "ProMk3"
 	
 	elif launchpad.LaunchpadMiniMk3().Check( 1 ):
 		lp = launchpad.LaunchpadMiniMk3()

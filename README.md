@@ -25,6 +25,7 @@ First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
 Now with (some) [Midi Fighter 64][23] support (8/2020).
 
+Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)  
 
 ---
 ## STATUS 2020/08/xx:
@@ -41,6 +42,8 @@ What's hot, what's not?
 
     Launchpad Pro      - class "LaunchpadPro()"     LEDs and buttons (digitally only (yet))
 
+    Launchpad Pro      - class "LaunchpadProMk3()"  EXPERIMENTAL
+
     Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
     Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL++ as in "should work quite well"
@@ -56,8 +59,16 @@ What's hot, what's not?
     Midi Fighter 64    - class "MidiFighter64"      EXPERIMENTAL; LEDs and buttons
 
 
+> PRO MK3 USERS:  
+> You need to disable the Launchpad's "Transmit Clock" in the MIDI settings!  
+> See section "For Launchpad Pro Mk3 users"  
+>  
+> Also, every program shall end with either calling lp.Close() or calling  
+> lp.SetLedMode( 0 ), to switch back to the Live mode.  
+
 Please notice that the class "LaunchpadMk3()" was renamed to "LaunchpadMiniMk3()" in 5/2020.  
 This was necessary to avoid confusion with the device search string and the new "Pro-Mk3" Launchpad.  
+The "Pro Mk3" now is in LaunchpadProMk3().
 
 Please notice the changes in methods "Open()" and "Check()" for the Mini Mk3 and X.  
 Also, see demo files "hello.py" or "launchpad_rgb.py" as a reference on how to use them.
@@ -89,6 +100,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - added a class for the Midi Fighter 64, only (raw) buttons so far
     - added MF64 LedCtrlRaw(), ButtonStateXY(), LedAllOn()
     - added MF64 LedCtrlXY()
+    - added support for the Launchpad Pro Mk3
+    - updated some demos to work with the Pro
+
 
 ### CHANGES 2020/05/XX:
 
@@ -274,6 +288,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ---
 ## Upcoming attractions, notes and thoughts
 
+  - "PK3": the Pro Mk3 has some issues; needs to be fixed
   - "All": New, officially recommended device selection code in all demo files
   - "M64": RGB to color code mapping
   - "M64": Add character and string methods for the Midi Fighter (requires RGB)
@@ -711,6 +726,19 @@ name it once shipped the first red/green LED with!
       As of 2016/01/24, the "Pro" is now automatically set to "Ableton Live mode",
       which is required for launchpad.py to work.
 
+### For Launchpad Pro Mk3 users
+
+      USE CLASS "LaunchpadProMk3":
+      
+        lp = launchpad.LaunchpadProMk3()
+        
+      You need to disable the "Transmit Clock" in the Launchpad settings!
+      Hold "Setup" and disable the 2nd LED from the left (must be red).
+
+![RGB color palette](/images/promk3_transmit.png)
+
+      Otherwise you will be spammed by pressure events!
+
 ### For Launchpad Mk2 users
 
       USE CLASS "LaunchpadMk2":
@@ -1000,7 +1028,9 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 
 
 ---
-## Launchpad "Mk2/3", "Pro" and "X" class methods overview (valid for RGB LED devices)
+## Launchpad "Mk2/3", "Pro", "Pro Mk3" and "X" class methods overview (valid for RGB LED devices)
+
+Please notice that the Mk3 does not yet have all of these.
 
 ### LED functions
 
@@ -2536,6 +2566,12 @@ There is no possibility to control the RGB LEDs individually.yle.
 
 
 ---
+## Button and LED codes, Launchpad "Pro Mk3" (RGB LEDs)
+
+TODO TODO TODO TODO
+
+
+---
 ## Buttons, LED and potentiometer codes, Launch Control
 
 Notice that the two "Templates" buttons on the top right cannot be controlled (NOP).
@@ -2810,3 +2846,4 @@ FMMT666(ASkr)
 [21]: https://twitter.com/FMMT666/status/1242950069923520519
 [22]: https://twitter.com/FMMT666/status/1242978460454326272
 [23]: https://twitter.com/FMMT666/status/1298372859383906305
+[24]: https://twitter.com/FMMT666/status/1299478117497688073

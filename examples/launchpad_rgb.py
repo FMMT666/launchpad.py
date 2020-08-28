@@ -66,6 +66,15 @@ def main():
 			print( " - Launchpad Pro: ERROR")
 			return
 
+	# try the first Pro Mk3
+	elif lp.Check( 0, "promk3" ):
+		lp = launchpad.LaunchpadProMk3()
+		if lp.Open( 0 ):
+			print( " - Launchpad Pro Mk3: OK" )
+		else:
+			print( " - Launchpad Pro Mk3: ERROR")
+			return
+
 	# try the first X
 	# Notice that this is already built-in in the LPX class' methods Check() and Open,
 	# but we're using the one from above!

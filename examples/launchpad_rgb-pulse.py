@@ -35,12 +35,13 @@ def main():
 		if lp.Open(0,"pad pro"):
 			print("Launchpad Pro")
 			mode = "Pro"
+
+	elif lp.Check( 0, "promk3" ):
+		lp = launchpad.LaunchpadProMk3()
+		if lp.Open( 0 ):
+			print("Launchpad Pro Mk3")
+			mode = "ProMk3"
 			
-	elif lp.Check( 0, "mk2" ):
-		lp = launchpad.LaunchpadMk2()
-		if lp.Open( 0, "mk2" ):
-			print("Launchpad Mk2")
-			mode = "Mk2"
 
 	elif lp.Check( 1, "minimk3" ):
 		lp = launchpad.LaunchpadMiniMk3()

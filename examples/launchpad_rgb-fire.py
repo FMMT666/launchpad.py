@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Launchpad Fire Demo for Mk2, Mini Mk3, Pro, X
+# Launchpad Fire Demo for Mk2, Mini Mk3, Pro, X, Pro Mk3
 # 
 #
 # FMMT666(ASkr) 7/2013..8/2020
@@ -329,6 +329,16 @@ class LpDisplay():
 				print( " - Launchpad Pro: ERROR")
 				return
 
+		# try the first Pro Mk3
+		elif lp.Check( 0, "mk3" ):
+			lp = launchpad.LaunchpadProMk3()
+			if lp.Open( 0 ):
+				print( " - Launchpad Pro Mk3: OK" )
+				self.mode = "promk3"
+			else:
+				print( " - Launchpad Pro Mk3: ERROR")
+				return
+
 		# try the first X
 		# Notice that this is already built-in in the LPX class' methods Check() and Open,
 		# but we're using the one from above!
@@ -348,6 +358,13 @@ class LpDisplay():
 
 		self.lp = lp
 
+
+	#-------------------------------------------------------------------------------------
+	#-- 
+	#-------------------------------------------------------------------------------------
+	def Close( self ):
+		if self.mode == "promk3":
+			self.lp.LedSetMode( 0 )
 
 
 	#-------------------------------------------------------------------------------------
@@ -398,7 +415,7 @@ class LpDisplay():
 	#-- 
 	#-------------------------------------------------------------------------------------
 	def ButtonGet( self ):
-		if self.mode == "pro":
+		if self.mode == "pro" or self.mode == "promk3":
 			return self.lp.ButtonStateXY( mode = "pro" )
 		elif self.mode == "mk3" or self.mode == "lpx":
 			return self.lp.ButtonStateXY( mode = "classic" )
@@ -467,3 +484,5 @@ if __name__ == '__main__':
 				break
 
 	lpDis.Clear()
+	lpDis.Close()
+

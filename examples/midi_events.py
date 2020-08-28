@@ -72,6 +72,10 @@ def main():
 	print("===")
 	print("Now hit the keys, turn the knobs or push the buttons:")
 
+	# DEBUG STUFF
+	# lp.midi.RawWriteSysEx( [ 0, 32, 41, 2, 14, 14, 1 ] )  # Pro Mk3 programmer's mode ON
+	# lp.midi.RawWriteSysEx( [ 0, 32, 41, 2, 14, 14, 0 ] )  # Pro Mk3 programmer's mode OFF (Live mode)
+
 	while(True):
 		events = lp.EventRaw()
 		if events != []:

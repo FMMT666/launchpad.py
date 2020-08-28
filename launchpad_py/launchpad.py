@@ -164,7 +164,12 @@ class Midi:
 		# There's a bug in PyGame's (Python 3) list-type message handling, so as a workaround,
 		# we'll use the string-type message instead...
 		#self.devOut.write_sys_ex( timeStamp, [0xf0] + lstMessage + [0xf7] ) # old Python 2
+
 		self.devOut.write_sys_ex( timeStamp, array.array('B', [0xf0] + lstMessage + [0xf7] ).tostring() )
+
+		# TODO
+		# as of now (~2020) tostring() is deprecated, so this will probably be the future (needs testing):
+#		self.devOut.write_sys_ex( timeStamp, array.array('B', [0xf0] + lstMessage + [0xf7] ).tobytes() )
 
 
 
@@ -785,14 +790,6 @@ class LaunchpadPro( LaunchpadBase ):
 			
 		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 16, 33, mode ] )
 		time.wait(10)
-
-
-	#-------------------------------------------------------------------------------------
-	#-- Sets the button layout to "Session" mode.
-	#-------------------------------------------------------------------------------------
-	# TODO: ASkr, Undocumented!
-	def LedSetButtonLayoutSession( self ):
-		self.LedSetLayout( 0 )
 
 
 	#-------------------------------------------------------------------------------------
@@ -2935,11 +2932,17 @@ class MidiFighter64( LaunchpadBase ):
 		# self.LedAllOn( 0 ) 
 		pass
 
+
+
 ########################################################################################
 ### CLASS LaunchpadPROMk3
 ###
-### For 3-color "X" Launchpads
+### For 3-color Pro Mk3 Launchpads
 ########################################################################################
+class LaunchpadProMk3( LaunchpadPro ):
+	#
+	# LED AND BUTTON NUMBERS IN RAW MODE
+	#
 	# +---+  +---+---+---+---+---+---+---+---+  +---+
 	# | 90|  | 91|   |   |   |   |   |   | 98|  | 99|
 	# +---+  +---+---+---+---+---+---+---+---+  +---+
@@ -2968,10 +2971,11 @@ class MidiFighter64( LaunchpadBase ):
 	#        +---+---+---+---+---+---+---+---+ 
 	#        |  1|  2|   |   |   |   |   |  8|
 	#        +---+---+---+---+---+---+---+---+ 
-class LaunchpadProMk3( LaunchpadPro ):
+	#
+	# LED AND BUTTON NUMBERS IN X/Y MODE
+	#
+	# TODO ...
 	
-#	COLORS = {'black':0, 'off':0, 'white':3, 'red':5, 'green':17 }
-
 	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Launchpad MIDI devices.
 	#-- Uses search string "ProMK3", by default.
@@ -2981,8 +2985,8 @@ class LaunchpadProMk3( LaunchpadPro ):
 	def Open( self, number = 0, name = "ProMk3" ):
 		retval = super( LaunchpadProMk3, self ).Open( number = number, name = name )
 		if retval == True:
+			# enable Programmer's mode
 			self.LedSetMode( 1 )
-
 		return retval
 
 
@@ -2991,29 +2995,9 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#-- Does not check whether a device is in use or other, strange things...
 	#-- Uses search string "ProMk3", by default.
 	#-------------------------------------------------------------------------------------
-	# Overrides "LaunchpadBase" method
+	# Overrides "LaunchpadPro" method
 	def Check( self, number = 0, name = "ProMk3" ):
 		return super( LaunchpadProMk3, self ).Check( number = number, name = name )
-
-
-	#-------------------------------------------------------------------------------------
-	#-- Sets the button layout (and codes) to the set, specified by <mode>.
-	#-- Valid options:
-	#--  00 - Session, 01 - Fader, 02 - Chord, 03 - Custom Mode, 
-	#--  04 - Note / Drum, 05 - Scale Settings, 06 - Sequencer Settings, 07 - Sequencer Steps, 
-	#--  08 - Sequencer Velocity, 09 - Sequencer Pattern Settings, 0A - Sequencer Probability, 0B - Sequencer Mutation, 
-	#--  0C - Sequencer Micro Step, 0D - Sequencer Projects, 0E - Sequencer Patterns, 0F - Sequencer Tempo, 
-	#--  10 - Sequencer Swing, 11 - Programmer Mode, 12 - Settings Menu, 13 - Custom mode Settings, 
-	#-------------------------------------------------------------------------------------
-	# TODO: ASkr, Undocumented!
-	# TODO: return value
-	def LedSetLayout( self, mode ):
-		ValidModes = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13]
-		if mode not in ValidModes:
-			return
-		
-		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 14, 0, mode ] )
-		time.wait(10)
 
 
 	#-------------------------------------------------------------------------------------
@@ -3026,15 +3010,7 @@ class LaunchpadProMk3( LaunchpadPro ):
 			return
 			
 		self.midi.RawWriteSysEx( [ 0, 32, 41, 2, 14, 14, mode ] )
-		time.wait(10)
-
-
-	#-------------------------------------------------------------------------------------
-	#-- Sets the button layout to "Session" mode.
-	#-------------------------------------------------------------------------------------
-	# TODO: ASkr, Undocumented!
-	def LedSetButtonLayoutSession( self ):
-		self.LedSetLayout( 0 )
+		time.wait(100)
 
 
 	#-------------------------------------------------------------------------------------
@@ -3119,6 +3095,7 @@ class LaunchpadProMk3( LaunchpadPro ):
 		#         Linux:   completely freaks out
 		for x in range(9):
 			for y in range(9):
+				# TODO
 				self.midi.RawWrite(144, (x + 1) + ((y + 1) * 10), colorcode)
 
 
@@ -3135,6 +3112,8 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#-- Otherwise Launchpad will stuck in programmer mode
 	#-------------------------------------------------------------------------------------
 	def Close( self ):
+		# re-enter Live mode
+		self.LedSetMode( 0 )
 		# TODO: redundant (but needs fix for Py2 embedded anyway)
-		self.midi.CloseInput()
-		self.midi.CloseOutput()
+		# self.midi.CloseInput()
+		# self.midi.CloseOutput()

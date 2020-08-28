@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Quick button test.
-# Works with these Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro
+# Works with these Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro, Pro Mk3
 # And these:                   Midi Figther 64
 # 
 #
@@ -31,7 +31,13 @@ def main():
 		if lp.Open( 0 ):
 			print("Launchpad Pro")
 			mode = "Pro"
-	
+
+	elif launchpad.LaunchpadProMk3().Check( 0 ):
+		lp = launchpad.LaunchpadProMk3()
+		if lp.Open( 0 ):
+			print("Launchpad Pro Mk3")
+			mode = "ProMk3"
+
 	elif launchpad.LaunchpadMiniMk3().Check( 1 ):
 		lp = launchpad.LaunchpadMiniMk3()
 		if lp.Open( 1 ):
@@ -74,8 +80,9 @@ def main():
 			print("Midi Fighter 64")
 			mode = "F64"
 
-	else:
-		if lp.Open():
+	elif launchpad.Launchpad().Check( 0 ):
+		lp = launchpad.Launchpad()
+		if lp.Open( 0 ):
 			print("Launchpad Mk1/S/Mini")
 			mode = "Mk1"
 
@@ -83,12 +90,23 @@ def main():
 		print("Did not find any Launchpads, meh...")
 		return
 
-	print("QUIT: That's on the TODO list. For now, just hit CTRL-C ...")
+	print("QUIT: Push a single button for longer than 3s and release it.")
 
+	lastBut = (-99,-99)
+	tStart = time.time()
 	while True:
 		buts = lp.ButtonStateXY()
 		if buts != []:
-			print( buts[0], buts[1], buts[2])
+			print( buts[0], buts[1], buts[2] )
+
+			# quit?
+			if buts[2] > 0:
+				lastBut = ( buts[0], buts[1] )
+				tStart = time.time()
+			else:
+				if lastBut == ( buts[0], buts[1] ) and (time.time() - tStart) > 2:
+					break
+
 
 	print("bye ...")
 
