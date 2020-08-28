@@ -2846,4 +2846,4 @@ FMMT666(ASkr)
 [21]: https://twitter.com/FMMT666/status/1242950069923520519
 [22]: https://twitter.com/FMMT666/status/1242978460454326272
 [23]: https://twitter.com/FMMT666/status/1298372859383906305
-[24]: https://twitter.com/FMMT666/status/1299478117497688073
+[24]: https://twitter.com/i/status/1299478117497688073
