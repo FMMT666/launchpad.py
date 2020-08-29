@@ -42,7 +42,7 @@ What's hot, what's not?
 
     Launchpad Pro      - class "LaunchpadPro()"     LEDs and buttons (digitally only (yet))
 
-    Launchpad Pro      - class "LaunchpadProMk3()"  EXPERIMENTAL
+    Launchpad Pro      - class "LaunchpadProMk3()"  EXPERIMENTAL++ as in "some issues, but ok"
 
     Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
@@ -89,7 +89,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ## NEWS
 
 ### CHANGES 2020/08/XX:
-    - added support for pressure events via ButtonStateRaw() for the Pro
+    - added support for pressure events via ButtonStateRaw() for the Pro and Pro Mk3
     - added support for pressure events via ButtonStateRaw() for the X
     - added demo file "launchpad_pressure.py" for pressure sensitivity
     - updated pressure demo to work with the X too
@@ -101,7 +101,12 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - added MF64 LedCtrlRaw(), ButtonStateXY(), LedAllOn()
     - added MF64 LedCtrlXY()
     - added support for the Launchpad Pro Mk3
-    - updated some demos to work with the Pro
+    - updated some demos to work with the Pro Mk3
+    - updated even some demos to work with the Pro Mk3
+    - updated yet some more demos and eliminated some bug
+    - updated pressure event handling in the Pro, Pro Mk3 and X's ButtonStateXY() methods
+    - added a Pro Mk3 "reset to Live mode" demo file
+    - updated ButtonStateXY() for the Pro Mk3, incl "classic" and "Pro" mode
 
 
 ### CHANGES 2020/05/XX:
@@ -289,9 +294,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ## Upcoming attractions, notes and thoughts
 
   - "PK3": the Pro Mk3 has some issues; needs to be fixed
+  - "All": optionally pressure events also for ButtonStateXY(); Pro, Pro Mk3, X
+  - "All": optionally avoid resetting the X and Pro Mk3 to Live mode in Close(); (bc LEDs turn on)
   - "All": New, officially recommended device selection code in all demo files
-  - "M64": RGB to color code mapping
-  - "M64": Add character and string methods for the Midi Fighter (requires RGB)
+  - "M64": Add character and string methods for the Midi Fighter
   - "All": RGB to color code approximation (for flash/pulse and color code methods)
   - "Pro": Finally add the Mk3Pro (has problems!)
   - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
@@ -313,6 +319,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
   - "All": [r,g,b] lists for colors, instead of single args (might affect compatibility)
   - ...
 
+## cancelled:
+
+  - "M64": RGB to color code mapping *NOPE* This does not work.
 
 ---
 ## Installation/Usage
@@ -737,7 +746,7 @@ name it once shipped the first red/green LED with!
 
 ![RGB color palette](/images/promk3_transmit.png)
 
-      Otherwise you will be spammed by pressure events!
+      Otherwise the receive buffer will be spammed with messages.
 
 ### For Launchpad Mk2 users
 
@@ -1900,11 +1909,11 @@ There is no possibility to control the RGB LEDs individually.yle.
     Notice that this is not directly compatible with the "Mk1" ButtonStateRaw()
     method, which returns [ <button>, <True/False> ].
 
-    Only the Pro, X and (future) Mk3-Pro support pressure events.
+    Only the Pro, X and Pro Mk3 support pressure events.
     They can be enables by passing "returnPressure=True" to the method call.
     Notice that the Pro and X behave differently:
 
-    Pro:
+    Pro and Pro Mk3:
       There is only one pressure value for all buttons together. If multiple buttons
       are pressed, the biggest value is returned. There is no possibility to determine
       which button caused it. To distinguish the pressure events from button events,
@@ -2568,7 +2577,100 @@ There is no possibility to control the RGB LEDs individually.yle.
 ---
 ## Button and LED codes, Launchpad "Pro Mk3" (RGB LEDs)
 
-TODO TODO TODO TODO
+### LED and and button numbers in RAW mode
+
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 90|  | 91|   |   |   |   |   |   | 98|  | 99|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+            
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 80|  | 81|   |   |   |   |   |   |   |  | 89|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 70|  |   |   |   |   |   |   |   |   |  | 79|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 60|  |   |   |   |   |   |   | 67|   |  | 69|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 50|  |   |   |   |   |   |   |   |   |  | 59|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 40|  |   |   |   |   |   |   |   |   |  | 49|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 30|  |   |   |   |   |   |   |   |   |  | 39|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 20|  |   |   | 23|   |   |   |   |   |  | 29|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    | 10|  |   |   |   |   |   |   |   |   |  | 19|
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+          
+           +---+---+---+---+---+---+---+---+ 
+           |101|102|   |   |   |   |   |108|
+           +---+---+---+---+---+---+---+---+ 
+           +---+---+---+---+---+---+---+---+ 
+           |  1|  2|   |   |   |   |   |  8|
+           +---+---+---+---+---+---+---+---+ 
+
+
+### LED and and button numbers in X/Y (classic) mode
+
+      9      0   1   2   3   4   5   6   7      8   
+           +---+---+---+---+---+---+---+---+ 
+           |0/0|   |2/0|   |   |   |   |   |         0
+           +---+---+---+---+---+---+---+---+ 
+            
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |0/1|   |   |   |   |   |   |   |  |   |  1
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |9/2|  |   |   |   |   |   |   |   |   |  |   |  2
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |5/3|   |   |  |   |  3
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  4
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  5
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |4/6|   |   |   |  |   |  6
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  7
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |9/8|  |   |   |   |   |   |   |   |   |  |8/8|  8
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+          
+           +---+---+---+---+---+---+---+---+ 
+           |   |1/9|   |   |   |   |   |   |         9
+           +---+---+---+---+---+---+---+---+ 
+           |/10|   |   |   |   |   |   |   |        10
+           +---+---+---+---+---+---+---+---+ 
+
+### LED and and button numbers in X/Y (pro) mode
+
+      0      1   2   3   4   5   6   7   8      9
+           +---+---+---+---+---+---+---+---+ 
+           |1/0|   |3/0|   |   |   |   |   |         0
+           +---+---+---+---+---+---+---+---+ 
+            
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |1/1|   |   |   |   |   |   |   |  |   |  1
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |0/2|  |   |   |   |   |   |   |   |   |  |   |  2
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |6/3|   |   |  |   |  3
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  4
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  5
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |5/6|   |   |   |  |   |  6
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |   |  |   |   |   |   |   |   |   |   |  |   |  7
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+    |0/8|  |   |   |   |   |   |   |   |   |  |9/8|  8
+    +---+  +---+---+---+---+---+---+---+---+  +---+
+          
+           +---+---+---+---+---+---+---+---+ 
+           |   |2/9|   |   |   |   |   |8/9|         9
+           +---+---+---+---+---+---+---+---+ 
+           |   |   |   |   |   |   |   |/10|        10
+           +---+---+---+---+---+---+---+---+ 
+
 
 
 ---
@@ -2846,4 +2948,4 @@ FMMT666(ASkr)
 [21]: https://twitter.com/FMMT666/status/1242950069923520519
 [22]: https://twitter.com/FMMT666/status/1242978460454326272
 [23]: https://twitter.com/FMMT666/status/1298372859383906305
-[24]: https://twitter.com/i/status/1299478117497688073
+[24]: https://twitter.com/FMMT666/status/1299478117497688073

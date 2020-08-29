@@ -42,13 +42,13 @@ def main():
 		lp = launchpad.LaunchpadMiniMk3()
 		if lp.Open( 1 ):
 			print("Launchpad Mini Mk3")
-			mode = "Pro"
+			mode = "MiniMk3"
 
 	elif launchpad.LaunchpadLPX().Check( 1 ):
 		lp = launchpad.LaunchpadLPX()
 		if lp.Open( 1 ):
 			print("Launchpad X")
-			mode = "Pro"
+			mode = "LPX"
 			
 	elif launchpad.LaunchpadMk2().Check( 0 ):
 		lp = launchpad.LaunchpadMk2()
@@ -95,7 +95,11 @@ def main():
 	lastBut = (-99,-99)
 	tStart = time.time()
 	while True:
-		buts = lp.ButtonStateXY()
+		if mode == 'Pro' or mode == 'ProMk3':
+			buts = lp.ButtonStateXY( mode = 'pro')
+		else:
+			buts = lp.ButtonStateXY()
+
 		if buts != []:
 			print( buts[0], buts[1], buts[2] )
 

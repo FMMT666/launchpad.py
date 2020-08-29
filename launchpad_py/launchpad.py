@@ -1168,8 +1168,14 @@ class LaunchpadPro( LaunchpadBase ):
 			#   [[[144, 55, 0, 0], 654614]]    button released ("NoteOn with vel == 0")
 			# When multiple buttons are pressed (hold), the biggest number will be returned.
 			#
+			# Copied over from the XY method.
+			# Try to avoid getting flooded with pressure events
+			if returnPressure == False:
+				while a[0][0][0] == 208:
+					a = self.midi.ReadRaw()
+					if a == []:
+						return []
 
-			
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 				return [ a[0][0][1], a[0][0][2] ]
 			else:
@@ -1202,6 +1208,11 @@ class LaunchpadPro( LaunchpadBase ):
 			# Pressing and not releasing a button will create hundreds of "pressure value" (208)
 			# events. Because we don't handle them here (yet), polling to slowly might create
 			# very long lags...
+			# 8/2020: Try to mitigate that a bit (yep, seems to work fine!)
+			while a[0][0][0] == 208:
+				a = self.midi.ReadRaw()
+				if a == []:
+					return []
 
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 			
@@ -2713,7 +2724,15 @@ class LaunchpadLPX( LaunchpadPro ):
 	def ButtonStateRaw( self, returnPressure = False ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
-			
+
+			# Copied over from the Pro's method.
+			# Try to avoid getting flooded with pressure events
+			if returnPressure == False:
+				while a[0][0][0] == 160:
+					a = self.midi.ReadRaw()
+					if a == []:
+						return []
+
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 				return [ a[0][0][1], a[0][0][2] ]
 			else:
@@ -2729,6 +2748,46 @@ class LaunchpadLPX( LaunchpadPro ):
 		else:
 			return []
 
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
+	#-- <value> is the intensity from 0..127.
+	#-- >0 = button pressed; 0 = button released
+	#-- A constant force ("push longer") is suppressed here... (TODO)
+	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
+	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
+	#-- Compatibility would require checking via "== True" and not "is True".
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadPro" method
+	def ButtonStateXY( self, mode = "classic" ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+
+			# TODO:
+			# Pressing and not releasing a button will create hundreds of "pressure value" (160)
+			# events. Because we don't handle them here (yet), polling to slowly might create
+			# very long lags...
+			# 8/2020: Copied from the Pro.
+			# Try to mitigate that a bit (yep, seems to work fine!)
+			while a[0][0][0] == 160:
+				a = self.midi.ReadRaw()
+				if a == []:
+					return []
+
+			if a[0][0][0] == 144 or a[0][0][0] == 176:
+			
+				if mode.lower() != "pro":
+					x = (a[0][0][1] - 1) % 10
+				else:
+					x = a[0][0][1] % 10
+				y = ( 99 - a[0][0][1] ) // 10
+			
+				return [ x, y, a[0][0][2] ]
+			else:
+				return []
+		else:
+			return []
 
 
 ########################################################################################
@@ -2972,9 +3031,70 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#        |  1|  2|   |   |   |   |   |  8|
 	#        +---+---+---+---+---+---+---+---+ 
 	#
-	# LED AND BUTTON NUMBERS IN X/Y MODE
 	#
-	# TODO ...
+	# LED AND BUTTON NUMBERS IN XY CLASSIC MODE (X/Y)
+	#
+	#   9      0   1   2   3   4   5   6   7      8   
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |0/0|   |2/0|   |   |   |   |   |         0
+	#        +---+---+---+---+---+---+---+---+ 
+	#         
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |0/1|   |   |   |   |   |   |   |  |   |  1
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |9/2|  |   |   |   |   |   |   |   |   |  |   |  2
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |5/3|   |   |  |   |  3
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  4
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  5
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |4/6|   |   |   |  |   |  6
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  7
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |9/8|  |   |   |   |   |   |   |   |   |  |8/8|  8
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	#       
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |   |1/9|   |   |   |   |   |   |         9
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |/10|   |   |   |   |   |   |   |        10
+	#        +---+---+---+---+---+---+---+---+ 
+	#
+	#
+	# LED AND BUTTON NUMBERS IN XY PRO MODE (X/Y)
+	#
+	#   0      1   2   3   4   5   6   7   8      9
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |1/0|   |3/0|   |   |   |   |   |         0
+	#        +---+---+---+---+---+---+---+---+ 
+	#         
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |1/1|   |   |   |   |   |   |   |  |   |  1
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |0/2|  |   |   |   |   |   |   |   |   |  |   |  2
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |6/3|   |   |  |   |  3
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  4
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  5
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |5/6|   |   |   |  |   |  6
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |   |  |   |   |   |   |   |   |   |   |  |   |  7
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	# |0/8|  |   |   |   |   |   |   |   |   |  |9/8|  8
+	# +---+  +---+---+---+---+---+---+---+---+  +---+
+	#       
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |   |2/9|   |   |   |   |   |8/9|         9
+	#        +---+---+---+---+---+---+---+---+ 
+	#        |   |   |   |   |   |   |   |/10|        10
+	#        +---+---+---+---+---+---+---+---+ 
+
 	
 	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Launchpad MIDI devices.
@@ -3097,6 +3217,50 @@ class LaunchpadProMk3( LaunchpadPro ):
 			for y in range(9):
 				# TODO
 				self.midi.RawWrite(144, (x + 1) + ((y + 1) * 10), colorcode)
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
+	#-- <value> is the intensity from 0..127.
+	#-- >0 = button pressed; 0 = button released
+	#-- A constant force ("push longer") is suppressed here... (TODO)
+	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
+	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
+	#-- Compatibility would require checking via "== True" and not "is True".
+	#-------------------------------------------------------------------------------------
+	def ButtonStateXY( self, mode = "classic" ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+
+			# TODO:
+			# Pressing and not releasing a button will create hundreds of "pressure value" (208)
+			# events. Because we don't handle them here (yet), polling to slowly might create
+			# very long lags...
+			# 8/2020: Try to mitigate that a bit (yep, seems to work fine!)
+			while a[0][0][0] == 208:
+				a = self.midi.ReadRaw()
+				if a == []:
+					return []
+
+			if a[0][0][0] == 144 or a[0][0][0] == 176:
+			
+				if mode.lower() != "pro":
+					x = (a[0][0][1] - 1) % 10
+				else:
+					x = a[0][0][1] % 10
+				if a[0][0][1] > 99:
+					y = 9
+				elif a[0][0][1] < 10:
+					y = 10
+				else:
+					y = ( 99 - a[0][0][1] ) // 10
+			
+				return [ x, y, a[0][0][2] ]
+			else:
+				return []
+		else:
+			return []
 
 
 	#-------------------------------------------------------------------------------------

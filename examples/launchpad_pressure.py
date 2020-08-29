@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Quick demo of the new, optional "pressure events" for supported Launchpads.
-# Works with: Pro, X
+# Works with: Pro, Pro Mk3, X
 # 
 #
 # FMMT666(ASkr) 7/2013..8/2020
@@ -27,11 +27,14 @@ def main():
 	if lp.Check( 0 ):
 		if lp.Open( 0 ):
 			mode = "pro"
-	else:
+	elif launchpad.LaunchpadProMk3().Check( 0 ):
+		lp = launchpad.LaunchpadProMk3()
+		if lp.Open( 0 ):
+			mode = "promk3"
+	elif launchpad.LaunchpadLPX().Check ( 1 ):
 		lp = launchpad.LaunchpadLPX()
-		if lp.Check( 1 ):
-			if lp.Open( 1 ):
-				mode = "lpx"
+		if lp.Open( 1 ):
+			mode = "lpx"
 
 	if mode is None:
 		print("no compatible Launchpad found ...")	
@@ -53,7 +56,7 @@ def main():
 				# LPX:
 				#   Returns a per-button pressure event.
 				#   To distinguish pressure events from button events, "255" is added to the button number.
-				if mode == "pro":
+				if mode == "pro" or mode == "promk3":
 					print(" PRESSURE: " + str(events[1]) )
 				else:
 					print(" PRESSURE: " + str(events[0]-255) + " " + str(events[1]) )

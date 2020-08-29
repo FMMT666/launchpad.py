@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #
 # Quick usage of "launchpad.py", LEDs and buttons.
-# Works with all Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro, XL and LaunchKey
+# Works with all Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro, Pro Mk3, XL and LaunchKey
 # 
 #
-# FMMT666(ASkr) 7/2013..5/2020
+# FMMT666(ASkr) 7/2013..8/2020
 # www.askrprojects.net
 #
 
@@ -35,6 +35,12 @@ def main():
 		if lp.Open(0,"pad pro"):
 			print("Launchpad Pro")
 			mode = "Pro"
+
+	elif lp.Check( 0, "promk3" ):
+		lp = launchpad.LaunchpadProMk3()
+		if lp.Open( 0 ):
+			print("Launchpad Pro Mk3")
+			mode = "ProMk3"
 
 	# experimental MK3 implementation
 	# The MK3 has two MIDI instances per device; we need the 2nd one.
