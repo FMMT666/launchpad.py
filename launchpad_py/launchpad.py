@@ -2901,6 +2901,74 @@ class MidiFighter64( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- Displays the character <char> with color of <colorcode> and lateral offset
+	#-- <offsx> (-8..8) on the Midi Fighter. <offsy> does not have yet any function.
+	#-- <coloroff> specifies the background color.
+	#-- Notice that the call to this method is not compatible to the Launchpad variants,
+	#-- because the Midi Fighter lacks support for RGB.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlChar( self, char, colorcode, offsx = 0, offsy = 0, coloroff = 0 ):
+		char = ord( char )
+		char = min( char, 255)
+		char = max( char, 0) * 8
+
+		if colorcode < 0 or colorcode > 127:
+			return
+
+		for y in range( 64, 35, -4 ):
+			for x in range(8):
+				number = y + x + offsx
+				if x + offsx > 3:
+					number += 28  # +32-4
+
+				if x + offsx < 8 and x + offsx >= 0:
+					if CHARTAB[char]  &  0x80 >> x:
+						self.LedCtrlRaw( number, colorcode )
+					else:
+						# lol, shit; there is no color code for "off"
+						self.LedCtrlRaw( number, coloroff )
+			char += 1
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Scroll <string>, with color specified by <colorcode>, as fast as we can.
+	#-- <direction> specifies: -1 to left, 0 no scroll, 1 to right
+	#-- Notice that the call to this method is not compatible to the Launchpad variants,
+	#-- because the Midi Fighter lacks support for RGB.
+	#-------------------------------------------------------------------------------------
+	def LedCtrlString( self, string, colorcode, coloroff=0, direction = None, waitms = 150 ):
+
+		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
+
+		if direction == self.SCROLL_LEFT:
+			string += " " # just to avoid artifacts on full width characters
+			for n in range( (len(string) + 1) * 8 ):
+				if n <= len(string)*8:
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], colorcode, 8- n   %16, coloroff = coloroff )
+				if n > 7:
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], colorcode, 8-(n-8)%16, coloroff = coloroff )
+				time.wait(waitms)
+		elif direction == self.SCROLL_RIGHT:
+			# TODO: Just a quick hack (screen is erased before scrolling begins).
+			#       Characters at odd positions from the right (1, 3, 5), with pixels at the left,
+			#       e.g. 'C' will have artifacts at the left (pixel repeated).
+			string = " " + string + " " # just to avoid artifacts on full width characters
+#			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
+			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
+				if n <= len(string)*8:
+					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], colorcode, 8- n   %16, coloroff = coloroff )
+				if n > 7:
+					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], colorcode, 8-(n-8)%16, coloroff = coloroff )
+				time.wait(waitms)
+		else:
+			# TODO: not a good idea :)
+			for i in string:
+				for n in range(4):  # pseudo repetitions to compensate the timing a bit
+					self.LedCtrlChar(i, colorcode)
+					time.wait(waitms)
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Sets all LEDs to the same color, specified by <color>.
 	#-- If color is omitted, the LEDs are set to white (code 3)
 	#-------------------------------------------------------------------------------------

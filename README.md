@@ -42,7 +42,7 @@ What's hot, what's not?
 
     Launchpad Pro      - class "LaunchpadPro()"     LEDs and buttons (digitally only (yet))
 
-    Launchpad Pro      - class "LaunchpadProMk3()"  EXPERIMENTAL++ as in "some issues, but ok"
+    Launchpad Pro Mk3  - class "LaunchpadProMk3()"  EXPERIMENTAL++ as in "should be ok"
 
     Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
@@ -52,7 +52,7 @@ What's hot, what's not?
 
     Launch Control XL  - class "LaunchControlXL()"  LEDs, buttons and potentiometers
     
-    LaunchKey (Mini)   - class "LaunchKeyMini()"    Buttons, keys and potentiometers (sliders for big KBs), no LEDs
+    LaunchKey (Mini)   - class "LaunchKeyMini()"    Buttons, keys and potentiometers/sliders, no LEDs
     
     Dicer              - class "Dicer()"            LEDs and buttons
 
@@ -63,8 +63,8 @@ What's hot, what's not?
 > You need to disable the Launchpad's "Transmit Clock" in the MIDI settings!  
 > See section "For Launchpad Pro Mk3 users"  
 >  
-> Also, every program shall end with either calling lp.Close() or calling  
-> lp.SetLedMode( 0 ), to switch back to the Live mode.  
+> The Pro Mk3 needs the latest Firmware to operate flawlessly. FW is only available  
+> via a Novation account- and product registration.
 
 Please notice that the class "LaunchpadMk3()" was renamed to "LaunchpadMiniMk3()" in 5/2020.  
 This was necessary to avoid confusion with the device search string and the new "Pro-Mk3" Launchpad.  
@@ -107,6 +107,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - updated pressure event handling in the Pro, Pro Mk3 and X's ButtonStateXY() methods
     - added a Pro Mk3 "reset to Live mode" demo file
     - updated ButtonStateXY() for the Pro Mk3, incl "classic" and "Pro" mode
+    - added character and string scrolling for Midi Fighter 64
+    - added stupid Midi Fighter text scrolling demo
 
 
 ### CHANGES 2020/05/XX:
@@ -1145,9 +1147,11 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 ### LED functions
 
-    LedCtrlRaw()
-    LedCtrlXY()
-    LedAllOn()
+    LedCtrlRaw( number, color)
+    LedCtrlXY( x, y, color )
+    LedAllOn( [color] )
+    LedCtrlChar( char, color, [offsx], [offsy], [coloroff] )
+    LedCtrlString( string, color, [coloroff], [direction], [waitms] )
 
 
 ### Button functions
@@ -2312,6 +2316,57 @@ There is no possibility to control the RGB LEDs individually.yle.
       RETURN:
 
 
+### LedCtrlChar( char, color, offsx = 0, offsy = 0, coloroff = 0 )
+
+    Displays character <char> with a color of <color> and a
+    lateral offset of <offsx> (-8..8) on the Midi Fighter.
+    <offsy> does not have yet any function.
+    The optional <coloroff> parameter specifies the background color.
+    Notice that it is not possible to set this to "black" or off as the
+    Midi Fighter doesn't support this.
+    
+    Also notice that this method is not compatible with the Launchpad "RGB-calls",
+    because the Midi Fighter also lacks RGB support. For 500 bucks. Lol :-)
+    
+      lp.LedCtrlChar( 'a', 5, offsx = xvar, coloroff = 0 )
+
+      PARAMS: <char>      one field string to display; e.g.: 'A'
+              <color>     color of the character; see table and image somewhere above
+              <offsx>     x offset of the character on the main, 8x8 matrix (-8..8)
+                          Negative is left and positive right.
+              <offsy>     no function
+              <coloroff>  color of the background; see table and image somewhere above
+      RETURN:
+
+      EXAMPLES:
+              # scroll a red 'A' from left to right
+              for x in range( -8, 9 ):
+                lp.LedCtrlChar( 'A', 3, 0, offsx = x )
+                time.wait( 100 ) # from PyGame (from pygame import time)
+
+
+### LedCtrlString( string, color, coloroff = 0, direction = 0, waitms = 150 )
+
+    Scrolls <string> across the Midi Fighter's 8x8 matrix.
+    <color> specifies the color of the string and <coloroff> the background.
+    <direction> determines the direction of scrolling.
+    <waitms>, by default 150, delays the scrolling speed.
+    
+    For future compatibility, it is highly recommended to use
+    <direction> and <waitms> as a named arguments, e.g.:
+    
+      lp.LedCtrlString( "Hello", 3,1, direction = -1, waitms = 100 )
+
+      PARAMS: <string>     a string to display; e.g.: 'Hello'
+              <color>      color of the character; see color table
+              <coloroff>   color of the background; see color table
+              <direction> -1 -> scroll right to left
+                           0 -> do not scroll, just show the character
+                           1 -> scroll left to right
+              <waitms>     OPTIONAL: delay for scrolling speed, default 150
+      RETURN:
+
+
 ### LedAllOn( <colorcode> )
 
     Quickly sets all LEDs to white or a given <colorcode>.
@@ -2947,5 +3002,5 @@ FMMT666(ASkr)
 [20]: https://github.com/FMMT666/launchpad.py/issues/38#issuecomment-519698406
 [21]: https://twitter.com/FMMT666/status/1242950069923520519
 [22]: https://twitter.com/FMMT666/status/1242978460454326272
-[23]: https://twitter.com/FMMT666/status/1298372859383906305
+[23]: https://twitter.com/FMMT666/status/1299842680533463043
 [24]: https://twitter.com/FMMT666/status/1299478117497688073
