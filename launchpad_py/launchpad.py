@@ -2865,8 +2865,9 @@ class MidiFighter64( LaunchpadBase ):
 	#-- Controls a grid LED by its <number> and a <color>.
 	#--  <number> 36..99
 	#--  <color>   0..127 from color table
+	#--  <mode>   18..53  for brightness, toggling and animation 
 	#-------------------------------------------------------------------------------------
-	def LedCtrlRaw( self, number, color ):
+	def LedCtrlRaw( self, number, color, mode = None ):
 
 		if number < 36 or number > 99:
 			return
@@ -2874,6 +2875,28 @@ class MidiFighter64( LaunchpadBase ):
 			return
 
 		self.midi.RawWrite( 146, number, color )
+
+		# faster than calling LedCtrlRawMode()
+		if mode is not None and mode > 17 and mode < 54:
+			self.midi.RawWrite( 147, number - 3*12, mode )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Controls a the mode of a grid LED by its <number> and the mode <mode> of the LED.
+	#--  <number> 36..99
+	#--  <mode>   18..53 for brightness, toggling and animation
+	#-- Internal LED numbers are 3 octaves lower than the color numbers.
+	#-- The mode must be sent over channel 4
+	#-------------------------------------------------------------------------------------
+	def LedCtrlRawMode( self, number, mode ):
+
+		# uses the original button numbers for usability
+		if number < 36 or number > 99:
+			return
+		if mode < 18 or mode > 53:
+			return
+
+		self.midi.RawWrite( 147, number - 3*12, mode )
 
 
 	#-------------------------------------------------------------------------------------
@@ -2972,9 +2995,9 @@ class MidiFighter64( LaunchpadBase ):
 	#-- Sets all LEDs to the same color, specified by <color>.
 	#-- If color is omitted, the LEDs are set to white (code 3)
 	#-------------------------------------------------------------------------------------
-	def LedAllOn( self, color = 3 ):
+	def LedAllOn( self, color = 3, mode = None ):
 		for i in range(64):
-			self.LedCtrlRaw( i+36, color )
+			self.LedCtrlRaw( i+36, color, mode )
 
 
 	#-------------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ Did we mention [Python 3][18] yet?
 
 First [Mk3][21] and [X][22] Launchpad code snippets running now (4/2020).
 
-Now with (some) [Midi Fighter 64][23] support (8/2020).
+Now with full [Midi Fighter 64][23] support (8/2020).
 
 Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)  
 
@@ -56,7 +56,7 @@ What's hot, what's not?
     
     Dicer              - class "Dicer()"            LEDs and buttons
 
-    Midi Fighter 64    - class "MidiFighter64"      EXPERIMENTAL; LEDs and buttons
+    Midi Fighter 64    - class "MidiFighter64"      LEDs and buttons
 
 
 > PRO MK3 USERS:  
@@ -109,6 +109,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - updated ButtonStateXY() for the Pro Mk3, incl "classic" and "Pro" mode
     - added character and string scrolling for Midi Fighter 64
     - added stupid Midi Fighter text scrolling demo
+    - added MF64 LED-mode settings: brightness, toggling, flashing and animation settings
+    - updated MF64 LedCtrlRaw() to accept LED-mode settings
+    - updated MF64 LedAllOn() to optionally accept LED-mode settings
 
 
 ### CHANGES 2020/05/XX:
@@ -1147,7 +1150,8 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 ### LED functions
 
-    LedCtrlRaw( number, color)
+    LedCtrlRaw( number, color, [mode] )
+    LedCtrlRawMode( number, mode )
     LedCtrlXY( x, y, color )
     LedAllOn( [color] )
     LedCtrlChar( char, color, [offsx], [offsy], [coloroff] )
@@ -1163,7 +1167,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 ### Color codes
 
 The Midi Fighter 64 only supports a color table.  
-There is no possibility to control the RGB LEDs individually.yle.
+There is no possibility to control the RGB LEDs individually.
 
 ![RGB color palette](/images/mf64_colorcodes.png)
 
@@ -2293,18 +2297,56 @@ There is no possibility to control the RGB LEDs individually.yle.
                                          <value>  >0 = pressed; 0 = released
 
 
-### LedCtrlRaw( <led>, <colorcode> )
+### LedCtrlRaw( led, colorcode, [mode] )
 
     Controls an LED via its number <button> and <colorcode>.
     See table with button number at the end of this document.
     Color codes are somewhere above (see image).
+    The optional <mode> parameter selects the brightness, toggling, flashing
+    or animation setting of the LED.
+    This also needs to be used to turn an LED comnpletely off.
+
+      Values for mode:
+        18..33: set brightness of the LED (0..15)
+        34..41: set toggling speed from every 16 beats down to 1/8 beat
+        42..49: set pulsing  speed from every 32 beats down to 1/8 beat (*)
+        50:     animation set to square
+        51:     animation set to circle
+        52:     animation set to star
+        53:     animation set to triangle
+
+        (*) This might be an error in the manual, as it does not contain an 1/4 setting
+            and starts at 1/32. Need to check ...
 
       PARAMS: <led>         36..99; number of the LED to control
               <colorcode>   0..127; color code
+              <mode>        [OPTIONAL] 18..53, see above
       RETURN:
 
 
-### LedCtrlXY( <x>, <y>, <colorcode> )
+### LedCtrlRawMode( led, mode )
+
+    Controls the mode of an LED via its number <button> and <mode>.
+    See table with button number at the end of this document.
+    The <mode> parameter can be set to:
+
+        18..33: set brightness of the LED (0..15)
+        34..41: set toggling speed from every 16 beats down to 1/8 beat
+        42..49: set pulsing  speed from every 32 beats down to 1/8 beat (*)
+        50:     animation set to square
+        51:     animation set to circle
+        52:     animation set to star
+        53:     animation set to triangle
+
+        (*) This might be an error in the manual, as it does not contain an 1/4 setting
+            and starts at 1/32. Need to check ...
+
+      PARAMS: <led>         36..99; number of the LED to control
+              <mode>        18..53; see above
+      RETURN:
+
+
+### LedCtrlXY( x, y, colorcode )
 
     Controls an LED via its coordinates <x>/<y> and a <colorcode>.
     See table with coordinates at the end of this document.
@@ -2316,7 +2358,7 @@ There is no possibility to control the RGB LEDs individually.yle.
       RETURN:
 
 
-### LedCtrlChar( char, color, offsx = 0, offsy = 0, coloroff = 0 )
+### LedCtrlChar( char, color, [offsx = 0], [offsy = 0], [coloroff = 0] )
 
     Displays character <char> with a color of <color> and a
     lateral offset of <offsx> (-8..8) on the Midi Fighter.
@@ -2345,7 +2387,7 @@ There is no possibility to control the RGB LEDs individually.yle.
                 time.wait( 100 ) # from PyGame (from pygame import time)
 
 
-### LedCtrlString( string, color, coloroff = 0, direction = 0, waitms = 150 )
+### LedCtrlString( string, color, [coloroff = 0], [direction = 0], [waitms = 150] )
 
     Scrolls <string> across the Midi Fighter's 8x8 matrix.
     <color> specifies the color of the string and <coloroff> the background.
@@ -2367,11 +2409,22 @@ There is no possibility to control the RGB LEDs individually.yle.
       RETURN:
 
 
-### LedAllOn( <colorcode> )
+### LedAllOn( [colorcode], [mode] )
 
-    Quickly sets all LEDs to white or a given <colorcode>.
-    Notice that it is not (yet) possible to turn the LEDs off.
-    The Midi Fighter's color table does not include "black" or off.
+    Quickly sets all LEDs to white or an optional color of <colorcode>
+    and a mode setting of <mode>.
+    To turn the LEDs off, set their brightness to "0" via the <mode> parameter:
+
+        18..33: set brightness of the LED (0..15)
+        34..41: set toggling speed from every 16 beats down to 1/8 beat
+        42..49: set pulsing  speed from every 32 beats down to 1/8 beat (*)
+        50:     animation set to square
+        51:     animation set to circle
+        52:     animation set to star
+        53:     animation set to triangle
+
+        (*) This might be an error in the manual, as it does not contain an 1/4 setting
+            and starts at 1/32. Need to check ...
 
       PARAMS: <colorcode>   0..127; color code
       RETURN:
