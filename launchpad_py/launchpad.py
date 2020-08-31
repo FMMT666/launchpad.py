@@ -2843,6 +2843,23 @@ class MidiFighter64( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
+	#-- Add some LED mode "constants" for better usability.
+	#-------------------------------------------------------------------------------------
+	def __init__( self ):
+
+		self.MODE_BRIGHT        = [ i+18 for i in range(16) ]
+		self.MODE_TOGGLE        = [ i+34 for i in range(8) ]
+		self.MODE_PULSE         = [ i+42 for i in range(8) ]
+		self.MODE_ANIM_SQUARE   = 50
+		self.MODE_ANIM_CIRCLE   = 51
+		self.MODE_ANIM_STAR     = 52
+		self.MODE_ANIM_TRIANGLE = 53
+
+		return super( MidiFighter64, self ).__init__( )
+
+
+
+	#-------------------------------------------------------------------------------------
 	#-- Opens one of the attached Launchpad MIDI devices.
 	#-- Uses search string "Fighter 64", by default.
 	#-------------------------------------------------------------------------------------
@@ -2904,7 +2921,7 @@ class MidiFighter64( LaunchpadBase ):
 	#--  <x>/<y>  0..7
 	#--  <color>  0..127 from color table
 	#-------------------------------------------------------------------------------------
-	def LedCtrlXY( self, x, y, color ):
+	def LedCtrlXY( self, x, y, color, mode = None ):
 
 		if x < 0 or x > 7:
 			return
@@ -2921,6 +2938,9 @@ class MidiFighter64( LaunchpadBase ):
 		number += (7-y) * 4
 
 		self.midi.RawWrite( 146, number, color )
+		# set the mode if required; faster than calling LedCtrlRawMode()
+		if mode is not None and mode > 17 and mode < 54:
+			self.midi.RawWrite( 147, number - 3*12, mode )
 
 
 	#-------------------------------------------------------------------------------------

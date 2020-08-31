@@ -112,6 +112,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - added MF64 LED-mode settings: brightness, toggling, flashing and animation settings
     - updated MF64 LedCtrlRaw() to accept LED-mode settings
     - updated MF64 LedAllOn() to optionally accept LED-mode settings
+    - updated MF64 LedCtrlXY() to optionally accept LED-mode settings
+    - added MF64 "constants" for easier LED-mode settings
+    - added MF64 LED-mode example file "midifighter_led_modes.py"
 
 
 ### CHANGES 2020/05/XX:
@@ -2272,6 +2275,28 @@ There is no possibility to control the RGB LEDs individually.
 ---
 ## Detailed description of Midi Fighter specific methods
 
+### Constants
+
+#### LED Modes
+
+    The following constants can be used instead of using integer values for the LED modes.
+
+        MODE_BRIGHT[0..15]  instead of  18..33  for brightness
+        MODE_TOGGLE[0..7]   instead of  34..41  for toggling
+        MODE_PULSE[0..7]    instead of  42..49  for pulsing
+        MODE_ANIM_SQUARE    instead of  50
+        MODE_ANIM_CIRCLE    instead of  51
+        MODE_ANIM_STAR      instead of  52
+        MODE_ANIM_TRIANGLE  instead of  53
+
+    Some examples:
+      lp.LedAllOn( 5, 18 )  becomes lp.LedAllOn( 5, lp.MODE_BRIGHT[0] );  LED RED BUT OFF
+      lp.LedAllOn( 5, 33 )  becomes lp.LedAllOn( 5, lp.MODE_BRIGHT[15] ); LED RED FULLY ON
+      lp.LedAllOn( 5, 33 )  becomes lp.LedAllOn( 5, lp.MODE_BRIGHT[15] ); LED RED FULLY ON
+
+    Accessing "out of bounds" list values will of course crash your app.
+
+
 ### ButtonStateRaw()
 
     Returns the state of the buttons in RAW mode.
@@ -2318,6 +2343,17 @@ There is no possibility to control the RGB LEDs individually.
         (*) This might be an error in the manual, as it does not contain an 1/4 setting
             and starts at 1/32. Need to check ...
 
+      As an alternative and instead of using the numbers above, these constants can be used.
+      E.g. "LedAllOn( 5, lp.MODE_BRIGHT[5] )" for an intensity value of 5, from 0..15
+
+        MODE_BRIGHT[0..15]
+        MODE_TOGGLE[0..7]
+        MODE_PULSE[0..7]
+        MODE_ANIM_SQUARE
+        MODE_ANIM_CIRCLE
+        MODE_ANIM_STAR
+        MODE_ANIM_TRIANGLE
+
       PARAMS: <led>         36..99; number of the LED to control
               <colorcode>   0..127; color code
               <mode>        [OPTIONAL] 18..53, see above
@@ -2340,6 +2376,17 @@ There is no possibility to control the RGB LEDs individually.
 
         (*) This might be an error in the manual, as it does not contain an 1/4 setting
             and starts at 1/32. Need to check ...
+
+      As an alternative and instead of using the numbers above, these constants can be used.
+      E.g. "LedAllOn( 5, lp.MODE_BRIGHT[5] )" for an intensity value of 5, from 0..15
+
+        MODE_BRIGHT[0..15]
+        MODE_TOGGLE[0..7]
+        MODE_PULSE[0..7]
+        MODE_ANIM_SQUARE
+        MODE_ANIM_CIRCLE
+        MODE_ANIM_STAR
+        MODE_ANIM_TRIANGLE
 
       PARAMS: <led>         36..99; number of the LED to control
               <mode>        18..53; see above
@@ -2425,6 +2472,17 @@ There is no possibility to control the RGB LEDs individually.
 
         (*) This might be an error in the manual, as it does not contain an 1/4 setting
             and starts at 1/32. Need to check ...
+
+      As an alternative and instead of using the numbers above, these constants can be used.
+      E.g. "LedAllOn( 5, lp.MODE_BRIGHT[5] )" for an intensity value of 5, from 0..15
+
+        MODE_BRIGHT[0..15]
+        MODE_TOGGLE[0..7]
+        MODE_PULSE[0..7]
+        MODE_ANIM_SQUARE
+        MODE_ANIM_CIRCLE
+        MODE_ANIM_STAR
+        MODE_ANIM_TRIANGLE
 
       PARAMS: <colorcode>   0..127; color code
       RETURN:
