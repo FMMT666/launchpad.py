@@ -88,6 +88,13 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ---
 ## NEWS
 
+### CHANGES 2020/09/XX:
+    - fixed sending command to not ready Pro Mk3 
+    - fixed MF64 LedCtrlString() to correctly work with the background color
+    - updated hello.py demo file for Midi Fighter 64
+    - updated demo files to new and recommended default device search strategy
+
+
 ### CHANGES 2020/08/XX:
     - added support for pressure events via ButtonStateRaw() for the Pro and Pro Mk3
     - added support for pressure events via ButtonStateRaw() for the X
@@ -304,13 +311,12 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
   - "PK3": the Pro Mk3 has some issues; needs to be fixed
   - "All": optionally pressure events also for ButtonStateXY(); Pro, Pro Mk3, X
   - "All": optionally avoid resetting the X and Pro Mk3 to Live mode in Close(); (bc LEDs turn on)
-  - "All": New, officially recommended device selection code in all demo files
-  - "M64": Add character and string methods for the Midi Fighter
+  - "FNT": fix character set; e.g. "!", "0", "N" and probably many more
   - "All": RGB to color code approximation (for flash/pulse and color code methods)
-  - "Pro": Finally add the Mk3Pro (has problems!)
   - "All": either remove or add the (non-) optional \<colorcode\> argument to all methods
   - "DCR": query mode
   - "All": native scrolling for RGB pads
+  - "All": split the doc in smaller, readable parts
   - "CXL": x/y support (if it makes sense...)
   - "All": LedCtrlChar() make y-offset work
   - "Pro": change ButtonStateXY() to return True/False + velocity, as in the LaunchKeyMini

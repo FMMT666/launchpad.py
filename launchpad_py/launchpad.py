@@ -3007,7 +3007,7 @@ class MidiFighter64( LaunchpadBase ):
 			# TODO: not a good idea :)
 			for i in string:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
-					self.LedCtrlChar(i, colorcode)
+					self.LedCtrlChar(i, colorcode, coloroff = coloroff)
 					time.wait(waitms)
 
 
@@ -3388,7 +3388,8 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#-------------------------------------------------------------------------------------
 	def Close( self ):
 		# re-enter Live mode
-		self.LedSetMode( 0 )
+		if self.midi.devIn != None and self.midi.devOut != None:
+			self.LedSetMode( 0 )
 		# TODO: redundant (but needs fix for Py2 embedded anyway)
 		# self.midi.CloseInput()
 		# self.midi.CloseOutput()

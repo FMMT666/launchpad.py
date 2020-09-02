@@ -2,6 +2,7 @@
 #
 # Quick usage of "launchpad.py", LEDs and buttons.
 # Works with all Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro, Pro Mk3, XL and LaunchKey
+# And these: Midifighter 64
 # 
 #
 # FMMT666(ASkr) 7/2013..8/2020
@@ -26,17 +27,14 @@ def main():
 
 	mode = None
 
-	# create an instance
-	lp = launchpad.Launchpad()
-
-	# check what we have here and override lp if necessary
-	if lp.Check( 0, "pad pro" ):
+	# create an instance for the Pro
+	if launchpad.LaunchpadPro().Check( 0 ):
 		lp = launchpad.LaunchpadPro()
-		if lp.Open(0,"pad pro"):
+		if lp.Open( 0 ):
 			print("Launchpad Pro")
 			mode = "Pro"
 
-	elif lp.Check( 0, "promk3" ):
+	elif launchpad.LaunchpadProMk3().Check( 0 ):
 		lp = launchpad.LaunchpadProMk3()
 		if lp.Open( 0 ):
 			print("Launchpad Pro Mk3")
@@ -45,7 +43,7 @@ def main():
 	# experimental MK3 implementation
 	# The MK3 has two MIDI instances per device; we need the 2nd one.
 	# If you have two MK3s attached, its "1" for the first and "3" for the 2nd device
-	elif lp.Check( 1, "minimk3" ):
+	elif launchpad.LaunchpadMiniMk3().Check( 1 ):
 		lp = launchpad.LaunchpadMiniMk3()
 		if lp.Open( 1, "minimk3" ):
 			print("Launchpad Mini Mk3")
@@ -54,37 +52,44 @@ def main():
 	# experimental LPX implementation
 	# Like the Mk3, the LPX also has two MIDI instances per device; we need the 2nd one.
 	# If you have two LPXs attached, its "1" for the first and "3" for the 2nd device
-	elif lp.Check( 1, "lpx" ):
+	elif launchpad.LaunchpadLPX().Check( 1 ):
 		lp = launchpad.LaunchpadLPX()
 		if lp.Open( 1, "lpx" ):
 			print("Launchpad X")
 			mode = "Pro"
 			
-	elif lp.Check( 0, "mk2" ):
+	elif launchpad.LaunchpadMk2().Check( 0 ):
 		lp = launchpad.LaunchpadMk2()
 		if lp.Open( 0, "mk2" ):
 			print("Launchpad Mk2")
 			mode = "Mk2"
 
-	elif lp.Check( 0, "control xl" ):
+	elif launchpad.LaunchControlXL().Check( 0 ):
 		lp = launchpad.LaunchControlXL()
 		if lp.Open( 0, "control xl" ):
 			print("Launch Control XL")
 			mode = "XL"
 			
-	elif lp.Check( 0, "launchkey" ):
+	elif launchpad.LaunchKeyMini().Check( 0 ):
 		lp = launchpad.LaunchKeyMini()
 		if lp.Open( 0, "launchkey" ):
 			print("LaunchKey (Mini)")
 			mode = "LKM"
 
-	elif lp.Check( 0, "dicer" ):
+	elif launchpad.Dicer().Check( 0 ):
 		lp = launchpad.Dicer()
 		if lp.Open( 0, "dicer" ):
 			print("Dicer")
 			mode = "Dcr"
-			
+
+	elif launchpad.MidiFighter64().Check( 0 ):
+		lp = launchpad.MidiFighter64()
+		if lp.Open( 0 ):
+			print("Midi Fighter 64")
+			mode = "MF64"
+
 	else:
+		lp = launchpad.Launchpad()
 		if lp.Open():
 			print("Launchpad Mk1/S/Mini")
 			mode = "Mk1"
@@ -94,12 +99,15 @@ def main():
 		return
 
 
-	# scroll "HELLO" from right to left
+	# scroll a string from right to left
 	if mode == "Mk1":
-		lp.LedCtrlString( "HELLO ", 0, 3, -1 )
+		lp.LedCtrlString( "HENLO!", 0, 3, -1 )
+	# the MF64's methods are not compatible with the Launchpad ones
+	elif mode == "MF64":
+		lp.LedCtrlString( "HENLO!", 5, 0, -1, waitms = 50 )
 	# for all others except the XL and the LaunchKey
 	elif mode != "XL" and mode != "LKM" and mode != "Dcr":
-		lp.LedCtrlString( "HELLO ", 0, 63, 0, -1 )
+		lp.LedCtrlString( "HENLO!", 0, 63, 0, -1, waitms = 50 )
 
 
 	# random output
@@ -129,6 +137,8 @@ def main():
 			lp.LedCtrlRaw( random.randint(0,127), random.randint(0,3), random.randint(0,3) )
 		elif mode == "Dcr":
 			lp.LedCtrlRaw( random.randint(0,130), random.randint(0,7), random.randint(0,15) )
+		elif mode == "MF64":
+			lp.LedCtrlRaw( random.randint(36,99), random.randint(0,127) )
 		elif mode != "LKM":
 			lp.LedCtrlRaw( random.randint(0,127), random.randint(0,63), random.randint(0,63), random.randint(0,63) )
 		
