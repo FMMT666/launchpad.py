@@ -28,9 +28,7 @@ Now with full [Midi Fighter 64][23] support (8/2020).
 Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)  
 
 ---
-## STATUS 2020/08/xx:
-
-What's hot, what's not?  
+## STATUS 2020/09/xx:
 
 ### Devices
 
@@ -42,11 +40,11 @@ What's hot, what's not?
 
     Launchpad Pro      - class "LaunchpadPro()"     LEDs and buttons (digitally only (yet))
 
-    Launchpad Pro Mk3  - class "LaunchpadProMk3()"  EXPERIMENTAL++ as in "should be ok"
+    Launchpad Pro Mk3  - class "LaunchpadProMk3()"  EXPERIMENTAL+++ as in "should be really ok"
 
     Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
-    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL++ as in "should work quite well"
+    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL+++ as in "should work really well"
 
     Launch Control     - class "LaunchControl()"    EXPERIMENTAL
 
@@ -1196,8 +1194,11 @@ There is no possibility to control the RGB LEDs individually.
     Opens the a Launchpad and initializes it.  
     Please notice that some devices have multiple and even up to six MIDI entries!
 
-    To open the first Mk3 or LPX device, "number" needs to be set to "1", not "0",
+    To open the first Mini Mk3 or X device, "number" needs to be set to "1", not "0",
     as valid for (most) of the other Launchpads.
+    
+    Some Launchpads, e.g. the "Mk3 Pro" come with 3 MIDI devices. While the first device's
+    number is "0", the 2nd device will require opening number "3" and not "1".
     
     (1) Notice that <template> is only valid for the Launch Control XL pad.
     A number of 1..8 selects and activates a user template (1 by default)
@@ -1234,6 +1235,7 @@ There is no possibility to control the RGB LEDs individually.
                            LaunchpadMiniMk3() -> "MiniMk3"
                            LaunchpadLPX()     -> "LPX" and "Launchpad X"
                            LaunchpadPro()     -> "Launchpad Pro"
+                           LaunchpadProMk3()  -> "Launchpad Pro Mk3"
                            LaunchControl()    -> "Control MIDI"
                            LaunchControlXL()  -> "Control XL"
                            LaunchKeyMini()    -> "Launchkey" (should work for all variants)
@@ -1254,8 +1256,8 @@ There is no possibility to control the RGB LEDs individually.
       RETURN: True     success
               False    error
 
-	As of 12/2016, the name search patterns are case insensitive, hence strings like "mk2", "pRo"
-	or even "lAunCHpAd MiNI" are valid too.
+  As of 12/2016, the name search patterns are case insensitive, hence strings like "mk2", "pRo"
+  or even "lAunCHpAd MiNI" are valid too.
 
     Notice that the default name for the class Launchpad(), the "Mk1" or "Classic" Launchpads,
     will also react to an attached "Pro" or "Mk2" model. In that case, it's required to either
@@ -1321,6 +1323,7 @@ There is no possibility to control the RGB LEDs individually.
       LaunchpadMiniMk3() -> "MiniMk3"
       LaunchpadLPX()     -> "LPX" and "Launchpad X"
       LaunchpadPro()     -> "Launchpad Pro"
+      LaunchpadProMk3()  -> "ProMk3"
       LaunchControl()    -> "Control MIDI"
       LaunchControlXL()  -> "Control XL"
       LaunchKeyMini()    -> "Launchkey"
@@ -1329,11 +1332,18 @@ There is no possibility to control the RGB LEDs individually.
       
     Notice that it's absolutely safe to query for an "Pro" or "Mk2" from all classes, e.g.:
     
-      lp = lauchpad.Launchpad()        # Launchpad "Mk1" or "Classic" class
-      if lp.Check( 0, "Pro" ):         # check for "Pro"
-        lp = launchpad.LaunchpadPro()  # "reload" the new class for the "Pro"
-        lp.Open()                      # equals lp.Open( 0, "Launchpad Pro" )
-    
+      lp = lauchpad.Launchpad()             # Launchpad "Mk1" or "Classic" class
+      if lp.Check( 0, "Pro" ):              # check for "Pro"
+        lp = launchpad.LaunchpadPro()       # "reload" the new class for the "Pro"
+        lp.Open()                           # equals lp.Open( 0, "Launchpad Pro" )
+
+    As of 8/2020, the recommended way is to simply omit the name and trust the
+    internal name search, though the above "name search variant" might be helpful in a pinch.
+
+      if launchpad.LaunchpadPro.Check( 0 ): # check for "Pro"
+        lp = launchpad.LaunchpadPro()       # "reload" the new class for the "Pro"
+        lp.Open( 0 )                        # equals lp.Open( 0, "Launchpad Pro" )
+
     Search patterns are case insensitive.  
     
       PARAMS: see Open()
@@ -1344,7 +1354,8 @@ There is no possibility to control the RGB LEDs individually.
 
 ### Close()
 
-    Bug in PyGame. Don't call it (yet)...
+    No effect for most devices, except for the "Pro Mk3" and "X".
+    Resets these Launchpads to Live mode.
 
       PARAMS:
       RETURN:
