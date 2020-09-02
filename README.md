@@ -93,6 +93,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - fixed MF64 LedCtrlString() to correctly work with the background color
     - updated hello.py demo file for Midi Fighter 64
     - updated demo files to new and recommended default device search strategy
+    - added Pro Mk3 ButtonStateXY() pressure events
+    - added demo file "launchpad_pressure_xy()" for new XY pressure events (Pro Mk3, so far)
+    - fixed MF64 minor init flaw
 
 
 ### CHANGES 2020/08/XX:
@@ -580,8 +583,9 @@ Supported and tested red/green LED Launchpad devices, here referred  to as "Clas
 Supported and tested full RGB Launchpad devices:
   
   - Launchpad Pro
+  - Launchpad Pro Mk3
   - Launchpad Mk2
-  - Launchpad Mk3
+  - Launchpad Mini Mk3
   - Launchpad LPX
 
 Supported completely different stuff:
@@ -590,6 +594,7 @@ Supported completely different stuff:
   - Launch Control XL
   - LaunchKey (Mini)
   - Dicer
+  - Midi Fighter 64
 
 Notice that Novation now (1/2016) sells an RGB Launchpad under the same
 name it once shipped the first red/green LED with!
@@ -1053,7 +1058,8 @@ Btw, the fireworks demo will play whenever the Launchpad cannot be enumerated (c
 ---
 ## Launchpad "Mk2/3", "Pro", "Pro Mk3" and "X" class methods overview (valid for RGB LED devices)
 
-Please notice that the Mk3 does not yet have all of these.
+Please notice that some devices do not yet have all of these or are implemented slightly different.  
+Refer to the "detailed description of ..." section for each device.
 
 ### LED functions
 
@@ -1077,7 +1083,7 @@ Please notice that the Mk3 does not yet have all of these.
 ### Button functions
 
     ButtonStateRaw( [returnPressure] )
-    ButtonStateXY()
+    ButtonStateXY( [mode], [returnPressure] )
     ButtonFlush()
 
 
@@ -1567,7 +1573,7 @@ There is no possibility to control the RGB LEDs individually.
 ---
 ## Detailed description of RGB Launchpad only methods
 
- Applies to "Pro", "Mk2", "Mk3" and "LPX" unless otherwise noted.
+ Applies to "Pro", "Pro Mk3", "Mk2", "Mini Mk3" and "LPX" unless otherwise noted.
 
 ### LedSetMode( mode ) *>>> PRO, MK3, LPX ONLY <<<*
 
@@ -1939,7 +1945,7 @@ There is no possibility to control the RGB LEDs individually.
     X:
       The X supports multiple pressure values. For a distinction between button events
       and pressure events, "255" is added to the button number:
-       [ 255 + <button>, <True/False> ]
+       [ 255 + <button>, <pressure> ]
 
       PARAMS:
       RETURN: [ ]                    An empty list if no event occured, otherwise...
@@ -1955,21 +1961,42 @@ There is no possibility to control the RGB LEDs individually.
                 of the pressure (0..127).
 
 
-### ButtonStateXY( [mode] )
+### ButtonStateXY( [mode], [returnPressure] )
 
-    Returns the state of the buttons in X/Y mode.
+    Returns the state of the buttons in X/Y mode and optionally the pressure value.
     
     Notice that this is not directly compatible with the "Mk1" ButtonStateRaw()
     method, which returns [ <button>, <True/False> ].
 
+    Only the Pro, X and Pro Mk3 support pressure events.
+    They can be enables by passing "returnPressure=True" to the method call.
+    Notice that the Pro and X behave differently:
+
+    Pro and Pro Mk3:
+      There is only one pressure value for all buttons together. If multiple buttons
+      are pressed, the biggest value is returned. There is no possibility to determine
+      which button caused it. To distinguish the pressure events from button events,
+      fake coordinates of "255" are returned in the list: [ 255, 255, <value>].
+
+    X:
+      The X supports multiple pressure values. For a distinction between button events
+      and pressure events, "255" is added to the coordinate:
+       [ <x> + 255, <y> + 255, <value> ]
+
       PARAMS: <mode>       OPTIONAL: "pro" selects new x/y origin >>> PRO ONLY <<<
       RETURN: [ ]                    An empty list if no event occured, otherwise...
               [ <x>, <y>, <value> ]  ... a list with three fields:
-              <x> and <y> are the button's coordinates. The third field, <value> determines
-              the intensity (0..127) with which the button was pressed.
-              0 means that the button was released.
-              Notice that "Mk2" Pads will only return either 0 or 127.
-              They don't have the full analog mode like the "Pro" has.
+                <x> and <y> are the button's coordinates. The third field, <value> determines
+                the intensity (0..127) with which the button was pressed.
+                0 means that the button was released.
+                Notice that "Mk2" Pads will only return either 0 or 127.
+                They don't have the full analog mode like the "Pro" has.
+              [ 255, 255, <value> ]             ... PRO: a list of pressure events with two fields:
+                "255" as an indicator for a pressure event and <value> for the the intensity
+                of the pressure (0..127).
+              [ <x> + 255, <y> + 255, <value> ] ... LPX: a list of pressure events with two fields:
+                "255" added to the <x> and <y> coordinates for a pressure event and <value> for the intensity
+                of the pressure (0..127).
 
 
 

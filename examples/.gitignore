@@ -8,6 +8,7 @@
 !launchpad_rgb.py
 !launchpad_rgb-pulse.py
 !launchpad_pressure.py
+!launchpad_pressure_xy.py
 !launchpad_pro_mk3_reset.py
 !midifighter_text.py
 !midifighter_led_modes.py

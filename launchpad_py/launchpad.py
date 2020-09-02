@@ -2855,7 +2855,7 @@ class MidiFighter64( LaunchpadBase ):
 		self.MODE_ANIM_STAR     = 52
 		self.MODE_ANIM_TRIANGLE = 53
 
-		return super( MidiFighter64, self ).__init__( )
+		super( MidiFighter64, self ).__init__( )
 
 
 
@@ -3340,7 +3340,7 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
 	#-------------------------------------------------------------------------------------
-	def ButtonStateXY( self, mode = "classic" ):
+	def ButtonStateXY( self, mode = "classic", returnPressure = False ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 
@@ -3349,10 +3349,12 @@ class LaunchpadProMk3( LaunchpadPro ):
 			# events. Because we don't handle them here (yet), polling to slowly might create
 			# very long lags...
 			# 8/2020: Try to mitigate that a bit (yep, seems to work fine!)
-			while a[0][0][0] == 208:
-				a = self.midi.ReadRaw()
-				if a == []:
-					return []
+			# 9/2020: XY now also with pressure event functionality
+			if returnPressure == False:
+				while a[0][0][0] == 208:
+					a = self.midi.ReadRaw()
+					if a == []:
+						return []
 
 			if a[0][0][0] == 144 or a[0][0][0] == 176:
 			
@@ -3369,7 +3371,10 @@ class LaunchpadProMk3( LaunchpadPro ):
 			
 				return [ x, y, a[0][0][2] ]
 			else:
-				return []
+				if a[0][0][0] == 208:
+					return [ 255, 255, a[0][0][1] ]
+				else:
+					return []
 		else:
 			return []
 
