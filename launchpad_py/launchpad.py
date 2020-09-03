@@ -2760,7 +2760,7 @@ class LaunchpadLPX( LaunchpadPro ):
 	#-- Compatibility would require checking via "== True" and not "is True".
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
-	def ButtonStateXY( self, mode = "classic" ):
+	def ButtonStateXY( self, mode = "classic", returnPressure = False ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 
@@ -2770,22 +2770,28 @@ class LaunchpadLPX( LaunchpadPro ):
 			# very long lags...
 			# 8/2020: Copied from the Pro.
 			# Try to mitigate that a bit (yep, seems to work fine!)
-			while a[0][0][0] == 160:
-				a = self.midi.ReadRaw()
-				if a == []:
-					return []
+			# 9/2020: now also _with_ pressure :)
+			if returnPressure == False:
+				while a[0][0][0] == 160:
+					a = self.midi.ReadRaw()
+					if a == []:
+						return []
 
-			if a[0][0][0] == 144 or a[0][0][0] == 176:
+			if a[0][0][0] == 144 or a[0][0][0] == 176 or a[0][0][0] == 160:
 			
 				if mode.lower() != "pro":
 					x = (a[0][0][1] - 1) % 10
 				else:
 					x = a[0][0][1] % 10
 				y = ( 99 - a[0][0][1] ) // 10
-			
-				return [ x, y, a[0][0][2] ]
+
+				# now with pressure events (9/2020)
+				if a[0][0][0] == 160 and returnPressure == True:
+					return [ x+255, y+255, a[0][0][2] ]
+				else:
+					return [ x, y, a[0][0][2] ]
 			else:
-				return []
+					return []
 		else:
 			return []
 

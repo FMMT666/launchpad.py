@@ -94,6 +94,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - added Pro Mk3 ButtonStateXY() pressure events
     - added demo file "launchpad_pressure_xy()" for new XY pressure events (Pro Mk3, so far)
     - fixed MF64 minor init flaw
+    - added X ButtonStateXY() pressure events
+    - updated pressure xy demo file for X and also fixed an error for the Pro Mk3
 
 
 ### CHANGES 2020/08/XX:
