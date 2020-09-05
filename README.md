@@ -1,7 +1,7 @@
 launchpad.py
 ============
 
-A [Novation Launchpad][1] control suite for [Python][2].
+A [Novation Launchpad][1] (and [Midi Fighter][25]) control suite for [Python][2].
 
 If you ever dreamed of using your Launchpad for completely other stuff than music: Welcome !-)
 
@@ -3161,3 +3161,4 @@ FMMT666(ASkr)
 [22]: https://twitter.com/FMMT666/status/1242978460454326272
 [23]: https://twitter.com/FMMT666/status/1299842680533463043
 [24]: https://twitter.com/FMMT666/status/1299478117497688073
+[25]: https://www.midifighter.com/
