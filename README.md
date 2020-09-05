@@ -96,6 +96,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
     - fixed MF64 minor init flaw
     - added X ButtonStateXY() pressure events
     - updated pressure xy demo file for X and also fixed an error for the Pro Mk3
+    - added Pro ButtonStateXY() pressure events
+    - updated pressure xy demo file for the Pro
 
 
 ### CHANGES 2020/08/XX:
@@ -312,7 +314,6 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ## Upcoming attractions, notes and thoughts
 
   - "PK3": the Pro Mk3 has some issues; needs to be fixed
-  - "All": optionally pressure events also for ButtonStateXY(); Pro, Pro Mk3, X
   - "All": optionally avoid resetting the X and Pro Mk3 to Live mode in Close(); (bc LEDs turn on)
   - "FNT": fix character set; e.g. "!", "0", "N" and probably many more
   - "All": RGB to color code approximation (for flash/pulse and color code methods)
