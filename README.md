@@ -401,6 +401,8 @@ Load and use the module with
       lp = launchpad_py.LaunchpadLPX()
       # Pro Launchpad:
       lp = launchpad_py.LaunchpadPro()
+      # Pro Mk3 Launchpad:
+      lp = launchpad_py.LaunchpadProMk3()
       # Control:
       lp = launchpad_py.LaunchControl()
       # Control XL:
@@ -420,6 +422,7 @@ or if you dislike typing that much, use
       lp = lppy.LaunchpadMiniMk3()
       lp = lppy.LaunchpadLPX()
       lp = lppy.LaunchpadPro()
+      lp = lppy.LaunchpadProMk3()
       lp = lppy.LaunchControl()
       lp = lppy.LaunchControlXL()
       lp = lppy.LaunchKeyMini()
@@ -2816,7 +2819,6 @@ There is no possibility to control the RGB LEDs individually.
           
            +---+---+---+---+---+---+---+---+ 
            |101|102|   |   |   |   |   |108|
-           +---+---+---+---+---+---+---+---+ 
            +---+---+---+---+---+---+---+---+ 
            |  1|  2|   |   |   |   |   |  8|
            +---+---+---+---+---+---+---+---+ 

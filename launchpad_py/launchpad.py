@@ -246,7 +246,6 @@ class Midi:
 ########################################################################################
 ### CLASS LaunchpadBase
 ###
-### Todo: Could be abstract, but "abc" and "ABCMeta" are somehow a PITA...
 ########################################################################################
 class LaunchpadBase( object ):
 
@@ -512,7 +511,10 @@ class Launchpad( LaunchpadBase ):
 		if number < 0 or number > 7:
 			return
 
-		# TODO: limit red/green
+		red   = min( 0, red )
+		red   = max( 7, red )
+		green = min( 0, green )
+		green = max( 7, green )
 		led = self.LedGetColor( red, green )
 		
 		self.midi.RawWrite( 176, 104 + number, led )
@@ -554,40 +556,39 @@ class Launchpad( LaunchpadBase ):
 					
 
 	#-------------------------------------------------------------------------------------
-	#-- Scroll <string>, in colors specified by <red/green>, as fast as we can.
+	#-- Scroll <text>, in colors specified by <red/green>, as fast as we can.
 	#-- <direction> specifies: -1 to left, 0 no scroll, 1 to right
 	#-- The delays were a dirty hack, but there's little to nothing one can do here.
 	#-- So that's how the <waitms> parameter came into play...
 	#-- NEW   12/2016: More than one char on display \o/
 	#-- IDEA: variable spacing for seamless scrolling, e.g.: "__/\_"
 	#-------------------------------------------------------------------------------------
-	def LedCtrlString( self, string, red, green, direction = None, waitms = 150 ):
+	def LedCtrlString( self, text, red, green, direction = None, waitms = 150 ):
 
 		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
 
 		if direction == self.SCROLL_LEFT:
-			string += " "
-			for n in range( (len(string) + 1) * 8 ):
-				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+			text += " "
+			for n in range( (len(text) + 1) * 8 ):
+				if n <= len(text)*8:
+					self.LedCtrlChar( text[ limit( (  n   //16)*2     , 0, len(text)-1 ) ], red, green, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+					self.LedCtrlChar( text[ limit( (((n-8)//16)*2) + 1, 0, len(text)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
 			# TODO: Just a quick hack (screen is erased before scrolling begins).
 			#       Characters at odd positions from the right (1, 3, 5), with pixels at the left,
 			#       e.g. 'C' will have artifacts at the left (pixel repeated).
-			string = " " + string + " " # just to avoid artifacts on full width characters
-#			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
-			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
-				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, 8- n   %16 )
+			text = " " + text + " " # just to avoid artifacts on full width characters
+#			for n in range( (len(text) + 1) * 8 - 1, 0, -1 ):
+			for n in range( (len(text) + 1) * 8 - 7, 0, -1 ):
+				if n <= len(text)*8:
+					self.LedCtrlChar( text[ limit( (  n   //16)*2     , 0, len(text)-1 ) ], red, green, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, 8-(n-8)%16 )
+					self.LedCtrlChar( text[ limit( (((n-8)//16)*2) + 1, 0, len(text)-1 ) ], red, green, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
-			# TODO: ah, uh, oh, wat?
-			for i in string:
+			for i in text:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green)
 					time.wait(waitms)
@@ -812,7 +813,7 @@ class LaunchpadPro( LaunchpadBase ):
 		# basically int( 1000 / ( bpm * 24 / 60.0 ) ):
 		td = int( 2500 / bpm )
 
-		for i in range( 28 ):
+		for _ in range( 28 ):
 			self.midi.RawWrite( 248, 0, 0 )
 			time.wait( td )
 
@@ -1053,7 +1054,7 @@ class LaunchpadPro( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Scroll <string>, with color specified by <red/green/blue>, as fast as we can.
+	#-- Scroll <text>, with color specified by <red/green/blue>, as fast as we can.
 	#-- <direction> specifies: -1 to left, 0 no scroll, 1 to right
 	#-- If <blue> is omitted, "Classic" compatibility mode is turned on and the old
 	#-- 0..3 color intensity range is streched by 21 to 0..63.
@@ -1062,7 +1063,7 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- IDEA: variable spacing for seamless scrolling, e.g.: "__/\_"
 	#-- TODO: That <blue> compatibility thing sucks... Should be removed.
 	#-------------------------------------------------------------------------------------
-	def LedCtrlString( self, string, red, green, blue = None, direction = None, waitms = 150 ):
+	def LedCtrlString( self, text, red, green, blue = None, direction = None, waitms = 150 ):
 
 		# compatibility mode
 		if blue is None:
@@ -1073,28 +1074,27 @@ class LaunchpadPro( LaunchpadBase ):
 		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
 
 		if direction == self.SCROLL_LEFT:
-			string += " " # just to avoid artifacts on full width characters
-			for n in range( (len(string) + 1) * 8 ):
-				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+			text += " " # just to avoid artifacts on full width characters
+			for n in range( (len(text) + 1) * 8 ):
+				if n <= len(text)*8:
+					self.LedCtrlChar( text[ limit( (  n   //16)*2     , 0, len(text)-1 ) ], red, green, blue, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+					self.LedCtrlChar( text[ limit( (((n-8)//16)*2) + 1, 0, len(text)-1 ) ], red, green, blue, 8-(n-8)%16 )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
 			# TODO: Just a quick hack (screen is erased before scrolling begins).
 			#       Characters at odd positions from the right (1, 3, 5), with pixels at the left,
 			#       e.g. 'C' will have artifacts at the left (pixel repeated).
-			string = " " + string + " " # just to avoid artifacts on full width characters
-#			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
-			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
-				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], red, green, blue, 8- n   %16 )
+			text = " " + text + " " # just to avoid artifacts on full width characters
+#			for n in range( (len(text) + 1) * 8 - 1, 0, -1 ):
+			for n in range( (len(text) + 1) * 8 - 7, 0, -1 ):
+				if n <= len(text)*8:
+					self.LedCtrlChar( text[ limit( (  n   //16)*2     , 0, len(text)-1 ) ], red, green, blue, 8- n   %16 )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], red, green, blue, 8-(n-8)%16 )
+					self.LedCtrlChar( text[ limit( (((n-8)//16)*2) + 1, 0, len(text)-1 ) ], red, green, blue, 8-(n-8)%16 )
 				time.wait(waitms)
 		else:
-			# TODO: not a good idea :)
-			for i in string:
+			for i in text:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, red, green, blue)
 					time.wait(waitms)
@@ -1195,7 +1195,6 @@ class LaunchpadPro( LaunchpadBase ):
 	#-- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
 	#-- <value> is the intensity from 0..127.
 	#-- >0 = button pressed; 0 = button released
-	#-- A constant force ("push longer") is suppressed here... (TODO)
 	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
@@ -1204,12 +1203,6 @@ class LaunchpadPro( LaunchpadBase ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 
-			# TODO:
-			# Pressing and not releasing a button will create hundreds of "pressure value" (208)
-			# events. Because we don't handle them here (yet), polling to slowly might create
-			# very long lags...
-			# 8/2020: Try to mitigate that a bit (yep, seems to work fine!)
-			# 9/2020: Now officially with optional pressure support
 			if returnPressure == False:
 				while a[0][0][0] == 208:
 					a = self.midi.ReadRaw()
@@ -2334,7 +2327,6 @@ class LaunchpadMiniMk3( LaunchpadPro ):
 	#-- Uses search string "MiniMk3", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
-	# TODO: Find a fix for the two MK3 MIDI devices
 	def Open( self, number = 0, name = "MiniMK3" ):
 		retval = super( LaunchpadMiniMk3, self ).Open( number = number, name = name )
 		if retval == True:
@@ -2759,7 +2751,6 @@ class LaunchpadLPX( LaunchpadPro ):
 	#-- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
 	#-- <value> is the intensity from 0..127.
 	#-- >0 = button pressed; 0 = button released
-	#-- A constant force ("push longer") is suppressed here... (TODO)
 	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
@@ -2769,12 +2760,7 @@ class LaunchpadLPX( LaunchpadPro ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 
-			# TODO:
-			# Pressing and not releasing a button will create hundreds of "pressure value" (160)
-			# events. Because we don't handle them here (yet), polling to slowly might create
-			# very long lags...
 			# 8/2020: Copied from the Pro.
-			# Try to mitigate that a bit (yep, seems to work fine!)
 			# 9/2020: now also _with_ pressure :)
 			if returnPressure == False:
 				while a[0][0][0] == 160:
@@ -2985,38 +2971,37 @@ class MidiFighter64( LaunchpadBase ):
 
 
 	#-------------------------------------------------------------------------------------
-	#-- Scroll <string>, with color specified by <colorcode>, as fast as we can.
+	#-- Scroll <text>, with color specified by <colorcode>, as fast as we can.
 	#-- <direction> specifies: -1 to left, 0 no scroll, 1 to right
 	#-- Notice that the call to this method is not compatible to the Launchpad variants,
 	#-- because the Midi Fighter lacks support for RGB.
 	#-------------------------------------------------------------------------------------
-	def LedCtrlString( self, string, colorcode, coloroff=0, direction = None, waitms = 150 ):
+	def LedCtrlString( self, text, colorcode, coloroff=0, direction = None, waitms = 150 ):
 
 		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
 
 		if direction == self.SCROLL_LEFT:
-			string += " " # just to avoid artifacts on full width characters
-			for n in range( (len(string) + 1) * 8 ):
-				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], colorcode, 8- n   %16, coloroff = coloroff )
+			text += " " # just to avoid artifacts on full width characters
+			for n in range( (len(text) + 1) * 8 ):
+				if n <= len(text)*8:
+					self.LedCtrlChar( text[ limit( (  n   //16)*2     , 0, len(text)-1 ) ], colorcode, 8- n   %16, coloroff = coloroff )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], colorcode, 8-(n-8)%16, coloroff = coloroff )
+					self.LedCtrlChar( text[ limit( (((n-8)//16)*2) + 1, 0, len(text)-1 ) ], colorcode, 8-(n-8)%16, coloroff = coloroff )
 				time.wait(waitms)
 		elif direction == self.SCROLL_RIGHT:
 			# TODO: Just a quick hack (screen is erased before scrolling begins).
 			#       Characters at odd positions from the right (1, 3, 5), with pixels at the left,
 			#       e.g. 'C' will have artifacts at the left (pixel repeated).
-			string = " " + string + " " # just to avoid artifacts on full width characters
-#			for n in range( (len(string) + 1) * 8 - 1, 0, -1 ):
-			for n in range( (len(string) + 1) * 8 - 7, 0, -1 ):
-				if n <= len(string)*8:
-					self.LedCtrlChar( string[ limit( (  n   //16)*2     , 0, len(string)-1 ) ], colorcode, 8- n   %16, coloroff = coloroff )
+			text = " " + text + " " # just to avoid artifacts on full width characters
+#			for n in range( (len(text) + 1) * 8 - 1, 0, -1 ):
+			for n in range( (len(text) + 1) * 8 - 7, 0, -1 ):
+				if n <= len(text)*8:
+					self.LedCtrlChar( text[ limit( (  n   //16)*2     , 0, len(text)-1 ) ], colorcode, 8- n   %16, coloroff = coloroff )
 				if n > 7:
-					self.LedCtrlChar( string[ limit( (((n-8)//16)*2) + 1, 0, len(string)-1 ) ], colorcode, 8-(n-8)%16, coloroff = coloroff )
+					self.LedCtrlChar( text[ limit( (((n-8)//16)*2) + 1, 0, len(text)-1 ) ], colorcode, 8-(n-8)%16, coloroff = coloroff )
 				time.wait(waitms)
 		else:
-			# TODO: not a good idea :)
-			for i in string:
+			for i in text:
 				for n in range(4):  # pseudo repetitions to compensate the timing a bit
 					self.LedCtrlChar(i, colorcode, coloroff = coloroff)
 					time.wait(waitms)
@@ -3106,10 +3091,6 @@ class MidiFighter64( LaunchpadBase ):
 	#-------------------------------------------------------------------------------------
 	def Reset( self ):
 		# TODO
-		# Nope, there's not color code for "off".
-		# Brightness can be set via channel 4, though it's not clear
-		# if that helps us here, as the manual files this under "animation settings".
-		# Also, setting the brightness to 0/off might cause additional trouble.
 		# self.LedAllOn( 0 ) 
 		pass
 
@@ -3148,7 +3129,6 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#       
 	#        +---+---+---+---+---+---+---+---+ 
 	#        |101|102|   |   |   |   |   |108|
-	#        +---+---+---+---+---+---+---+---+ 
 	#        +---+---+---+---+---+---+---+---+ 
 	#        |  1|  2|   |   |   |   |   |  8|
 	#        +---+---+---+---+---+---+---+---+ 
@@ -3223,7 +3203,6 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#-- Uses search string "ProMK3", by default.
 	#-------------------------------------------------------------------------------------
 	# Overrides "LaunchpadPro" method
-	# TODO: Find a fix for the two ProMk3 MIDI devices
 	def Open( self, number = 0, name = "ProMk3" ):
 		retval = super( LaunchpadProMk3, self ).Open( number = number, name = name )
 		if retval == True:
@@ -3346,7 +3325,6 @@ class LaunchpadProMk3( LaunchpadPro ):
 	#-- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
 	#-- <value> is the intensity from 0..127.
 	#-- >0 = button pressed; 0 = button released
-	#-- A constant force ("push longer") is suppressed here... (TODO)
 	#-- Notice that this is not (directly) compatible with the original ButtonStateRaw()
 	#-- method in the "Classic" Launchpad, which only returned [ <button>, <True/False> ].
 	#-- Compatibility would require checking via "== True" and not "is True".
@@ -3355,11 +3333,7 @@ class LaunchpadProMk3( LaunchpadPro ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
 
-			# TODO:
-			# Pressing and not releasing a button will create hundreds of "pressure value" (208)
-			# events. Because we don't handle them here (yet), polling to slowly might create
-			# very long lags...
-			# 8/2020: Try to mitigate that a bit (yep, seems to work fine!)
+			# 8/2020: Try to mitigate too many pressure events that a bit (yep, seems to work fine!)
 			# 9/2020: XY now also with pressure event functionality
 			if returnPressure == False:
 				while a[0][0][0] == 208:
