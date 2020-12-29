@@ -5,7 +5,7 @@ import sys
 
 setup(
 	name = "launchpad_py",
-	version = "0.8.3",
+	version = "0.9.0",
 	description = "A Novation Launchpad control suite for Python",
 	long_description = open('README').read(),
 	author = "FMMT666(ASkr)",

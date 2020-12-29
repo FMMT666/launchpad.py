@@ -86,6 +86,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ---
 ## NEWS
 
+### CHANGES 2020/12/XX:
+    - changed version and tag to v0.9.0
+    - uploaded v0.9.0 to PyPI (finally :)
+
 ### CHANGES 2020/09/XX:
     - fixed sending command to not ready Pro Mk3 
     - fixed MF64 LedCtrlString() to correctly work with the background color
