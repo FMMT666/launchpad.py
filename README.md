@@ -88,6 +88,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2021/01/XX:
     - fix for Python 3.9
+    - updated documentation for raw LED and button codes (top row had wrong values)
 
 ### CHANGES 2020/12/XX:
     - changed version and tag to v0.9.0
@@ -2659,7 +2660,7 @@ There is no possibility to control the RGB LEDs individually.
 ### RAW mode
 
     +---+---+---+---+---+---+---+---+  +---+
-    |104|   |106|   |   |   |   |111|  |112|
+    | 91|   |   |   | 95|   |   | 98|  | 99|
     +---+---+---+---+---+---+---+---+  +---+
     
     +---+---+---+---+---+---+---+---+  +---+
