@@ -28,7 +28,7 @@ Now with full [Midi Fighter 64][23] support (8/2020).
 Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)  
 
 ---
-## STATUS 2020/09/xx:
+## STATUS 2021/01/xx:
 
 ### Devices
 
@@ -85,6 +85,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## NEWS
+
+### CHANGES 2021/01/XX:
+    - fix for Python 3.9
 
 ### CHANGES 2020/12/XX:
     - changed version and tag to v0.9.0

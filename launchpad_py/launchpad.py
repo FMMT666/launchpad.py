@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# FMMT666(ASkr) 01/2013..09/2019..08/2020
+# FMMT666(ASkr) 01/2013..09/2019..08/2020..01/2021
 # www.askrprojects.net
 #
 #
@@ -165,11 +165,11 @@ class Midi:
 		# we'll use the string-type message instead...
 		#self.devOut.write_sys_ex( timeStamp, [0xf0] + lstMessage + [0xf7] ) # old Python 2
 
-		self.devOut.write_sys_ex( timeStamp, array.array('B', [0xf0] + lstMessage + [0xf7] ).tostring() )
-
-		# TODO
-		# as of now (~2020) tostring() is deprecated, so this will probably be the future (needs testing):
-#		self.devOut.write_sys_ex( timeStamp, array.array('B', [0xf0] + lstMessage + [0xf7] ).tobytes() )
+		# array.tostring() deprecated in 3.9; quickfix ahead
+		try:
+			self.devOut.write_sys_ex( timeStamp, array.array('B', [0xf0] + lstMessage + [0xf7] ).tostring() )
+		except:
+			self.devOut.write_sys_ex( timeStamp, array.array('B', [0xf0] + lstMessage + [0xf7] ).tobytes() )
 
 
 
