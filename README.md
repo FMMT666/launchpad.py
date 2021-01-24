@@ -89,6 +89,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 ### CHANGES 2021/01/XX:
     - fix for Python 3.9
     - updated documentation for raw LED and button codes (top row had wrong values)
+    - changed version and tag to v0.9.1
+    - uploaded v0.9.1 to PyPI
 
 ### CHANGES 2020/12/XX:
     - changed version and tag to v0.9.0
