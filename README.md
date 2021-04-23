@@ -28,7 +28,7 @@ Now with full [Midi Fighter 64][23] support (8/2020).
 Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)  
 
 ---
-## STATUS 2021/01/xx:
+## STATUS 2021/04/xx:
 
 ### Devices
 
@@ -85,6 +85,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## NEWS
+
+### CHANGES 2021/04/XX:
+    - added link to driver for Mk1 Launchpad and Mini
 
 ### CHANGES 2021/01/XX:
     - fix for Python 3.9
@@ -754,6 +757,11 @@ name it once shipped the first red/green LED with!
   
 
 ### For Launchpad Mk1 users (the original "Classic" Launchpad):
+
+  Also valid for the Mk1 Mini.
+
+  (Most likely still) requires an USB driver for Windoze (7/10/...).  
+  Look out for the Novation [USB Driver 2.xx][26].  
 
       USE CLASS "Launchpad":
       
@@ -3175,3 +3183,4 @@ FMMT666(ASkr)
 [23]: https://twitter.com/FMMT666/status/1299842680533463043
 [24]: https://twitter.com/FMMT666/status/1299478117497688073
 [25]: https://www.midifighter.com/
+[26]: https://customer.novationmusic.com/en/support/downloads?brand=Novation&product_by_type=510&download_type=all
