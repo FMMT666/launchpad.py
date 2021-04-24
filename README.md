@@ -88,6 +88,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2021/04/XX:
     - added link to driver for Mk1 Launchpad and Mini
+    - fixed Mk1 Automap buttons always yellow; thx to mutax and Ferada
 
 ### CHANGES 2021/01/XX:
     - fix for Python 3.9
