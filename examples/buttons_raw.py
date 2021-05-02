@@ -81,6 +81,7 @@ def main():
 			mode = "F64"
 
 	else:
+		lp = launchpad.Launchpad()
 		if lp.Open():
 			print("Launchpad Mk1/S/Mini")
 			mode = "Mk1"
