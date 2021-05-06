@@ -27,6 +27,8 @@ Now with full [Midi Fighter 64][23] support (8/2020).
 
 Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)  
 
+And here comes the ***CENSORED SO FAR*** (5/2021)
+
 ---
 ## STATUS 2021/04/xx:
 
@@ -56,7 +58,7 @@ Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)
 
     Midi Fighter 64    - class "MidiFighter64"      LEDs and buttons
 
-    Midi Fighter 3D    - class "MidiFighter63D      IN WORK
+    Midi Fighter 3D    - class "MidiFighter3D       IN WORK
 
 
 > PRO MK3 USERS:  
@@ -90,7 +92,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2021/05/XX:
     - fixed Launchpad Mk1 code in buttons_raw.py demo; thx to jmtrivial
-    - added first Midi Mighter 3D code
+    - added first Midi Fighter 3D code
 
 ### CHANGES 2021/04/XX:
     - added link to driver for Mk1 Launchpad and Mini
@@ -3156,6 +3158,58 @@ The mode keys return:
     +---+---+---+---+---+---+---+---+
     |   |   |   |   |   |   |   |   | 7
     +---+---+---+---+---+---+---+---+
+
+
+
+---
+## (TODO) Led and Button codes, Midi Fighter 3D
+
+### RAW Mode
+
+  Button codes depend on the selected bank, the bottom row with the small buttons.
+  Indicated with a ```###``` in here.
+  
+           +---+---+---+---+               +---+---+---+---+      
+           | 39|   |   | 36|               | 55|   |   | 52|      
+     +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
+     |   | | 43|   |   | 40| |   |   |   | | 59|   |   | 56| |   |
+     |   | +---+---+---+---+ |   |   |   | +---+---+---+---+ |   |
+     |   | | 47|   |   | 44| |   |   |   | | 63|   |   | 60| |   |
+     +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
+           | 51|   |   | 48|               | 67|   |   | 64|      
+           +---+---+---+---+               +---+---+---+---+      
+           +---+---+---+---+               +---+---+---+---+      
+           |   |   |   |###|               |   |   |###|   |      
+           +---+---+---+---+               +---+---+---+---+      
+
+           +---+---+---+---+               +---+---+---+---+      
+           | 71|   |   | 68|               | 87|   |   | 84|      
+     +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
+     |   | | 75|   |   | 72| |   |   |   | | 91|   |   | 88| |   |
+     |   | +---+---+---+---+ |   |   |   | +---+---+---+---+ |   |
+     |   | | 79|   |   | 76| |   |   |   | | 95|   |   | 92| |   |
+     +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
+           | 83|   |   | 80|               | 99|   |   | 96|      
+           +---+---+---+---+               +---+---+---+---+      
+           +---+---+---+---+               +---+---+---+---+      
+           |   |###|   |   |               |###|   |   |   |      
+           +---+---+---+---+               +---+---+---+---+      
+  
+  
+### XY MODE
+  
+           +---+---+---+---+ 
+           |   |   |   |   | 
+     +---+ +---+---+---+---+ +---+
+     |   | |   |   |   |   | |   |
+     |   | +---+---+---+---+ |   |
+     |   | |   |   |   |   | |   |
+     +---+ +---+---+---+---+ +---+
+           |   |   |   |   | 
+           +---+---+---+---+ 
+           +---+---+---+---+ 
+           |   |   |   |   | 
+           +---+---+---+---+ 
 
 
 
