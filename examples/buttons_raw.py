@@ -2,10 +2,10 @@
 #
 # Quick button test.
 # Works with these Launchpads: Mk1, Mk2, Mini Mk3, S/Mini, Pro, Pro Mk3
-# And these:                   Midi Figther 64
+# And these:                   Midi Fighter 64, Mifi Fighter 3D
 # 
 #
-# FMMT666(ASkr) 7/2013..8/2020
+# FMMT666(ASkr) 7/2013..5/2021
 # www.askrprojects.net
 #
 
@@ -79,6 +79,12 @@ def main():
 		if lp.Open( 0 ):
 			print("Midi Fighter 64")
 			mode = "F64"
+
+	elif launchpad.MidiFighter3D().Check( 0 ):
+		lp = launchpad.MidiFighter3D()
+		if lp.Open( 0 ):
+			print("Midi Fighter 3D")
+			mode = "F3D"
 
 	else:
 		lp = launchpad.Launchpad()

@@ -56,6 +56,8 @@ Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)
 
     Midi Fighter 64    - class "MidiFighter64"      LEDs and buttons
 
+    Midi Fighter 3D    - class "MidiFighter63D      IN WORK
+
 
 > PRO MK3 USERS:  
 > You need to disable the Launchpad's "Transmit Clock" in the MIDI settings!  
@@ -85,6 +87,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## NEWS
+
+### CHANGES 2021/05/XX:
+    - fixed Launchpad Mk1 code in buttons_raw.py demo; thx to jmtrivial
+    - added first Midi Mighter 3D code
 
 ### CHANGES 2021/04/XX:
     - added link to driver for Mk1 Launchpad and Mini

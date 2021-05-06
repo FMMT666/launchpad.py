@@ -4,7 +4,7 @@
 #
 # https://github.com/FMMT666/launchpad.py
 # 
-# FMMT666(ASkr) 01/2013..09/2019..08/2020..01/2021
+# FMMT666(ASkr) 01/2013..09/2019..08/2020..05/2021
 # www.askrprojects.net
 #
 #
@@ -3079,6 +3079,134 @@ class MidiFighter64( LaunchpadBase ):
 			else:
 				if a[0][0][0] == 130 or a[0][0][0] == 129:
 					return [ x, y, 0 ]
+				else:
+					return []
+		else:
+			return []
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Reset the Midi Fighter
+	#-- Well, at least turn off all its LEDs
+	#-------------------------------------------------------------------------------------
+	def Reset( self ):
+		# TODO
+		# self.LedAllOn( 0 ) 
+		pass
+
+
+
+########################################################################################
+### CLASS MidiFighter3D
+###
+### For Midi Fighter 3D Gedöns
+########################################################################################
+class MidiFighter3D( LaunchpadBase ):
+
+	#         
+	# LED AND BUTTON NUMBERS IN RAW MODE
+	#         
+	#         +---+---+---+---+ 
+	#         | XX|   |   | XX| 
+	#   +---+ +---+---+---+---+ +---+
+	#   | XX| | XX|   |   | XX| |XX |
+	#   | XX| +---+---+---+---+ |XX |
+	#   | XX| | XX|   |   | XX| |XX |
+	#   +---+ +---+---+---+---+ +---+
+	#         | XX|   |   | XX| 
+	#         +---+---+---+---+ 
+	#         +---+---+---+---+ 
+	#         | XX|   |   | XX| 
+	#         +---+---+---+---+ 
+	#
+	#
+	# LED AND BUTTON NUMBERS IN XY MODE (X/Y)
+	#
+	#         +---+---+---+---+ 
+	#         | XX|   |   | XX| 
+	#   +---+ +---+---+---+---+ +---+
+	#   | XX| | XX|   |   | XX| |XX |
+	#   | XX| +---+---+---+---+ |XX |
+	#   | XX| | XX|   |   | XX| |XX |
+	#   +---+ +---+---+---+---+ +---+
+	#         | XX|   |   | XX| 
+	#         +---+---+---+---+ 
+	#         +---+---+---+---+ 
+	#         | XX|   |   | XX| 
+	#         +---+---+---+---+ 
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Add some LED mode "constants" for better usability.
+	#-------------------------------------------------------------------------------------
+	def __init__( self ):
+
+		# TODO TODO TODO
+
+		self.MODE_BRIGHT        = [ i+18 for i in range(16) ]
+		self.MODE_TOGGLE        = [ i+34 for i in range(8) ]
+		self.MODE_PULSE         = [ i+42 for i in range(8) ]
+		self.MODE_ANIM_SQUARE   = 50
+		self.MODE_ANIM_CIRCLE   = 51
+		self.MODE_ANIM_STAR     = 52
+		self.MODE_ANIM_TRIANGLE = 53
+
+		super( MidiFighter3D, self ).__init__( )
+
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached Launchpad MIDI devices.
+	#-- Uses search string "Fighter 3D", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Open( self, number = 0, name = "Fighter 3D" ):
+		return super( MidiFighter3D, self ).Open( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Checks if a device exists, but does not open it.
+	#-- Does not check whether a device is in use or other, strange things...
+	#-- Uses search string "Fighter 3D64", by default.
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
+	def Check( self, number = 0, name = "Fighter 3D" ):
+		return super( MidiFighter3D, self ).Check( number = number, name = name )
+
+
+	#-------------------------------------------------------------------------------------
+	#-- Returns the raw value of the last button change (pressed/unpressed) as a list
+	#-- [ <button>, <velocity> ], in which <button> is the raw number of the button and
+	#-- <velocity> the button state.
+	#--   >0 = button pressed; 0 = button released
+	#-------------------------------------------------------------------------------------
+	def ButtonStateRaw( self ):
+		if self.midi.ReadCheck():
+			a = self.midi.ReadRaw()
+
+			# The Midi Fighter 64 does not support velocities. For 500 bucks. Lol :'-)
+			# What we see here are either channel 3 or 2 NoteOn/NoteOff commands,
+			# the factory settings, depending on the "bank selection".
+			#   Channel 3 -> hold upper left  button for longer than 2s
+			#   Channel 2 -> hold upper right button for longer than 2s
+			#
+			#    [[[146, 81, 127, 0], 47365]]
+			#    [[[130, 81, 127, 0], 47443]]
+			#    [[[146, 82, 127, 0], 47610]]
+			#
+			#    [[[ <NoteOn/Off>, <button>, 127, 0], 47610]]
+			#
+			#    146/145 -> NoteOn
+			#    130/129 -> NoteOff
+			#    127     -> fixed velocity (as set by the Midi Fighter utility )
+
+			# Mhh, I guess it's about time to think about adding MIDI channels, isn't it?
+			# But for now, we just check ch 2 and 3:
+			if a[0][0][0] == 145 or a[0][0][0] == 146:
+				return [ a[0][0][1], a[0][0][2] ]
+			else:
+				if a[0][0][0] == 130 or a[0][0][0] == 129:
+					return [ a[0][0][1], 0 ]
 				else:
 					return []
 		else:
