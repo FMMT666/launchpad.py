@@ -27,7 +27,7 @@ Now with full [Midi Fighter 64][23] support (8/2020).
 
 Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)  
 
-And here comes the ***CENSORED SO FAR*** (5/2021)
+And here comes the [Midi Fighter 3D][27] (5/2021)
 
 ---
 ## STATUS 2021/04/xx:
@@ -42,11 +42,11 @@ And here comes the ***CENSORED SO FAR*** (5/2021)
 
     Launchpad Pro      - class "LaunchpadPro()"     LEDs and buttons (digitally only (yet))
 
-    Launchpad Pro Mk3  - class "LaunchpadProMk3()"  EXPERIMENTAL+++ as in "should be really ok"
+    Launchpad Pro Mk3  - class "LaunchpadProMk3()"  LEDs and buttons, pressure, everything; "should work"
 
     Launchpad Mini Mk3 - class "LaunchpadMiniMk3()" LEDs and buttons  *** RENAMED 5/2020 ***
 
-    Launchpad X        - class "LaunchpadLPX()"     EXPERIMENTAL+++ as in "should work really well"
+    Launchpad X        - class "LaunchpadLPX()"     LEDs and buttons and more
 
     Launch Control     - class "LaunchControl()"    EXPERIMENTAL
 
@@ -92,7 +92,10 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2021/05/XX:
     - fixed Launchpad Mk1 code in buttons_raw.py demo; thx to jmtrivial
-    - added first Midi Fighter 3D code
+    - added first Midi Fighter 3D code; derived from the MF64
+    - added MF3D LedCtrlRaw()
+    - added MF3D ButtonStateRaw()
+    - added MF3D LedCtrlXY()
 
 ### CHANGES 2021/04/XX:
     - added link to driver for Mk1 Launchpad and Mini
@@ -1190,7 +1193,7 @@ Functions requiring a color code have a "...ByCode" naming style.
 
 
 ---
-## Midi Fighter 64 class methods overview
+## Midi Fighter 64 and Midi Fighter 3D class methods overview
 
 *WORK IN PROGESS*
 
@@ -1216,7 +1219,6 @@ The Midi Fighter 64 only supports a color table.
 There is no possibility to control the RGB LEDs individually.
 
 ![RGB color palette](/images/mf64_colorcodes.png)
-
 
 
 ---
@@ -2394,8 +2396,8 @@ There is no possibility to control the RGB LEDs individually.
       PARAMS:
       RETURN: [ ]                        An empty list if no event occured, otherwise...
               [ <x> , <y>, <value> ]     ... a list with three fields:
-                                         <x>      0..7; x coordinate of button
-                                         <y>      0..7; y coordinate of button
+                                         <x>      0..7; x coordinate of button (0..3 for Midi Fighter 3D)
+                                         <y>      0..7; y coordinate of button (0..3 for Midi Fighter 3D)
                                          <value>  >0 = pressed; 0 = released
 
 
@@ -2432,6 +2434,7 @@ There is no possibility to control the RGB LEDs individually.
         MODE_ANIM_TRIANGLE
 
       PARAMS: <led>         36..99; number of the LED to control
+                            see tables at end of file
               <colorcode>   0..127; color code
               <mode>        [OPTIONAL] 18..53, see above
       RETURN:
@@ -2466,6 +2469,7 @@ There is no possibility to control the RGB LEDs individually.
         MODE_ANIM_TRIANGLE
 
       PARAMS: <led>         36..99; number of the LED to control
+                            see tables at end of file
               <mode>        18..53; see above
       RETURN:
 
@@ -2476,13 +2480,15 @@ There is no possibility to control the RGB LEDs individually.
     See table with coordinates at the end of this document.
     Color codes are somewhere above (see image).
 
-      PARAMS: <x>           0..7; x coordinate
-              <y>           0..7; y coordinate
+      PARAMS: <x>           0..7; x coordinate (0..3 for Midi Fighter 3D)
+              <y>           0..7; y coordinate (0..3 for Midi Fighter 3D)
               <colorcode>   0..127; color code
       RETURN:
 
 
 ### LedCtrlChar( char, color, [offsx = 0], [offsy = 0], [coloroff = 0] )
+
+    Only for Midi Fighter 64!
 
     Displays character <char> with a color of <color> and a
     lateral offset of <offsx> (-8..8) on the Midi Fighter.
@@ -2512,6 +2518,8 @@ There is no possibility to control the RGB LEDs individually.
 
 
 ### LedCtrlString( string, color, [coloroff = 0], [direction = 0], [waitms = 150] )
+
+    Only for Midi Fighter 64!
 
     Scrolls <string> across the Midi Fighter's 8x8 matrix.
     <color> specifies the color of the string and <coloroff> the background.
@@ -3166,46 +3174,50 @@ The mode keys return:
 
 ### RAW Mode
 
-  Button codes depend on the selected bank, the bottom row with the small buttons.
-  Indicated with a ```###``` in here.
+  Button and LED codes depend on the selected bank, the bottom row with the small buttons.  
+  Selected bank is indicated with a ```#x#``` here.
+
+  Notice that the side button codes 36-40 might overlap with the arcade buttons.  
+  This behaviour can be reprogrammed with the Midi Fighter Utility.
   
            +---+---+---+---+               +---+---+---+---+      
            | 39|   |   | 36|               | 55|   |   | 52|      
      +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
-     |   | | 43|   |   | 40| |   |   |   | | 59|   |   | 56| |   |
-     |   | +---+---+---+---+ |   |   |   | +---+---+---+---+ |   |
-     |   | | 47|   |   | 44| |   |   |   | | 63|   |   | 60| |   |
+     | 23| | 43|   |   | 40| | 20|   | 29| | 59|   |   | 56| | 26|
+     | 24| +---+---+---+---+ | 21|   | 30| +---+---+---+---+ | 27|
+     | 25| | 47|   |   | 44| | 22|   | 31| | 63|   |   | 60| | 28|
      +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
            | 51|   |   | 48|               | 67|   |   | 64|      
            +---+---+---+---+               +---+---+---+---+      
            +---+---+---+---+               +---+---+---+---+      
-           |   |   |   |###|               |   |   |###|   |      
+           | 3 | 2 | 1 |#0#|               | 3 | 2 |#1#| 0 |      
            +---+---+---+---+               +---+---+---+---+      
 
            +---+---+---+---+               +---+---+---+---+      
            | 71|   |   | 68|               | 87|   |   | 84|      
      +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
-     |   | | 75|   |   | 72| |   |   |   | | 91|   |   | 88| |   |
-     |   | +---+---+---+---+ |   |   |   | +---+---+---+---+ |   |
-     |   | | 79|   |   | 76| |   |   |   | | 95|   |   | 92| |   |
+     | 35| | 75|   |   | 72| | 32|   | 41| | 91|   |   | 88| | 38|
+     | 36| +---+---+---+---+ | 33|   | 42| +---+---+---+---+ | 39|
+     | 37| | 79|   |   | 76| | 34|   | 43| | 95|   |   | 92| | 40|
      +---+ +---+---+---+---+ +---+   +---+ +---+---+---+---+ +---+
            | 83|   |   | 80|               | 99|   |   | 96|      
            +---+---+---+---+               +---+---+---+---+      
            +---+---+---+---+               +---+---+---+---+      
-           |   |###|   |   |               |###|   |   |   |      
+           | 3 |#2#| 1 | 0 |               |#3#| 2 | 1 | 0 |      
            +---+---+---+---+               +---+---+---+---+      
   
   
 ### XY MODE
   
+             0   1   2   3
            +---+---+---+---+ 
-           |   |   |   |   | 
+  0        |   |1/0|   |   |        0
      +---+ +---+---+---+---+ +---+
-     |   | |   |   |   |   | |   |
+  1  |   | |   |   |   |   | |   |  1
      |   | +---+---+---+---+ |   |
-     |   | |   |   |   |   | |   |
+  2  |   | |   |   |   |3/2| |   |  2
      +---+ +---+---+---+---+ +---+
-           |   |   |   |   | 
+  3        |0/3|   |   |   |        3
            +---+---+---+---+ 
            +---+---+---+---+ 
            |   |   |   |   | 
@@ -3245,3 +3257,4 @@ FMMT666(ASkr)
 [24]: https://twitter.com/FMMT666/status/1299478117497688073
 [25]: https://www.midifighter.com/
 [26]: https://customer.novationmusic.com/en/support/downloads?brand=Novation&product_by_type=510&download_type=all
+[27]: https://twitter.com/FMMT666/status/1390806661829386241
