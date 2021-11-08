@@ -30,7 +30,7 @@ Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)
 And here comes the [Midi Fighter 3D][27] (5/2021)
 
 ---
-## STATUS 2021/04/xx:
+## STATUS 2021/11/xx:
 
 ### Devices
 
@@ -68,7 +68,8 @@ And here comes the [Midi Fighter 3D][27] (5/2021)
 > The Pro Mk3 needs the latest Firmware to operate flawlessly. FW is only available  
 > via a Novation account- and product registration.
 >
-> Alternatively, visit [mat1jaczyyy's Firmware Utility][28] on a Chromium-based browser to update the firmware of Pro Mk3.
+> Alternatively, visit [mat1jaczyyy's Firmware Utility][28] on a Chromium-based browser to update the firmware of Pro Mk3.  
+> USE THIS AT YOUR OWN RISK!
 
 Please notice that the class "LaunchpadMk3()" was renamed to "LaunchpadMiniMk3()" in 5/2020.  
 This was necessary to avoid confusion with the device search string and the new "Pro-Mk3" Launchpad.  
