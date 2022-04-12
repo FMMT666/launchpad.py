@@ -2067,13 +2067,11 @@ class LaunchKeyMini( LaunchpadBase ):
 ### For multicolor LaunchKey Keyboards
 ########################################################################################
 class LaunchKeyMiniMk3( LaunchpadBase ):
-	#	COLORS = {'black': 0, 'off': 0, 'white': 3, 'red': 5, 'green': 17}
-#	COLORS_RGB = [0:[1,1,1],1:[127,0,0],2:[1,],3:[],4:[],5:[],6:[]]
-	def getPadSessionMatrix(self):
-		return
-	def getPadDrumMatrix(self):
-		return [[40,41,42,43,48,49,50,51,52],[36,37,38,39,44,45,46,47]]
-
+###
+#	Most of the ids equal to Launchkey MK3 Programmers guide, so need to check if it works with  Launchkey Mk3 37/49/61
+###
+	drumPadMatrix=[[40,41,42,43,48,49,50,51,52],[36,37,38,39,44,45,46,47]]
+	sessionPadMatrix=[[96,97,98,99,100,101,102,103],[112,113,114,115,116,117,118,119]]
 	def setDrumMode(self,mode=True):
 		self.drumMode=mode
 	def Reset(self):
@@ -2083,6 +2081,12 @@ class LaunchKeyMiniMk3( LaunchpadBase ):
 		else:
 			for x in range(96,120):
 				self.LedCtrlRaw(x,0)
+	#-------------------------------------------------------------------------------------
+	#-- Opens one of the attached LaunchKey Mini Mk3 devices.
+	#-- New Launchkey requires enter DAW mode to change colors properly,and have 2 Midi channels so send noteOn trough
+	#-- second midi channel
+	#-------------------------------------------------------------------------------------
+	# Overrides "LaunchpadBase" method
 	def Open( self, number = 0, name = "AUTO" ):
 		retval = super( LaunchKeyMiniMk3, self ).Open( number = number, name = name )
 		nameList = [ "(Launchkey Mini MK3", "(2- Launchkey Mini MK3", "(3- Launchkey Mini MK3" ]
@@ -2097,27 +2101,8 @@ class LaunchKeyMiniMk3( LaunchpadBase ):
 				self.setDawMode()
 				print(self.idIn)
 				return rval
-#		self.standAloneIn=self.midi.SearchDevice('MIDIIN2.*?'+name,True,False)
-#		self.standAloneOut=self.midi.SearchDevice('MIDIOUT*'+name,False,True)
-#		print(self.standAloneIn)
 		return False
 
-	def cOpen( self, number = 0, nameIn = "Launchpad" ,nameOut="Launchpad"):
-		LaunchpadBase.idOut = self.midi.SearchDevice( nameOut, True, False, number = number )
-		LaunchpadBase.idIn  = self.midi.SearchDevice( nameIn, False, True, number = number )
-		if LaunchpadBase.idOut is None or LaunchpadBase.idIn is None:
-			return False
-		if self.midi.OpenOutput(LaunchpadBase.idOut) == False:
-			return False
-		return self.midi.OpenInput(LaunchpadBase.idIn)
-	def rawOpen(self,number=0,idIn=0,idOut=0):
-		LaunchpadBase.idOut = idOut
-		LaunchpadBase.idIn  = idIn
-		if LaunchpadBase.idOut is None or LaunchpadBase.idIn is None:
-			return False
-		if self.midi.OpenOutput(LaunchpadBase.idOut) == False:
-			return False
-		return self.midi.OpenInput(LaunchpadBase.idIn)
 	def Check( self, number = 0, name = "LaunchKey Mini MK3" ):
 		return super( LaunchKeyMiniMk3, self ).Check( number = number, name = name )
 
@@ -2126,29 +2111,32 @@ class LaunchKeyMiniMk3( LaunchpadBase ):
 
 	def InputChanged( self ):
 		return self.midi.ReadCheck()
+
 	def LedCtrlXYByCode(self,x,y,colorcode):
-
 		if (self.drumMode):
-			matrix=self.getPadDrumMatrix()
+			matrix=self.drumPadMatrix
 		else:
-			matrix=[[96,97,98,99,100,101,102,103],[112,113,114,115,116,117,118,119]]
+			matrix=self.sessionPadMatrix
 		led =matrix[y][x]
-
 		self.LedCtrlRaw(led, colorcode)
+	#-------------------------------------------------------------------------------------
+	#-- Controls a grid LED by its <x>/<y> coordinates and a <color>.
+	#--  <x>/<y>  0..7
+	#--  <r>/<g>/<b>  0..127 r g b
+	#-- uses custom code for conversion rgb to colorcodes
+	#-- Seems like, that color table is something like HSV palette
+	#-------------------------------------------------------------------------------------
 	def LedCtrlXY(self, x, y, red, green, blue):
 		if x < 0 or x > 9 or y < 0 or y > 2:
 			return
-		# rotate matrix to the right, column 9 overflows from right to left, same row
 		if (self.drumMode):
-			matrix=self.getPadDrumMatrix()
+			matrix=self.drumPadMatrix
 		else:
-			matrix = [[96, 97, 98, 99, 100, 101, 102, 103], [112, 113, 114, 115, 116, 117, 118, 119]]
+			matrix = self.sessionPadMatrix
 		led =matrix[y][x]
-#		print(str(red)+" "+str(green)+" "+str(blue))
 		c_array=colorsys.rgb_to_hsv(float(red/127.0), float(green/127.0),float(blue/127.0))
 
 		limit = lambda n, mini, maxi: max(min(maxi, n), mini)
-#		print(c_array)
 		if (c_array[1]<=0.25 and c_array[2]<=0.25):
 			colorcode=round(3*c_array[2])
 			colorcode=limit(colorcode,0,3)
@@ -2160,52 +2148,56 @@ class LaunchKeyMiniMk3( LaunchpadBase ):
 			v=math.ceil(4*(1-c_array[2]))
 			h=round(54*c_array[0])
 			colorcode=h+s+v+4
-#			print("colorcode:"+str(colorcode))
 		self.LedCtrlRaw(led, colorcode)
-	def LedCtrlRawCmd(self,cmd, number,data2,channel):
-		self.midi.RawWrite(cmd+channel, number ,data2)
+
 	def LedCtrlRawByCode(self, number, colorcode, channel ):
-
-		#if number < 96 or number > 103:
-		#	return
-
-
-#		self.midi.RawWriteSysEx([0, 32, 41, 2, 13, 3, 3, number, red, green, blue])
 		self.midi.RawWrite(0x90 + channel, number ,colorcode)
+	######
+	#-- Turns on DAW Mode, where color function works
+	####
 	def setDawMode(self):
-		self.LedCtrlRawCmd(0x90, 12, 1, 15)
+		self.midi.RawWrite(0x9F,12,1)
+	#####
+	#--	Turns Standalone mode,where you cant color any pad :( (Unused for now, but must be called at Close)
+	####
 	def setStandAloneMode(self):
 		self.midi.RawWrite(0x9F,12,0)
+
 	def LedCtrlRaw(self,number,colorcode):
 		if (self.drumMode):
 			self.midi.RawWrite(0x90+9, number ,colorcode)
 		else:
 			self.midi.RawWrite(0x90, number ,colorcode)
-#		self.midi.RawWriteSysEx([0, 32, 41, 2, 13, 3, 3, number, red, green, blue]))
+
+	# -------------------------------------------------------------------------------------
+	# -- Returns the raw value of the last button change (pressed/unpressed) as a list
+	# -- [ <x>, <y>, <value> ], in which <x> and <y> are the buttons coordinates and
+	# -- <value> is the intensity from 0..127.
+	# -------------------------------------------------------------------------------------
 	def ButtonStateXY( self ):
 		if self.midi.ReadCheck():
 			a = self.midi.ReadRaw()
-			#print(a[0][0][1])
 			button_id=a[0][0][1]
-			matrixDrum=self.getPadDrumMatrix()
-
-			# whatever that is, does not belong here...
+			matrixDrum=self.drumPadMatrix
 			if (a[0][0][1]>=36 and a[0][0][1]<=52):
 				if (button_id in matrixDrum[0]):
 					index_1 = matrixDrum[0].index(button_id)
-					return [index_1,0,0]
+					return [index_1,0,a[0][0][2]]
 				elif (button_id in matrixDrum[1]):
 					index_2 = matrixDrum[1].index(button_id)
-					return [index_2,1,0]
+					return [index_2,1,a[0][0][2]]
 			elif(a[0][0][1]>=96 and a[0][0][1]<=119):
 				x=(button_id - 96)%8
 				y=int((button_id-96)/8*0.5)
-
-				return [x,y,0]
+				return [x,y,a[0][0][2]]
 			return []
 		else:
 			return []
 
+	#-------------------------------------------------------------------------------------
+	#-- Here should be setStandAloneMode called, but it must be called before destroying "midi"
+	#--
+	#-------------------------------------------------------------------------------------
 	def Close(self):
 		super( LaunchKeyMiniMk3, self ).Close()
 ########################################################################################
