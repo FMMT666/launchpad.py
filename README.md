@@ -9,7 +9,7 @@ Compatible with most [tm] single board computers.
 
 Watch a 6s video [here][7].  
 Or take a look at [that one][8].  
-What about the brand new Launchpad Pro support? [Right][9]!
+What about the brand-new Launchpad Pro support? [Right][9]!
 
 Hey - and the Mac? Yep, that finally works too. [Look][12] \o/  
 
@@ -358,7 +358,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
   - "Pro": support full analog reads (button already pressed, but intensity changes)
   - "Doc": split installation and usage (and condense that a little)
   - "All": fix manual text scrolling
-  - "All": replace MIDI cmd numbers with sth human readable (144->Note On; 176->Control Change, etc...)
+  - "All": replace MIDI cmd numbers with sth human-readable (144->Note On; 176->Control Change, etc...)
   - "All": custom bitmaps and graphics
   - "All": event system
   - "All": better custom font support
@@ -386,7 +386,7 @@ or
     sudo pip install launchpad_py
 
 (in case you need superuser rights) to install it.  
-Notice that the required dependencies (see below) are not automatically resolved and you need to install PyGame separately.
+Notice that the required dependencies (see below) are not automatically resolved, and you need to install PyGame separately.
 
 Also make sure that you're using the right "pip", matching your Python 2 or 3 preference.  
 Check with
@@ -397,7 +397,7 @@ Which should bring up somewthing like:
 
     pip 9.0.1 from /usr/lib/python2.7/dist-packages (python 2.7)
 
-For explicitly installing this in an Python 3 environment, use
+For explicitly installing this in a Python 3 environment, use
 
     pip3 install launchpad_py
 
@@ -461,9 +461,9 @@ For compatibility with existing code, use
       import launchpad_py as launchpad
 
 
-#### Install directly from Github
+#### Install directly from GitHub
 
-Instead of downloading the source distribution, you can directly install it from Github
+Instead of downloading the source distribution, you can directly install it from GitHub
 by executing
 
       pip install git+https://github.com/FMMT666/launchpad.py
@@ -761,7 +761,7 @@ name it once shipped the first red/green LED with!
  Until now (6/2017), Launchpad.py does not have an event system built in. You need to poll the buttons' or
  potentiometer's values manually.  
  Notice that actually nothing will get lost, but every event you create will be buffered (until you run out
- or memory :). If you don't poll the buttons or potentiometers regulary, your might end up with thousands
+ or memory). If you don't poll the buttons or potentiometers regulary, your might end up with thousands
  of old states and values, blocking the current input.  
  Especially rotating a potentiometer or pushing a slider, creates an event for each single value that
  was sampled. This can easily be hundreds of messages in a few seconds.
@@ -773,9 +773,9 @@ name it once shipped the first red/green LED with!
 
 ### For Launchpad Mk1 users (the original "Classic" Launchpad):
 
-  Also valid for the Mk1 Mini.
+  This is also valid for the Mk1 Mini.
 
-  (Most likely still) requires an USB driver for Windoze (7/10/...).  
+  (Most likely still) requires a USB driver for Windoze (7/10/...).  
   Look out for the Novation [USB Driver 2.xx][26].  
 
       USE CLASS "Launchpad":
@@ -837,7 +837,7 @@ name it once shipped the first red/green LED with!
 ### For LaunchKey (Mini) users
 
 Even it is named "Mini", it also supports most of the bigger keyboards' functionalities.  
-Notice that some of the button and key numbers collide and cannot be differed.
+Notice that some button and key numbers collide and cannot be differed.
 
       USE CLASS "LaunchKeyMini":
       
@@ -856,7 +856,7 @@ The first set of the six mode is enabled by simply pushing (and releasing) on of
 buttons, the second set, "shift-mode" is activated by holding down one of the mode buttons while
 pushing a number button.
 
-So, if the "cue" page is active and you try to activate an LED in the "loop" page, that
+So, if the "cue" page is active, and you try to activate an LED in the "loop" page, that
 will not be visible until you activate that page.
 
 
@@ -955,7 +955,7 @@ Install that with:
 
 #### Hardware
 
-Notice that the original Launchpad Mk1 requires an USB driver. Thanks, [Stewart!][13].  
+Notice that the original Launchpad Mk1 requires a USB driver. Thanks, [Stewart!][13].  
 Get it from [here][14] (Novation USB Driver-2.7.dmg).
 
 As it seems, all newer Launchpads work right out of the box, no driver required.
@@ -965,7 +965,7 @@ As it seems, all newer Launchpads work right out of the box, no driver required.
 Please notice that some the newer RGB LED Launchpads consume more current than a
 Raspberry Pi can deliver. If you turn on a lot of LEDs, the Launchpad will just reset and show the fireworks demo.  
 At least for the Launchpad Pro, you could use an external power supply adapter. For the Mk2, you
-would need a an "USB-Y" cable, with the "power plug" connected to an external power supply (or other PC).
+would need a "USB-Y" cable, with the "power plug" connected to an external power supply (or other PC).
 
 As written somewhere above, at least for Raspbian (Jesse), you should install Raspbian's PyGame version
 via the package manager or apt. The PyPI version (installation via "pip") will not work due to some missing SDL components.  
@@ -1008,7 +1008,7 @@ Which outputs something comparable to
 Just discovered another oddity...
 
 I attached a Launchpad Pro to my Linux box, as many times before, to finally add the
-button methods, but it refused to show up as an USB device. Instead of the "note mode",
+button methods, but it refused to show up as a USB device. Instead of the "note mode",
 indicated by a turquoise/pink colour pattern, it played that "fireworks animation" and
 did nothing...
 
@@ -1128,7 +1128,7 @@ Refer to the "detailed description of ..." section for each device.
 
 All RGB Launchpads have a 128 color palette built-in.  
 Controlling LEDs with colors from the palette is about three times faster than
-using the, indeed much more comfortable, RGB notation.
+using the much more comfortable RGB notation.
 
 Functions requiring a color code have a "...ByCode" naming style.
 
@@ -1294,7 +1294,7 @@ There is no possibility to control the RGB LEDs individually.
       RETURN: True     success
               False    error
 
-  As of 12/2016, the name search patterns are case insensitive, hence strings like "mk2", "pRo"
+  As of 12/2016, the name search patterns are case-insensitive, hence strings like "mk2", "pRo"
   or even "lAunCHpAd MiNI" are valid too.
 
     Notice that the default name for the class Launchpad(), the "Mk1" or "Classic" Launchpads,
@@ -2831,7 +2831,7 @@ There is no possibility to control the RGB LEDs individually.
 ---
 ## Button and LED codes, Launchpad "Pro Mk3" (RGB LEDs)
 
-### LED and and button numbers in RAW mode
+### LED and button numbers in RAW mode
 
     +---+  +---+---+---+---+---+---+---+---+  +---+
     | 90|  | 91|   |   |   |   |   |   | 98|  | 99|
@@ -2862,7 +2862,7 @@ There is no possibility to control the RGB LEDs individually.
            +---+---+---+---+---+---+---+---+ 
 
 
-### LED and and button numbers in X/Y (classic) mode
+### LED and button numbers in X/Y (classic) mode
 
       9      0   1   2   3   4   5   6   7      8   
            +---+---+---+---+---+---+---+---+ 
@@ -2893,7 +2893,7 @@ There is no possibility to control the RGB LEDs individually.
            |/10|   |   |   |   |   |   |   |        10
            +---+---+---+---+---+---+---+---+ 
 
-### LED and and button numbers in X/Y (pro) mode
+### LED and button numbers in X/Y (pro) mode
 
       0      1   2   3   4   5   6   7   8      9
            +---+---+---+---+---+---+---+---+ 
@@ -3092,7 +3092,7 @@ three mode buttons while pressing a number button.
      +-----+                                            +-----+
 
 
-### One Page Mode
+### One-Page Mode
 
 Button numbers equal the labels on the buttons.
 The mode keys return:
