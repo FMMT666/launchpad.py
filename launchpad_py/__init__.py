@@ -11,4 +11,5 @@ from launchpad_py.launchpad import LaunchpadLPX
 from launchpad_py.launchpad import MidiFighter64
 from launchpad_py.launchpad import MidiFighter3D
 from launchpad_py.launchpad import LaunchpadProMk3
+from launchpad_py.launchpad import LaunchKeyMiniMk3
 from launchpad_py import charset
