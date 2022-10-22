@@ -204,11 +204,10 @@ class Midi:
 		#-------------------------------------------------------------------------------------
 		def SearchDevices( self, name, output = True, input = True, quiet = True ):
 			ret = []
-			i = 0
-			
-			for n in range( midi.get_count() ):
-				md = midi.get_device_info( n )
-				if str( md[1].lower() ).find( name.lower() ) >= 0:
+
+			for i in range( midi.get_count() ):
+				md = midi.get_device_info( i )
+				if name.lower() in str( md[1].lower() ):
 					if quiet == False:
 						print('%2d' % ( i ), md)
 						sys.stdout.flush()
@@ -216,7 +215,6 @@ class Midi:
 						ret.append( i )
 					if input == True and md[2] > 0:
 						ret.append( i )
-				i += 1
 
 			return ret
 
