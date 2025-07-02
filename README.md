@@ -67,6 +67,7 @@ And here comes the [Midi Fighter 3D][27] (5/2021)
 > I do not use Homebrew - maybe you can try your luck with that one.  
 > Compiling PyGame though is acually easy. Usually. Hehe.  
 > The process is explained somewhere below. CTRL-F your way down to "compile" in the RPi section.  
+> Also, please update your Launchpads to the latest version.  
 
 
 > PRO MK3 USERS:  
@@ -103,6 +104,7 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ### CHANGES 2025/06/XX:
     - added notes for Apple Silicon
+    - added notes updating the MK2
 
 ### CHANGES 2021/05/XX:
     - fixed Launchpad Mk1 code in buttons_raw.py demo; thx to jmtrivial
@@ -351,7 +353,8 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## Upcoming attractions, notes and thoughts
-
+ 
+  - "AP3": AKAI Professional APC mini MK2
   - "PK3": the Pro Mk3 has some issues; needs to be fixed
   - "All": optionally avoid resetting the X and Pro Mk3 to Live mode in Close(); (bc LEDs turn on)
   - "FNT": fix character set; e.g. "!", "0", "N" and probably many more
@@ -838,6 +841,9 @@ name it once shipped the first red/green LED with!
       USE CLASS "LaunchpadMk2":
       
         lp = launchpad.LaunchpadMk2()
+
+  Instructions to safely update to the latest version [here][29].  
+  Especially for Apple Silicon!
 
 ### For Launchpad Mini Mk3 users
 
@@ -3295,3 +3301,4 @@ FMMT666(ASkr)
 [26]: https://customer.novationmusic.com/en/support/downloads?brand=Novation&product_by_type=510&download_type=all
 [27]: https://twitter.com/FMMT666/status/1390806661829386241
 [28]: https://fw.mat1jaczyyy.com
+[29]: https://support.novationmusic.com/hc/en-gb/articles/115003688729-My-Launchpad-MK2-Freezes-During-The-Firmware-Update
