@@ -30,7 +30,7 @@ Finally! Hehe, say hello to the [Mk3 Pro][24] (8/2020)
 And here comes the [Midi Fighter 3D][27] (5/2021)
 
 ---
-## STATUS 2021/11/xx:
+## STATUS 2025/06/xx:
 
 ### Devices
 
@@ -59,6 +59,14 @@ And here comes the [Midi Fighter 3D][27] (5/2021)
     Midi Fighter 64    - class "MidiFighter64"      LEDs and buttons
 
     Midi Fighter 3D    - class "MidiFighter3D       IN WORK
+
+
+> APPLE SILICON:  
+> You most likely need to compile your own PyGame version.  
+> 6/2025: The PyPI version has a broken MIDI out path, the MacPorts version comes without MIDI at all.  
+> I do not use Homebrew - maybe you can try your luck with that one.  
+> Compiling PyGame though is acually easy. Usually. Hehe.  
+> The process is explained somewhere below. CTRL-F your way down to "compile" in the RPi section.  
 
 
 > PRO MK3 USERS:  
@@ -92,6 +100,9 @@ Successfully tested with Ubuntu 18.04-LTS+. Requires compiling your own PyGame t
 
 ---
 ## NEWS
+
+### CHANGES 2025/06/XX:
+    - added notes for Apple Silicon
 
 ### CHANGES 2021/05/XX:
     - fixed Launchpad Mk1 code in buttons_raw.py demo; thx to jmtrivial
@@ -569,7 +580,7 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 ## Requirements
 
   - [Python][2] 2, 3
-  - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3, v1.9.4-XX, ...
+  - [Pygame][3] v1.9.1, (v1.9.2), v1.9.3, v1.9.4-XX, ..., v2.6.1 ...
 
 Some Pygame versions do not work on some OSes (e.g. v1.9.2 might cause trouble
 with Windows 7/10). I cannot tell you any more than just "try!".  
@@ -604,6 +615,7 @@ Previously, launchpad.py was tested under
   - Beagle Bone (Black)
   - Banana Pi (Pro/M2/R1)
   - pcDuino V3
+  - Apple Silicon (6/2025; you'll need to compile your own PyGame version)
   - ...
 
 Supported and tested red/green LED Launchpad devices, here referred  to as "Classic" or "Mk1":
@@ -633,6 +645,8 @@ name it once shipped the first red/green LED with!
 
 ---
 ## Compiling your own PyGame
+
+ As of 6/2025, I would recommend to build it the "compile via 'setup.py'" way, below.
 
  If you have problems with errors like "alsa.conf" or the ListAll() method
  not recognizing any attached Launchpads on newer systems, especially Ubuntu 17/18,
@@ -693,6 +707,15 @@ name it once shipped the first red/green LED with!
  If you need a fully working PyGame, with all features, I leave it up to you,
  to resolve the remaining "not found" issues, but they're not required by Launchpad.py
 
+ In case Cython is missing, the 'setup.py' process will print the instructions to install it.  
+ Otherwise, simply install it via
+
+   pip3 install cython
+
+ Assuming your Python 3 pip is named pip3, of course. Otherwise, check your matching version with
+
+   pip --version
+
  Make sure PORTMIDI and PORTTIME are marked with "found", then continue the build process.
  After a hopfully error-free build, execute (Ubuntu example for superuser access)
 
@@ -705,7 +728,7 @@ name it once shipped the first red/green LED with!
  ...
 
 
-### Compile via "configure" (old)
+### Compile via "configure" (old, not recommended)
 
  Newer Python variants come with a fully functional setup.py (see above).  
  I just leave the old compiling instructions here...
@@ -755,6 +778,12 @@ name it once shipped the first red/green LED with!
  
 ---
 ## Random Notes
+
+### Botton events work, but LED methods fail (won't light up)
+
+ In case of Apple Silicon, pls compile your own PyGame version. Explained above.  
+ This also might me a solution on other rare or ARM platforms.
+
 
 ### Button, value and potentiometer polling
 
@@ -926,6 +955,10 @@ There is no easy fix for this (unless you wish to spend a lot of time completely
 
 
 ### For Mac users
+
+#### Apple Silicon
+
+You need to compile your own PyGame version. See above.
 
 #### Mac Python and Pygame
 
